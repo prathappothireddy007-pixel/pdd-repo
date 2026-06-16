@@ -1,0 +1,24 @@
+# Node / React Native
+**/node_modules/
+**/.expo/
+**/.claude/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python virtual environment and caches
+**/venv/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# SQLite Database & local assets
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
+**/local.properties
+.DS_Store
+Thumbs.db
