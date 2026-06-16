@@ -24,10 +24,20 @@ const elProfileTabContent = document.getElementById('profile-tab-content');
 // Navigate to different tabs/pages
 async function navigateTo(pageId, itemId = null) {
   // Authentication Guard for protected pages
-  if ((pageId === 'sell' || pageId === 'profile') && !currentUsername) {
+  if ((pageId === 'sell' || pageId === 'profile' || pageId === 'admin') && !currentUsername) {
     showToast("Authentication required. Please sign in first.", "error");
     openAuthModal();
     return;
+  }
+
+  // Admin authorization guard
+  if (pageId === 'admin') {
+    const user = getLocalUserProfile(currentUsername);
+    if (!user || user.role !== 'admin') {
+      showToast("Access Denied: Administrator privileges required.", "error");
+      navigateTo('dashboard');
+      return;
+    }
   }
 
   // Hide all pages
@@ -61,6 +71,8 @@ async function navigateTo(pageId, itemId = null) {
     await renderDetailPage(itemId);
   } else if (pageId === 'profile') {
     await renderProfilePage();
+  } else if (pageId === 'admin') {
+    await renderAdminPage();
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -160,10 +172,20 @@ function updateAuthHeaderUI() {
       elUsernameSpan.textContent = currentUsername;
     }
     if (elLoginBtn) elLoginBtn.style.display = 'none';
+    
+    // Check if user is Admin
+    const user = getLocalUserProfile(currentUsername);
+    const elNavAdmin = document.getElementById('li-nav-admin');
+    if (elNavAdmin) {
+      elNavAdmin.style.display = (user && user.role === 'admin') ? 'block' : 'none';
+    }
   } else {
     if (elPill) elPill.style.display = 'none';
     if (elUserBtn) elUserBtn.style.display = 'none';
     if (elLoginBtn) elLoginBtn.style.display = 'inline-flex';
+    
+    const elNavAdmin = document.getElementById('li-nav-admin');
+    if (elNavAdmin) elNavAdmin.style.display = 'none';
   }
 }
 
@@ -762,8 +784,15 @@ async function handleCreateListing(event) {
 
   if (result.success) {
     document.getElementById('sell-form').reset();
-    showToast("Your auction has been published successfully!", "success");
-    await navigateTo('dashboard');
+    const isPending = result.item.status === 'pending';
+    if (isPending) {
+      showToast("Listing submitted successfully! Awaiting Admin approval.", "success");
+      activeProfileTab = 'listed';
+      await navigateTo('profile');
+    } else {
+      showToast("Your auction has been published successfully!", "success");
+      await navigateTo('dashboard');
+    }
   } else {
     showToast(result.message, "error");
   }
@@ -901,3 +930,115 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fire off clock timers
   startTimerEngine();
 });
+// ===================================================
+// ADMIN MODERATION PANEL CONTROLLER
+// ===================================================
+
+async function renderAdminPage() {
+  const pending = await getPendingAuctions();
+  const allAuctions = await getAuctions();
+  const activeAuctions = allAuctions.filter(a => a.status === 'active');
+
+  const elPending = document.getElementById('admin-pending-container');
+  const elActive = document.getElementById('admin-active-container');
+
+  if (!elPending || !elActive) return;
+
+  // 1. Render Pending Approvals
+  if (pending.length === 0) {
+    elPending.innerHTML = `
+      <div style="text-align: center; padding: 30px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+        <i data-lucide="check-square" style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.5;"></i>
+        <p>All listings have been reviewed. No pending approvals.</p>
+      </div>
+    `;
+  } else {
+    elPending.innerHTML = pending.map(item => {
+      return `
+        <div class="glass" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-radius: 12px; border-left: 4px solid var(--accent-cyan);">
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 4px; color: var(--text-primary);">${item.title}</h4>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              Seller: <span style="color: var(--accent-cyan); font-weight: 700;">@${item.seller}</span> | Category: ${item.category}
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              Starting Bid: ${formatCurrency(item.startingBid)} ${item.buyNowPrice ? ` | Buyout: ${formatCurrency(item.buyNowPrice)}` : ''}
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" style="border-color: var(--accent-green); color: var(--accent-green); padding: 8px 16px; border-radius: 8px;" onclick="approveAuction('${item.id}')">
+              Approve
+            </button>
+            <button class="btn btn-secondary" style="border-color: var(--accent-magenta); color: var(--accent-magenta); padding: 8px 16px; border-radius: 8px;" onclick="rejectAuction('${item.id}')">
+              Reject
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // 2. Render Active Moderation list
+  if (activeAuctions.length === 0) {
+    elActive.innerHTML = `
+      <div style="text-align: center; padding: 30px; color: var(--text-muted); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px;">
+        <p>No active marketplace auctions.</p>
+      </div>
+    `;
+  } else {
+    elActive.innerHTML = activeAuctions.map(item => {
+      return `
+        <div class="glass" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-radius: 12px;">
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: 4px; color: var(--text-primary);">${item.title}</h4>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              Seller: @${item.seller} | Current Bid: <span style="color: var(--accent-cyan); font-weight: 700;">${formatCurrency(item.currentBid)}</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="border-color: var(--accent-magenta); color: var(--accent-magenta); padding: 8px 16px; border-radius: 8px;" onclick="deleteAuction('${item.id}')">
+            Delete
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  lucide.createIcons();
+}
+
+async function approveAuction(itemId) {
+  showToast("Approving listing...", "info");
+  const res = await approveAuctionAPI(itemId);
+  if (res.success) {
+    showToast(`Approved "${res.item.title}"! It is now active in the browse grid.`, "success");
+    await renderAdminPage();
+  } else {
+    showToast(res.message, "error");
+  }
+}
+
+async function rejectAuction(itemId) {
+  if (confirm("Are you sure you want to reject and delete this user listing?")) {
+    showToast("Rejecting listing...", "info");
+    const res = await rejectAuctionAPI(itemId);
+    if (res.success) {
+      showToast("Listing rejected.", "success");
+      await renderAdminPage();
+    } else {
+      showToast(res.message, "error");
+    }
+  }
+}
+
+async function deleteAuction(itemId) {
+  if (confirm("Are you sure you want to permanently delete this active auction? All active bids will be voided.")) {
+    showToast("Deleting listing...", "info");
+    const res = await deleteAuctionAPI(itemId);
+    if (res.success) {
+      showToast("Active auction listing deleted successfully.", "success");
+      await renderAdminPage();
+    } else {
+      showToast(res.message, "error");
+    }
+  }
+}

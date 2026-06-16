@@ -33,6 +33,11 @@
               <i data-lucide="user"></i> My Profile
             </button>
           </li>
+          <li id="li-nav-admin" style="display: none;">
+            <button id="nav-admin" class="nav-btn" onclick="navigateTo('admin')">
+              <i data-lucide="shield-check"></i> Admin Panel
+            </button>
+          </li>
         </ul>
       </nav>
 
@@ -207,6 +212,37 @@
 
             <div id="profile-tab-content">
               <!-- Rendered dynamically based on sub-tab -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 5: Admin Moderation Panel -->
+      <section id="page-admin" class="page">
+        <div class="admin-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+          <!-- Pending Approvals Box -->
+          <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="clock" style="color: var(--accent-cyan);"></i> Pending Listings Approvals
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+              Review items submitted by normal users. Approved items will go live immediately with their requested duration.
+            </p>
+            <div id="admin-pending-container" style="display: flex; flex-direction: column; gap: 15px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Active Listings Box -->
+          <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="shield-alert" style="color: var(--accent-magenta);"></i> Active Auctions Moderation
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+              Moderators can delete any active marketplace listings violating rules or causing disputes.
+            </p>
+            <div id="admin-active-container" style="display: flex; flex-direction: column; gap: 15px;">
+              <!-- Dynamically populated -->
             </div>
           </div>
         </div>
