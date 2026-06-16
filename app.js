@@ -90,10 +90,14 @@ async function filterCategory(category) {
   // Update UI filters
   const filterButtons = document.querySelectorAll('#category-filters .filter-btn');
   filterButtons.forEach(btn => {
-    if (btn.textContent.trim().includes(category) || 
-        (category === 'All' && btn.textContent.trim() === 'All Categories') || 
-        (category === 'Gaming & Entertainment' && btn.textContent.trim() === 'Gaming') || 
-        (category === 'Art & Collectibles' && btn.textContent.trim() === 'Art')) {
+    const text = btn.textContent.trim();
+    if (text.includes(category) || 
+        (category === 'All' && text === 'All Categories') || 
+        (category === 'Gaming & Entertainment' && text === 'Gaming') || 
+        (category === 'Art & Collectibles' && text === 'Art') ||
+        (category === 'Vehicles & Motors' && text === 'Vehicles') ||
+        (category === 'Books & Comics' && text === 'Books') ||
+        (category === 'Sports & Outdoors' && text === 'Sports')) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
