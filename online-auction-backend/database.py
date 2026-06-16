@@ -19,6 +19,7 @@ class DBUser(Base):
     email = Column(String)
     hashed_password = Column(String, nullable=True) # Hashed password using hashlib
     wallet_balance = Column(Float, default=2500.0)
+    role = Column(String, default="user") # user or admin
     
     # Store list of item IDs as JSON string
     _items_won = Column("items_won", Text, default="[]")
@@ -70,9 +71,10 @@ class DBAuction(Base):
     current_bid = Column(Float)
     seller = Column(String)
     ends_at = Column(Float)  # Timestamp in milliseconds
+    duration_hours = Column(Float, default=24.0) # original duration preserved for approvals
     bg_color = Column(String)  # gradient style or hex color
     icon = Column(String)  # emoji or key name
-    status = Column(String, default="active")  # active, ended, sold
+    status = Column(String, default="active")  # active, pending, ended, sold
 
     bids = relationship("DBBid", back_populates="auction", cascade="all, delete-orphan")
 

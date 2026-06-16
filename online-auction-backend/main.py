@@ -109,6 +109,7 @@ class UserResponse(BaseModel):
     username: str
     email: str
     wallet_balance: float
+    role: str
     items_won: List[str]
     items_bid_on: List[str]
     items_sold: List[str]
@@ -164,21 +165,23 @@ def seed_data(db: Session):
     default_hashed = hash_password("password123")
     
     # Seed Users
+    admin_hashed = hash_password("admin123")
     users = [
-        DBUser(username="BidMaster_X", email="bidmaster@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0),
-        DBUser(username="NeonCustoms", email="neon@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
-        DBUser(username="LegacyTimepieces", email="legacy@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
-        DBUser(username="SoleSynth", email="soles@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
-        DBUser(username="PixelNostalgia", email="pixel@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
-        DBUser(username="VaporVector", email="vapor@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
-        DBUser(username="ShiftKey99", email="shift@bidsphere.io", hashed_password=default_hashed, wallet_balance=500.0),
-        DBUser(username="CyberRider", email="rider@bidsphere.io", hashed_password=default_hashed, wallet_balance=800.0),
-        DBUser(username="AeroCollector", email="aero@bidsphere.io", hashed_password=default_hashed, wallet_balance=3000.0),
-        DBUser(username="TimeLord", email="timelord@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0),
-        DBUser(username="MarioBros85", email="mario@bidsphere.io", hashed_password=default_hashed, wallet_balance=600.0),
-        DBUser(username="SegaFanatic", email="sega@bidsphere.io", hashed_password=default_hashed, wallet_balance=700.0),
-        DBUser(username="GalleryDirector", email="gallery@bidsphere.io", hashed_password=default_hashed, wallet_balance=2000.0),
-        DBUser(username="CryptoCurator", email="crypto@bidsphere.io", hashed_password=default_hashed, wallet_balance=3500.0)
+        DBUser(username="admin", email="admin@bidsphere.io", hashed_password=admin_hashed, wallet_balance=100000.0, role="admin"),
+        DBUser(username="BidMaster_X", email="bidmaster@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0, role="user"),
+        DBUser(username="NeonCustoms", email="neon@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0, role="user"),
+        DBUser(username="LegacyTimepieces", email="legacy@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0, role="user"),
+        DBUser(username="SoleSynth", email="soles@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0, role="user"),
+        DBUser(username="PixelNostalgia", email="pixel@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0, role="user"),
+        DBUser(username="VaporVector", email="vapor@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0, role="user"),
+        DBUser(username="ShiftKey99", email="shift@bidsphere.io", hashed_password=default_hashed, wallet_balance=500.0, role="user"),
+        DBUser(username="CyberRider", email="rider@bidsphere.io", hashed_password=default_hashed, wallet_balance=800.0, role="user"),
+        DBUser(username="AeroCollector", email="aero@bidsphere.io", hashed_password=default_hashed, wallet_balance=3000.0, role="user"),
+        DBUser(username="TimeLord", email="timelord@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0, role="user"),
+        DBUser(username="MarioBros85", email="mario@bidsphere.io", hashed_password=default_hashed, wallet_balance=600.0, role="user"),
+        DBUser(username="SegaFanatic", email="sega@bidsphere.io", hashed_password=default_hashed, wallet_balance=700.0, role="user"),
+        DBUser(username="GalleryDirector", email="gallery@bidsphere.io", hashed_password=default_hashed, wallet_balance=2000.0, role="user"),
+        DBUser(username="CryptoCurator", email="crypto@bidsphere.io", hashed_password=default_hashed, wallet_balance=3500.0, role="user")
     ]
     for u in users:
         db.add(u)
@@ -352,7 +355,8 @@ def register_user(reg: UserRegister, db: Session = Depends(get_db)):
         username=username,
         email=email,
         hashed_password=hash_password(reg.password),
-        wallet_balance=2500.0 # Default starting money
+        wallet_balance=2500.0, # Default starting money
+        role="user"
     )
     db.add(db_user)
     db.commit()
@@ -414,7 +418,7 @@ def topup_wallet(username: str, card_in: CardTopUp, db: Session = Depends(get_db
 @app.get("/api/auctions", response_model=List[AuctionResponse])
 def get_auctions(category: Optional[str] = None, db: Session = Depends(get_db)):
     settle_auctions(db)
-    query = db.query(DBAuction)
+    query = db.query(DBAuction).filter(DBAuction.status != "pending")
     if category and category != "All":
         query = query.filter(DBAuction.category == category)
     return query.order_by(DBAuction.ends_at.asc()).all()
@@ -433,12 +437,14 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db)):
     user = db.query(DBUser).filter(DBUser.username == auction_in.seller).first()
     if not user:
         # Create seller on the fly (for backwards compatibility)
-        user = DBUser(username=auction_in.seller, email=f"{auction_in.seller}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=1000.0)
+        user = DBUser(username=auction_in.seller, email=f"{auction_in.seller}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=1000.0, role="user")
         db.add(user)
         db.commit()
 
     now_ms = time.time() * 1000
-    ends_at_ms = now_ms + (auction_in.duration_hours * 60 * 60 * 1000)
+    is_admin = user.role == "admin"
+    status = "active" if is_admin else "pending"
+    ends_at_ms = (now_ms + (auction_in.duration_hours * 60 * 60 * 1000)) if is_admin else 0.0
     new_id = f"auc-{int(time.time() * 1000)}"
 
     db_auc = DBAuction(
@@ -451,9 +457,10 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db)):
         current_bid=auction_in.starting_bid,
         seller=auction_in.seller,
         ends_at=ends_at_ms,
+        duration_hours=auction_in.duration_hours,
         bg_color=auction_in.bg_color,
         icon=auction_in.icon,
-        status="active"
+        status=status
     )
     db.add(db_auc)
     
@@ -588,7 +595,7 @@ def get_user(username: str, db: Session = Depends(get_db)):
     user = db.query(DBUser).filter(DBUser.username == username).first()
     if not user:
         # Create default on the fly
-        user = DBUser(username=username, email=f"{username}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0)
+        user = DBUser(username=username, email=f"{username}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0, role="user")
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -603,3 +610,41 @@ def reset_database(db: Session = Depends(get_db)):
     
     seed_data(db)
     return {"message": "Database successfully reset to mock data"}
+
+# Admin Operations
+@app.get("/api/admin/pending", response_model=List[AuctionResponse])
+def get_pending_auctions(db: Session = Depends(get_db)):
+    return db.query(DBAuction).filter(DBAuction.status == "pending").all()
+
+@app.post("/api/admin/auctions/{auction_id}/approve", response_model=AuctionResponse)
+def approve_auction(auction_id: str, db: Session = Depends(get_db)):
+    auction = db.query(DBAuction).filter(DBAuction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    
+    now_ms = time.time() * 1000
+    auction.status = "active"
+    auction.ends_at = now_ms + (auction.duration_hours * 60 * 60 * 1000)
+    db.commit()
+    db.refresh(auction)
+    return auction
+
+@app.post("/api/admin/auctions/{auction_id}/reject", response_model=AuctionResponse)
+def reject_auction(auction_id: str, db: Session = Depends(get_db)):
+    auction = db.query(DBAuction).filter(DBAuction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    
+    db.delete(auction)
+    db.commit()
+    return auction
+
+@app.delete("/api/admin/auctions/{auction_id}")
+def delete_auction(auction_id: str, db: Session = Depends(get_db)):
+    auction = db.query(DBAuction).filter(DBAuction.id == auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=404, detail="Auction not found")
+    
+    db.delete(auction)
+    db.commit()
+    return {"message": "Auction successfully deleted"}

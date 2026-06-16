@@ -137,6 +137,7 @@ export default function App() {
     username: "Guest",
     email: "guest@bidsphere.io",
     walletBalance: 0,
+    role: "user",
     itemsWon: [],
     itemsBidOn: [],
     itemsSold: []
@@ -283,6 +284,7 @@ export default function App() {
           username: uData.username,
           email: uData.email,
           walletBalance: uData.wallet_balance,
+          role: uData.role || "user",
           itemsWon: uData.items_won,
           itemsBidOn: uData.items_bid_on,
           itemsSold: uData.items_sold
@@ -587,7 +589,13 @@ export default function App() {
           })
         });
         if (res.ok) {
-          triggerToast("Listing published to marketplace!", "success");
+          const data = await res.json();
+          const isPending = data.status === 'pending';
+          if (isPending) {
+            triggerToast("Listing submitted successfully! Awaiting Admin approval.", "success");
+          } else {
+            triggerToast("Listing published to marketplace!", "success");
+          }
           // Reset Form
           setNewTitle('');
           setNewStartingBid('');
@@ -596,7 +604,7 @@ export default function App() {
           setNewDuration('24');
           
           await fetchFromServer(backendUrl);
-          setActiveTab('home');
+          setActiveTab(isPending ? 'profile' : 'home');
           return;
         } else {
           const err = await res.json();
@@ -610,6 +618,7 @@ export default function App() {
     }
 
     // Fallback: local add
+    const isPending = user.role !== 'admin';
     const newAuctionItem = {
       id: `auc-${Date.now()}`,
       title: newTitle.trim(),
@@ -619,10 +628,11 @@ export default function App() {
       buyNowPrice: buyNowPrice,
       currentBid: startingBid,
       seller: user.username,
-      endsAt: Date.now() + (duration * 60 * 60 * 1000),
+      endsAt: isPending ? 0 : Date.now() + (duration * 60 * 60 * 1000),
+      durationHours: duration,
       bgColor: selectedTheme.color,
       icon: selectedTheme.icon,
-      status: "active",
+      status: isPending ? "pending" : "active",
       bids: []
     };
 
@@ -641,8 +651,13 @@ export default function App() {
     setNewDescription('');
     setNewDuration('24');
 
-    triggerToast("Listing published locally!", "success");
-    setActiveTab('home');
+    if (isPending) {
+      triggerToast("Listing submitted locally! Awaiting Admin approval.", "success");
+      setActiveTab('profile');
+    } else {
+      triggerToast("Listing published locally!", "success");
+      setActiveTab('home');
+    }
   };
 
   // ===================================================
@@ -677,6 +692,7 @@ export default function App() {
               username: uData.username,
               email: uData.email,
               walletBalance: uData.wallet_balance,
+              role: uData.role || "user",
               itemsWon: uData.items_won,
               itemsBidOn: uData.items_bid_on,
               itemsSold: uData.items_sold
@@ -702,6 +718,7 @@ export default function App() {
           username: username,
           email: `${username.toLowerCase()}@bidsphere.io`,
           walletBalance: 2500,
+          role: (username.toLowerCase().includes("admin") || username === "admin") ? "admin" : "user",
           itemsWon: [],
           itemsBidOn: [],
           itemsSold: []
@@ -737,6 +754,7 @@ export default function App() {
               username: uData.username,
               email: uData.email,
               walletBalance: uData.wallet_balance,
+              role: uData.role || "user",
               itemsWon: uData.items_won,
               itemsBidOn: uData.items_bid_on,
               itemsSold: uData.items_sold
@@ -761,6 +779,7 @@ export default function App() {
           username: username,
           email: email,
           walletBalance: 2500.0,
+          role: (username.toLowerCase().includes("admin") || username === "admin") ? "admin" : "user",
           itemsWon: [],
           itemsBidOn: [],
           itemsSold: []
@@ -780,6 +799,7 @@ export default function App() {
       username: "Guest",
       email: "guest@bidsphere.io",
       walletBalance: 0,
+      role: "user",
       itemsWon: [],
       itemsBidOn: [],
       itemsSold: []
@@ -862,7 +882,8 @@ export default function App() {
       const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchCat = selectedCategory === 'All' || item.category === selectedCategory;
-      return matchSearch && matchCat;
+      const isNotPending = item.status !== 'pending';
+      return matchSearch && matchCat && isNotPending;
     });
 
     return (
@@ -1491,6 +1512,166 @@ export default function App() {
     );
   };
 
+  // ----------------------------------------------------
+  // ADMIN PANEL SCREEN RENDER
+  // ----------------------------------------------------
+  const renderAdminScreen = () => {
+    const pendingItems = auctions.filter(a => a.status === 'pending');
+    const activeItems = auctions.filter(a => a.status === 'active');
+
+    const handleApprove = async (itemId) => {
+      const backendUrl = getBackendUrl();
+      if (isOnline && backendUrl) {
+        try {
+          const res = await fetch(`${backendUrl}/admin/auctions/${itemId}/approve`, {
+            method: 'POST'
+          });
+          if (res.ok) {
+            triggerToast("Listing approved and is now live!", "success");
+            await fetchFromServer(backendUrl);
+          } else {
+            triggerToast("Failed to approve.", "error");
+          }
+        } catch (e) {
+          triggerToast("Connection failed.", "error");
+        }
+      } else {
+        // Offline Approve
+        setAuctions(prev => prev.map(a => {
+          if (a.id === itemId) {
+            return {
+              ...a,
+              status: 'active',
+              endsAt: Date.now() + (a.durationHours || 24) * 60 * 60 * 1000
+            };
+          }
+          return a;
+        }));
+        triggerToast("Listing approved locally!", "success");
+      }
+    };
+
+    const handleReject = async (itemId) => {
+      const backendUrl = getBackendUrl();
+      if (isOnline && backendUrl) {
+        try {
+          const res = await fetch(`${backendUrl}/admin/auctions/${itemId}/reject`, {
+            method: 'POST'
+          });
+          if (res.ok) {
+            triggerToast("Listing rejected.", "success");
+            await fetchFromServer(backendUrl);
+          } else {
+            triggerToast("Failed to reject.", "error");
+          }
+        } catch (e) {
+          triggerToast("Connection failed.", "error");
+        }
+      } else {
+        // Offline Reject
+        setAuctions(prev => prev.filter(a => a.id !== itemId));
+        triggerToast("Listing rejected locally.", "success");
+      }
+    };
+
+    const handleDelete = async (itemId) => {
+      const backendUrl = getBackendUrl();
+      if (isOnline && backendUrl) {
+        try {
+          const res = await fetch(`${backendUrl}/admin/auctions/${itemId}`, {
+            method: 'DELETE'
+          });
+          if (res.ok) {
+            triggerToast("Active listing deleted.", "success");
+            await fetchFromServer(backendUrl);
+          } else {
+            triggerToast("Failed to delete.", "error");
+          }
+        } catch (e) {
+          triggerToast("Connection failed.", "error");
+        }
+      } else {
+        // Offline Delete
+        setAuctions(prev => prev.filter(a => a.id !== itemId));
+        triggerToast("Listing deleted locally.", "success");
+      }
+    };
+
+    return (
+      <View style={styles.tabContent}>
+        <View style={styles.heroBanner}>
+          <Text style={styles.heroTitle}>Admin Moderation</Text>
+          <Text style={styles.heroSubtitle}>Approve user listings and moderate active auctions.</Text>
+        </View>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+          {/* Pending Approvals */}
+          <View style={styles.connectionCard}>
+            <Text style={styles.connectionTitle}>Pending Approvals ({pendingItems.length})</Text>
+            {pendingItems.length === 0 ? (
+              <Text style={styles.emptySubTab}>No pending listing approvals.</Text>
+            ) : (
+              pendingItems.map(item => (
+                <View key={item.id} style={[styles.historyCardItem, { flexDirection: 'column', alignItems: 'stretch' }]}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                      <Text style={{ fontSize: 24, marginRight: 10 }}>{item.icon}</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.historyCardTitle}>{item.title}</Text>
+                        <Text style={styles.historyCardSeller}>Seller: @{item.seller}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.historyCardPrice}>{formatCurrency(item.startingBid)}</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', gap: 10 }}>
+                    <TouchableOpacity 
+                      style={[styles.connectBtn, { flex: 1, backgroundColor: '#39ff14' }]} 
+                      onPress={() => handleApprove(item.id)}
+                    >
+                      <Text style={[styles.connectBtnText, { color: '#0a0813' }]}>Approve</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={[styles.connectBtn, { flex: 1, backgroundColor: '#ff007f', borderColor: '#ff007f' }]} 
+                      onPress={() => handleReject(item.id)}
+                    >
+                      <Text style={styles.connectBtnText}>Reject</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+
+          {/* Active Listings Moderation */}
+          <View style={styles.connectionCard}>
+            <Text style={styles.connectionTitle}>Active Marketplace Listings ({activeItems.length})</Text>
+            {activeItems.length === 0 ? (
+              <Text style={styles.emptySubTab}>No active listings.</Text>
+            ) : (
+              activeItems.map(item => (
+                <View key={item.id} style={[styles.historyCardItem, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10 }}>
+                    <Text style={{ fontSize: 24, marginRight: 10 }}>{item.icon}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.historyCardTitle} numberOfLines={1}>{item.title}</Text>
+                      <Text style={styles.historyCardSeller}>Seller: @{item.seller}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity 
+                    style={[styles.connectBtn, { backgroundColor: '#ff007f', borderColor: '#ff007f', width: 80 }]} 
+                    onPress={() => handleDelete(item.id)}
+                  >
+                    <Text style={styles.connectBtnText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  };
+
   // Main Return containing layout skeleton
   return (
     <SafeAreaView style={styles.appContainer}>
@@ -1504,7 +1685,7 @@ export default function App() {
           <View style={[styles.headerStatusDot, { backgroundColor: isOnline ? '#39ff14' : '#ff7f00' }]} />
         </View>
         <View style={styles.walletPill}>
-          <Text style={styles.walletText}>💰 {formatCurrency(user.walletBalance)}</Text>
+          <Text style={walletStyle(user.walletBalance)}>💰 {formatCurrency(user.walletBalance)}</Text>
         </View>
       </View>
 
@@ -1512,6 +1693,7 @@ export default function App() {
       {activeTab === 'home' && renderDashboardScreen()}
       {activeTab === 'sell' && renderSellScreen()}
       {activeTab === 'profile' && renderProfileScreen()}
+      {activeTab === 'admin' && renderAdminScreen()}
 
       {/* Detail view Modal popup overlay */}
       {activeDetailId !== null && renderDetailScreen()}
@@ -1545,6 +1727,16 @@ export default function App() {
           <Text style={[styles.navLabel, activeTab === 'sell' && styles.navLabelActive]}>Sell</Text>
         </TouchableOpacity>
 
+        {user.role === 'admin' && (
+          <TouchableOpacity 
+            style={[styles.navBtn, activeTab === 'admin' && styles.navBtnActive]} 
+            onPress={() => { setActiveTab('admin'); setActiveDetailId(null); }}
+          >
+            <Text style={styles.navIcon}>🛡️</Text>
+            <Text style={[styles.navLabel, activeTab === 'admin' && styles.navLabelActive]}>Admin</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity 
           style={[styles.navBtn, activeTab === 'profile' && styles.navBtnActive]} 
           onPress={() => { setActiveTab('profile'); setActiveDetailId(null); }}
@@ -1556,6 +1748,14 @@ export default function App() {
     </SafeAreaView>
   );
 }
+
+// Simple dynamic styling helper for header wallet
+const walletStyle = (balance) => {
+  return {
+    color: '#ffd700',
+    fontWeight: 'bold',
+  };
+};
 
 // ----------------------------------------------------
 // MOBILE STYLING SHEET

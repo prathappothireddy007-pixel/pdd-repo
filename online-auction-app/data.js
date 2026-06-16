@@ -182,6 +182,7 @@ async function checkBackendActive() {
           username: serverUser.username,
           email: serverUser.email,
           walletBalance: serverUser.wallet_balance,
+          role: serverUser.role || "user",
           itemsWon: serverUser.items_won,
           itemsBidOn: serverUser.items_bid_on,
           itemsSold: serverUser.items_sold
@@ -238,7 +239,7 @@ async function getAuctions() {
       updateBackendIndicator(false);
     }
   }
-  return getLocalAuctions();
+  return getLocalAuctions().filter(a => a.status !== "pending");
 }
 
 async function getUserProfile() {
@@ -255,6 +256,7 @@ async function getUserProfile() {
           username: serverUser.username,
           email: serverUser.email,
           walletBalance: serverUser.wallet_balance,
+          role: serverUser.role || "user",
           itemsWon: serverUser.items_won,
           itemsBidOn: serverUser.items_bid_on,
           itemsSold: serverUser.items_sold
@@ -291,6 +293,7 @@ async function authLoginAPI(username, password) {
           username: serverUser.username,
           email: serverUser.email,
           walletBalance: serverUser.wallet_balance,
+          role: serverUser.role || "user",
           itemsWon: serverUser.items_won,
           itemsBidOn: serverUser.items_bid_on,
           itemsSold: serverUser.items_sold
@@ -336,6 +339,7 @@ async function authRegisterAPI(username, email, password) {
           username: serverUser.username,
           email: serverUser.email,
           walletBalance: serverUser.wallet_balance,
+          role: serverUser.role || "user",
           itemsWon: serverUser.items_won,
           itemsBidOn: serverUser.items_bid_on,
           itemsSold: serverUser.items_sold
@@ -357,10 +361,12 @@ async function authRegisterAPI(username, email, password) {
     return { success: false, message: "Username already exists." };
   }
   
+  const role = (username.toLowerCase().includes("admin") || username === "admin") ? "admin" : "user";
   const newUser = {
     username: username,
     email: email,
     walletBalance: 2500.0,
+    role: role,
     itemsWon: [],
     itemsBidOn: [],
     itemsSold: []
@@ -404,6 +410,7 @@ async function userTopupAPI(amount, cardNumber, expiry, cvv) {
           username: serverUser.username,
           email: serverUser.email,
           walletBalance: serverUser.wallet_balance,
+          role: serverUser.role || "user",
           itemsWon: serverUser.items_won,
           itemsBidOn: serverUser.items_bid_on,
           itemsSold: serverUser.items_sold
@@ -618,3 +625,101 @@ initializeStore();
 checkBackendActive();
 // Periodically check server
 setInterval(checkBackendActive, 8000);
+
+// ===================================================
+// ADMIN API WRAPPER METHODS
+// ===================================================
+
+async function getPendingAuctions() {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/pending`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.map(mapBackendAuction);
+      }
+    } catch (e) {
+      isBackendActive = false;
+      updateBackendIndicator(false);
+    }
+  }
+  return getLocalAuctions().filter(a => a.status === "pending");
+}
+
+async function approveAuctionAPI(auctionId) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/auctions/${auctionId}/approve`, {
+        method: "POST"
+      });
+      if (res.ok) {
+        const data = await res.json();
+        await getAuctions(); // Sync
+        return { success: true, item: mapBackendAuction(data) };
+      }
+      const err = await res.json();
+      return { success: false, message: err.detail || "Failed to approve." };
+    } catch (e) {
+      return { success: false, message: "Backend server connection error." };
+    }
+  }
+  
+  // Offline Fallback
+  const auctions = getLocalAuctions();
+  const idx = auctions.findIndex(a => a.id === auctionId);
+  if (idx !== -1) {
+    auctions[idx].status = "active";
+    auctions[idx].endsAt = Date.now() + (auctions[idx].durationHours || 24) * 60 * 60 * 1000;
+    saveLocalAuctions(auctions);
+    return { success: true, item: auctions[idx] };
+  }
+  return { success: false, message: "Listing not found." };
+}
+
+async function rejectAuctionAPI(auctionId) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/auctions/${auctionId}/reject`, {
+        method: "POST"
+      });
+      if (res.ok) {
+        await getAuctions(); // Sync
+        return { success: true };
+      }
+      const err = await res.json();
+      return { success: false, message: err.detail || "Failed to reject." };
+    } catch (e) {
+      return { success: false, message: "Backend server connection error." };
+    }
+  }
+  
+  // Offline Fallback
+  const auctions = getLocalAuctions();
+  const filtered = auctions.filter(a => a.id !== auctionId);
+  saveLocalAuctions(filtered);
+  return { success: true };
+}
+
+async function deleteAuctionAPI(auctionId) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/auctions/${auctionId}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        await getAuctions(); // Sync
+        return { success: true };
+      }
+      const err = await res.json();
+      return { success: false, message: err.detail || "Failed to delete listing." };
+    } catch (e) {
+      return { success: false, message: "Backend server connection error." };
+    }
+  }
+  
+  // Offline Fallback
+  const auctions = getLocalAuctions();
+  const filtered = auctions.filter(a => a.id !== auctionId);
+  saveLocalAuctions(filtered);
+  return { success: true };
+}
