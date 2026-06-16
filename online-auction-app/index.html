@@ -40,10 +40,22 @@
         <div id="backend-status-badge" class="status-badge badge-fallback" title="Shows connection status to Python FastAPI backend">
           <span class="status-dot orange"></span> Offline (Demo Mode)
         </div>
-        <div class="wallet-pill">
+        <div class="wallet-pill" id="wallet-pill-container" onclick="openTopUpModal()" style="display: none; cursor: pointer;" title="Click to Top Up Wallet Balance">
           <i data-lucide="wallet"></i>
           <span id="wallet-balance">$0.00</span>
+          <span class="topup-btn-plus">+</span>
         </div>
+        <div id="header-user-btn" style="display: none; align-items: center; gap: 8px;">
+          <button class="btn btn-secondary nav-profile-btn" onclick="navigateTo('profile')" style="padding: 8px 14px; font-size: 0.85rem;">
+            <i data-lucide="user" style="width: 14px; height: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i> <span id="header-username">Guest</span>
+          </button>
+          <button class="btn btn-secondary btn-logout" onclick="handleLogout()" title="Sign Out" style="padding: 8px; border-radius: 10px; color: var(--accent-magenta); border-color: rgba(255, 0, 127, 0.15);">
+            <i data-lucide="log-out" style="width: 15px; height: 15px;"></i>
+          </button>
+        </div>
+        <button id="header-login-btn" class="btn btn-primary" onclick="openAuthModal()" style="padding: 8px 16px;">
+          <i data-lucide="log-in" style="width: 15px; height: 15px; display: inline; vertical-align: middle; margin-right: 4px;"></i> Sign In
+        </button>
       </div>
     </header>
 
@@ -206,6 +218,124 @@
       <p>&copy; 2026 BidSphere Inc. Built using futuristic glassmorphism UI. All rights reserved.</p>
       <p style="margin-top: 5px;">Created for pair programming demonstration.</p>
     </footer>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal-content glass auth-modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" required placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn">
+          Sign In <i data-lucide="log-in" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i>
+        </button>
+      </form>
+      
+      <!-- Register Form -->
+      <form id="register-form" onsubmit="handleRegisterSubmit(event)" style="display:none;">
+        <div class="form-group">
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" required placeholder="e.g. BuyerOne">
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email Address</label>
+          <input type="email" id="register-email" required placeholder="e.g. buyer@bidsphere.io">
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required placeholder="Min. 6 characters">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn">
+          Create Account <i data-lucide="user-plus" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Payment / Top-Up Modal -->
+  <div id="payment-modal" class="modal-overlay">
+    <div class="modal-content glass payment-modal-box">
+      <button class="modal-close" onclick="closeTopUpModal()">&times;</button>
+      
+      <h2 class="modal-title" style="text-align:center;margin-bottom:6px;">Refill Wallet</h2>
+      <p class="modal-subtitle" style="text-align:center;color:var(--text-secondary);font-size:0.85rem;margin-bottom:20px;line-height:1.4;">
+        Add simulated funds to your BidSphere account instantly.
+      </p>
+      
+      <!-- Credit Card Graphic -->
+      <div class="credit-card-wrapper">
+        <div class="credit-card" id="visual-card">
+          <div class="card-front">
+            <div class="card-chip"></div>
+            <div class="card-logo">VISA</div>
+            <div class="card-number-display" id="visual-card-number">•••• •••• •••• ••••</div>
+            <div class="card-holder-row">
+              <div class="card-holder-info">
+                <div class="card-label">CARDHOLDER</div>
+                <div class="card-val" id="visual-card-holder">YOUR NAME</div>
+              </div>
+              <div class="card-expiry-info">
+                <div class="card-label">EXPIRES</div>
+                <div class="card-val" id="visual-card-expiry">MM/YY</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-back">
+            <div class="card-magnetic-strip"></div>
+            <div class="card-signature-box">
+              <span class="card-cvv-display" id="visual-card-cvv">•••</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Payment Form -->
+      <form id="payment-form" onsubmit="handleTopUpSubmit(event)">
+        <div class="form-group">
+          <label for="card-holder">Cardholder Name</label>
+          <input type="text" id="card-holder" required placeholder="Enter full name" oninput="updateVisualCard()">
+        </div>
+        
+        <div class="form-group">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" required placeholder="4000 1234 5678 9010" maxlength="19" oninput="formatCardNumber(this); updateVisualCard()">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group" style="flex:1;margin-right:10px;">
+            <label for="card-expiry">Expiry Date</label>
+            <input type="text" id="card-expiry" required placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateVisualCard()">
+          </div>
+          <div class="form-group" style="width:100px;">
+            <label for="card-cvv">CVV</label>
+            <input type="password" id="card-cvv" required placeholder="123" maxlength="4" onfocus="flipCard(true)" onblur="flipCard(false)" oninput="updateVisualCard()">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="topup-amount">Deposit Amount ($)</label>
+          <input type="number" id="topup-amount" required min="10" max="10000" placeholder="e.g. 500" value="500">
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px;display:block;">
+          <i data-lucide="credit-card" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Pay & Deposit Funds
+        </button>
+      </form>
+    </div>
   </div>
 
   <!-- Toast Notification Container -->

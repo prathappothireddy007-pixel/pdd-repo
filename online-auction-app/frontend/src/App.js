@@ -1,4 +1,4 @@
-// BidSphere - Application Controller with Backend Sync, Auth, and Payments
+// BidSphere - Application Controller with Backend Sync
 
 // Global App State
 let activePage = 'dashboard';
@@ -23,13 +23,6 @@ const elProfileTabContent = document.getElementById('profile-tab-content');
 
 // Navigate to different tabs/pages
 async function navigateTo(pageId, itemId = null) {
-  // Authentication Guard for protected pages
-  if ((pageId === 'sell' || pageId === 'profile') && !currentUsername) {
-    showToast("Authentication required. Please sign in first.", "error");
-    openAuthModal();
-    return;
-  }
-
   // Hide all pages
   document.querySelectorAll('.page').forEach(page => {
     page.classList.remove('active');
@@ -144,204 +137,6 @@ function formatCurrency(amount) {
 }
 
 // ----------------------------------------------------
-// AUTHENTICATION INTERACTIVE CONTROLS
-// ----------------------------------------------------
-
-function updateAuthHeaderUI() {
-  const elPill = document.getElementById('wallet-pill-container');
-  const elUserBtn = document.getElementById('header-user-btn');
-  const elLoginBtn = document.getElementById('header-login-btn');
-  const elUsernameSpan = document.getElementById('header-username');
-  
-  if (currentUsername) {
-    if (elPill) elPill.style.display = 'flex';
-    if (elUserBtn) {
-      elUserBtn.style.display = 'flex';
-      elUsernameSpan.textContent = currentUsername;
-    }
-    if (elLoginBtn) elLoginBtn.style.display = 'none';
-  } else {
-    if (elPill) elPill.style.display = 'none';
-    if (elUserBtn) elUserBtn.style.display = 'none';
-    if (elLoginBtn) elLoginBtn.style.display = 'inline-flex';
-  }
-}
-
-function openAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (modal) modal.classList.add('active');
-  switchAuthTab('login');
-}
-
-function closeAuthModal() {
-  const modal = document.getElementById('auth-modal');
-  if (modal) modal.classList.remove('active');
-  document.getElementById('login-form').reset();
-  document.getElementById('register-form').reset();
-}
-
-function switchAuthTab(tabType) {
-  const tabLogin = document.getElementById('tab-login');
-  const tabRegister = document.getElementById('tab-register');
-  const formLogin = document.getElementById('login-form');
-  const formRegister = document.getElementById('register-form');
-  
-  if (tabType === 'login') {
-    tabLogin.classList.add('active');
-    tabRegister.classList.remove('active');
-    formLogin.style.display = 'block';
-    formRegister.style.display = 'none';
-  } else {
-    tabLogin.classList.remove('active');
-    tabRegister.classList.add('active');
-    formLogin.style.display = 'none';
-    formRegister.style.display = 'block';
-  }
-}
-
-async function handleLoginSubmit(event) {
-  event.preventDefault();
-  const usernameInput = document.getElementById('login-username').value.trim();
-  const passwordInput = document.getElementById('login-password').value;
-  
-  showToast("Verifying credentials...", "info");
-  const res = await authLoginAPI(usernameInput, passwordInput);
-  if (res.success) {
-    showToast(`Welcome back, @${usernameInput}!`, "success");
-    closeAuthModal();
-    updateAuthHeaderUI();
-    await updateHeaderWallet();
-    
-    // Repaint UI
-    if (activePage === 'dashboard') await renderDashboard();
-    if (activePage === 'detail') await renderDetailPage(activeAuctionId);
-    if (activePage === 'profile') await renderProfilePage();
-  } else {
-    showToast(res.message, "error");
-  }
-}
-
-async function handleRegisterSubmit(event) {
-  event.preventDefault();
-  const usernameInput = document.getElementById('register-username').value.trim();
-  const emailInput = document.getElementById('register-email').value.trim();
-  const passwordInput = document.getElementById('register-password').value;
-  
-  if (passwordInput.length < 6) {
-    showToast("Password must be at least 6 characters.", "error");
-    return;
-  }
-  
-  showToast("Registering account...", "info");
-  const res = await authRegisterAPI(usernameInput, emailInput, passwordInput);
-  if (res.success) {
-    showToast(`Account successfully registered! Welcome, @${usernameInput}!`, "success");
-    closeAuthModal();
-    updateAuthHeaderUI();
-    await updateHeaderWallet();
-    
-    if (activePage === 'dashboard') await renderDashboard();
-    if (activePage === 'profile') await renderProfilePage();
-  } else {
-    showToast(res.message, "error");
-  }
-}
-
-async function handleLogout() {
-  authLogout();
-  showToast("Signed out successfully.", "info");
-  updateAuthHeaderUI();
-  await updateHeaderWallet();
-  await navigateTo('dashboard');
-}
-
-// ----------------------------------------------------
-// WALLET PAYMENT & TOP-UP CONTROLS
-// ----------------------------------------------------
-
-function openTopUpModal() {
-  if (!currentUsername) {
-    openAuthModal();
-    return;
-  }
-  const modal = document.getElementById('payment-modal');
-  if (modal) modal.classList.add('active');
-  resetPaymentForm();
-}
-
-function closeTopUpModal() {
-  const modal = document.getElementById('payment-modal');
-  if (modal) modal.classList.remove('active');
-}
-
-function resetPaymentForm() {
-  document.getElementById('payment-form').reset();
-  flipCard(false);
-  updateVisualCard();
-}
-
-function flipCard(state) {
-  const card = document.getElementById('visual-card');
-  if (card) {
-    if (state) card.classList.add('flipped');
-    else card.classList.remove('flipped');
-  }
-}
-
-function formatCardNumber(input) {
-  let val = input.value.replace(/\D/g, '');
-  let matches = val.match(/.{1,4}/g);
-  input.value = matches ? matches.join(' ') : '';
-}
-
-function formatExpiry(input) {
-  let val = input.value.replace(/\D/g, '');
-  if (val.length >= 2) {
-    input.value = val.slice(0, 2) + '/' + val.slice(2, 4);
-  } else {
-    input.value = val;
-  }
-}
-
-function updateVisualCard() {
-  const number = document.getElementById('card-number').value || '•••• •••• •••• ••••';
-  const holder = document.getElementById('card-holder').value || 'YOUR NAME';
-  const expiry = document.getElementById('card-expiry').value || 'MM/YY';
-  const cvv = document.getElementById('card-cvv').value || '•••';
-  
-  document.getElementById('visual-card-number').textContent = number;
-  document.getElementById('visual-card-holder').textContent = holder.toUpperCase();
-  document.getElementById('visual-card-expiry').textContent = expiry;
-  document.getElementById('visual-card-cvv').textContent = cvv;
-}
-
-async function handleTopUpSubmit(event) {
-  event.preventDefault();
-  const amount = parseFloat(document.getElementById('topup-amount').value);
-  const holder = document.getElementById('card-holder').value.trim();
-  const number = document.getElementById('card-number').value.trim();
-  const expiry = document.getElementById('card-expiry').value.trim();
-  const cvv = document.getElementById('card-cvv').value.trim();
-  
-  if (isNaN(amount) || amount <= 0) {
-    showToast("Please enter a valid deposit amount.", "error");
-    return;
-  }
-  
-  showToast("Processing payment gateway check...", "info");
-  
-  const res = await userTopupAPI(amount, number, expiry, cvv);
-  if (res.success) {
-    showToast(`Refilled! Deposited ${formatCurrency(amount)} to your wallet balance.`, "success");
-    closeTopUpModal();
-    await updateHeaderWallet();
-    if (activePage === 'profile') await renderProfilePage();
-  } else {
-    showToast(res.message, "error");
-  }
-}
-
-// ----------------------------------------------------
 // UI RENDERING FUNCTIONS
 // ----------------------------------------------------
 
@@ -435,7 +230,6 @@ async function renderDetailPage(itemId) {
   const isLive = item.status === 'active' && item.endsAt > Date.now();
   const timeRemainingStr = isLive ? formatTimeRemaining(item.endsAt - Date.now()) : "Ended";
   const user = await getUserProfile();
-  const loggedInUsername = user ? user.username : null;
 
   // Icon mapping
   let iconName = 'box';
@@ -454,7 +248,7 @@ async function renderDetailPage(itemId) {
   const bidsHTML = sortedBids.length > 0 ? sortedBids.map(bid => {
     const bidDate = new Date(bid.timestamp);
     const timeFormatted = bidDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const isUserBid = loggedInUsername && bid.bidder === loggedInUsername;
+    const isUserBid = bid.bidder === user.username;
     
     return `
       <div class="bid-history-item">
@@ -510,14 +304,14 @@ async function renderDetailPage(itemId) {
         </div>
 
         ${isLive ? `
-          ${loggedInUsername && item.seller === loggedInUsername ? `
+          ${item.seller === user.username ? `
             <div style="text-align: center; color: var(--text-secondary); padding: 10px 0;">
               <i data-lucide="shield-alert" style="vertical-align: middle; margin-right: 5px;"></i>
               You are the seller of this auction listing.
             </div>
           ` : `
             <div>
-              <span class="price-label">Enter Bid (Min. ${formatCurrency(minAllowedBid)})</span>
+              <span class="price-label">Enter Bid (Min. {formatCurrency(minAllowedBid)})</span>
               <div class="bid-input-group">
                 <div class="bid-input-wrapper">
                   <span class="bid-currency">$</span>
@@ -564,10 +358,6 @@ async function renderDetailPage(itemId) {
 // 3. Render Profile Page
 async function renderProfilePage() {
   const user = await getUserProfile();
-  if (!user) {
-    navigateTo('dashboard');
-    return;
-  }
   const auctions = await getAuctions();
 
   // Populate Sidebar
@@ -593,9 +383,8 @@ async function switchProfileTab(tabName, element) {
 
 async function renderProfileTab() {
   const user = await getUserProfile();
-  if (!user) return;
-  
   const auctions = await getAuctions();
+  
   let htmlContent = "";
 
   if (activeProfileTab === 'bids') {
@@ -680,12 +469,6 @@ async function renderProfileTab() {
 
 // 1. Place a Bid
 async function placeBid(itemId) {
-  if (!currentUsername) {
-    showToast("Authentication required. Please sign in to place a bid.", "error");
-    openAuthModal();
-    return;
-  }
-
   const amountInput = document.getElementById('bid-amount-input');
   if (!amountInput) return;
 
@@ -708,12 +491,6 @@ async function placeBid(itemId) {
 
 // 2. Buy Out Item Outright
 async function buyOutItem(itemId) {
-  if (!currentUsername) {
-    showToast("Authentication required. Please sign in to buy out.", "error");
-    openAuthModal();
-    return;
-  }
-
   // Call database buyout API
   const result = await buyOutAPI(itemId, currentUsername);
   if (result.success) {
@@ -729,12 +506,6 @@ async function buyOutItem(itemId) {
 // 3. Create Listing Submission
 async function handleCreateListing(event) {
   event.preventDefault();
-
-  if (!currentUsername) {
-    showToast("Authentication required. Please sign in first.", "error");
-    openAuthModal();
-    return;
-  }
 
   const title = document.getElementById('item-title').value.trim();
   const category = document.getElementById('item-category').value;
@@ -783,6 +554,7 @@ async function updateHeaderWallet() {
 function startTimerEngine() {
   // 1. One-second countdown timer for UI responsiveness
   setInterval(() => {
+    // Only fetch from memory cache to avoid performance block
     const auctions = getLocalAuctions();
     updateActiveClocks(auctions);
   }, 1000);
@@ -807,7 +579,7 @@ function startTimerEngine() {
       // Local fallback mode settlement run
       let stateChanged = false;
       const auctions = getLocalAuctions();
-      const user = currentUsername ? getLocalUserProfile(currentUsername) : null;
+      const user = getLocalUserProfile();
       const now = Date.now();
 
       auctions.forEach((item) => {
@@ -817,17 +589,17 @@ function startTimerEngine() {
 
           if (item.bids.length > 0) {
             const winningBid = item.bids[item.bids.length - 1];
-            if (user && winningBid.bidder === user.username) {
+            if (winningBid.bidder === user.username) {
               user.itemsWon.push(item.id);
               user.walletBalance -= winningBid.amount;
               showToast(`🎉 Auction Won! You purchased "${item.title}" for ${formatCurrency(winningBid.amount)}`, "success");
-            } else if (user && item.seller === user.username) {
+            } else if (item.seller === user.username) {
               user.walletBalance += winningBid.amount;
               user.itemsSold.push(item.id);
               showToast(`💰 Listing Sold! Your "${item.title}" sold to @${winningBid.bidder} for ${formatCurrency(winningBid.amount)}`, "success");
             }
           } else {
-            if (user && item.seller === user.username) {
+            if (item.seller === user.username) {
               showToast(`⚠️ Auction Ended: Your listing "${item.title}" closed without any bids.`, "info");
             }
           }
@@ -836,7 +608,7 @@ function startTimerEngine() {
 
       if (stateChanged) {
         saveLocalAuctions(auctions);
-        if (user) saveLocalUserProfile(user);
+        saveLocalUserProfile(user);
         await updateHeaderWallet();
         if (activePage === 'dashboard') await renderDashboard();
         if (activePage === 'detail') await renderDetailPage(activeAuctionId);
@@ -879,6 +651,8 @@ function updateActiveClocks(auctions) {
         clockEl.textContent = item.status === 'active' && item.endsAt > now ? formatTimeRemaining(item.endsAt - now) : 'Ended';
       }
     }
+  } else if (activePage === 'profile' && activeProfileTab === 'bids') {
+    // We let the interval sync it
   }
 }
 
@@ -888,9 +662,6 @@ function updateActiveClocks(auctions) {
 document.addEventListener('DOMContentLoaded', async () => {
   // Sync state with backend immediately if available
   await checkBackendActive();
-  
-  // Render login/logout indicator
-  updateAuthHeaderUI();
   
   // Update wallet UI
   await updateHeaderWallet();

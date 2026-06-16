@@ -1,8 +1,10 @@
-// BidSphere - Shared State & Backend Integration
+// BidSphere - Shared State & Backend Integration with Auth and Payments
 
 const API_BASE = "http://localhost:8000/api";
 let isBackendActive = false;
-let currentUsername = "BidMaster_X"; // Default current logged-in user
+
+// Dynamic logged-in user state
+let currentUsername = localStorage.getItem("bidsphere_username") || null;
 
 const DEFAULT_AUCTIONS = [
   {
@@ -104,7 +106,7 @@ const DEFAULT_USER_PROFILE = {
   email: "bidmaster@bidsphere.io",
   walletBalance: 2500,
   itemsWon: [],
-  itemsBidOn: ["auc-1", "auc-2", "auc-4"], // Track list of IDs the user bid on
+  itemsBidOn: ["auc-1", "auc-2", "auc-4"],
   itemsSold: []
 };
 
@@ -117,12 +119,38 @@ function saveLocalAuctions(auctions) {
   localStorage.setItem("bidsphere_auctions", JSON.stringify(auctions));
 }
 
-function getLocalUserProfile() {
-  return JSON.parse(localStorage.getItem("bidsphere_user")) || DEFAULT_USER_PROFILE;
+function getLocalUserProfile(username = null) {
+  const targetUsername = username || currentUsername || "BidMaster_X";
+  
+  // Try retrieving this specific user from a local mock user base
+  const userBase = JSON.parse(localStorage.getItem("bidsphere_users_base")) || {};
+  if (userBase[targetUsername]) {
+    return userBase[targetUsername];
+  }
+  
+  // Fallback to legacy single user key
+  if (targetUsername === "BidMaster_X") {
+    return JSON.parse(localStorage.getItem("bidsphere_user")) || DEFAULT_USER_PROFILE;
+  }
+  
+  // Return new mock user details
+  return {
+    username: targetUsername,
+    email: `${targetUsername.toLowerCase()}@bidsphere.io`,
+    walletBalance: 2500,
+    itemsWon: [],
+    itemsBidOn: [],
+    itemsSold: []
+  };
 }
 
 function saveLocalUserProfile(user) {
-  localStorage.setItem("bidsphere_user", JSON.stringify(user));
+  if (user.username === currentUsername) {
+    localStorage.setItem("bidsphere_user", JSON.stringify(user));
+  }
+  const userBase = JSON.parse(localStorage.getItem("bidsphere_users_base")) || {};
+  userBase[user.username] = user;
+  localStorage.setItem("bidsphere_users_base", JSON.stringify(userBase));
 }
 
 function initializeStore() {
@@ -132,30 +160,39 @@ function initializeStore() {
   if (!localStorage.getItem("bidsphere_user")) {
     localStorage.setItem("bidsphere_user", JSON.stringify(DEFAULT_USER_PROFILE));
   }
+  // Initialize mock users base
+  if (!localStorage.getItem("bidsphere_users_base")) {
+    const base = {};
+    base["BidMaster_X"] = DEFAULT_USER_PROFILE;
+    localStorage.setItem("bidsphere_users_base", JSON.stringify(base));
+  }
 }
 
-// Check if Python FastAPI server is running
+// Check if Python FastAPI server is running & validate authentication
 async function checkBackendActive() {
   try {
-    const res = await fetch(`${API_BASE}/user/${currentUsername}`, { method: 'GET' });
+    const checkUsername = currentUsername || "BidMaster_X";
+    const res = await fetch(`${API_BASE}/user/${checkUsername}`, { method: 'GET' });
     if (res.ok) {
       isBackendActive = true;
-      // Sync local user profile cache
-      const serverUser = await res.json();
-      const mappedUser = {
-        username: serverUser.username,
-        email: serverUser.email,
-        walletBalance: serverUser.wallet_balance,
-        itemsWon: serverUser.items_won,
-        itemsBidOn: serverUser.items_bid_on,
-        itemsSold: serverUser.items_sold
-      };
-      saveLocalUserProfile(mappedUser);
+      // If we are logged in, sync our profile details
+      if (currentUsername) {
+        const serverUser = await res.json();
+        const mappedUser = {
+          username: serverUser.username,
+          email: serverUser.email,
+          walletBalance: serverUser.wallet_balance,
+          itemsWon: serverUser.items_won,
+          itemsBidOn: serverUser.items_bid_on,
+          itemsSold: serverUser.items_sold
+        };
+        saveLocalUserProfile(mappedUser);
+      }
       updateBackendIndicator(true);
       return true;
     }
   } catch (e) {
-    // Fail silently, fall back to local storage
+    // Fail silently
   }
   isBackendActive = false;
   updateBackendIndicator(false);
@@ -205,6 +242,10 @@ async function getAuctions() {
 }
 
 async function getUserProfile() {
+  if (!currentUsername) {
+    return null;
+  }
+  
   if (isBackendActive) {
     try {
       const res = await fetch(`${API_BASE}/user/${currentUsername}`);
@@ -226,8 +267,169 @@ async function getUserProfile() {
       updateBackendIndicator(false);
     }
   }
-  return getLocalUserProfile();
+  return getLocalUserProfile(currentUsername);
 }
+
+// ===================================================
+// USER AUTHENTICATION APIS
+// ===================================================
+
+async function authLoginAPI(username, password) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      if (res.ok) {
+        const serverUser = await res.json();
+        currentUsername = serverUser.username;
+        localStorage.setItem("bidsphere_username", currentUsername);
+        
+        const mappedUser = {
+          username: serverUser.username,
+          email: serverUser.email,
+          walletBalance: serverUser.wallet_balance,
+          itemsWon: serverUser.items_won,
+          itemsBidOn: serverUser.items_bid_on,
+          itemsSold: serverUser.items_sold
+        };
+        saveLocalUserProfile(mappedUser);
+        return { success: true, user: mappedUser };
+      } else {
+        const err = await res.json();
+        return { success: false, message: err.detail || "Invalid credentials." };
+      }
+    } catch (e) {
+      return { success: false, message: "Backend connection error." };
+    }
+  }
+  
+  // Local fallback auth
+  const userBase = JSON.parse(localStorage.getItem("bidsphere_users_base")) || {};
+  if (userBase[username]) {
+    // For demo purposes, we log them in directly
+    currentUsername = username;
+    localStorage.setItem("bidsphere_username", currentUsername);
+    return { success: true, user: userBase[username] };
+  } else {
+    // Auto-create user on the fly if offline to make it friction-free!
+    return authRegisterAPI(username, `${username.toLowerCase()}@bidsphere.io`, password);
+  }
+}
+
+async function authRegisterAPI(username, email, password) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+      if (res.ok) {
+        const serverUser = await res.json();
+        currentUsername = serverUser.username;
+        localStorage.setItem("bidsphere_username", currentUsername);
+        
+        const mappedUser = {
+          username: serverUser.username,
+          email: serverUser.email,
+          walletBalance: serverUser.wallet_balance,
+          itemsWon: serverUser.items_won,
+          itemsBidOn: serverUser.items_bid_on,
+          itemsSold: serverUser.items_sold
+        };
+        saveLocalUserProfile(mappedUser);
+        return { success: true, user: mappedUser };
+      } else {
+        const err = await res.json();
+        return { success: false, message: err.detail || "Registration failed." };
+      }
+    } catch (e) {
+      return { success: false, message: "Backend connection error." };
+    }
+  }
+  
+  // Local fallback registration
+  const userBase = JSON.parse(localStorage.getItem("bidsphere_users_base")) || {};
+  if (userBase[username]) {
+    return { success: false, message: "Username already exists." };
+  }
+  
+  const newUser = {
+    username: username,
+    email: email,
+    walletBalance: 2500.0,
+    itemsWon: [],
+    itemsBidOn: [],
+    itemsSold: []
+  };
+  
+  userBase[username] = newUser;
+  localStorage.setItem("bidsphere_users_base", JSON.stringify(userBase));
+  
+  currentUsername = username;
+  localStorage.setItem("bidsphere_username", currentUsername);
+  saveLocalUserProfile(newUser);
+  
+  return { success: true, user: newUser };
+}
+
+function authLogout() {
+  currentUsername = null;
+  localStorage.removeItem("bidsphere_username");
+  localStorage.removeItem("bidsphere_user");
+}
+
+// ===================================================
+// WALLET PAYMENT / TOP-UP API
+// ===================================================
+
+async function userTopupAPI(amount, cardNumber, expiry, cvv) {
+  if (!currentUsername) {
+    return { success: false, message: "Must be logged in to add balance." };
+  }
+
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/user/${currentUsername}/topup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, card_number: cardNumber, expiry, cvv })
+      });
+      if (res.ok) {
+        const serverUser = await res.json();
+        const mappedUser = {
+          username: serverUser.username,
+          email: serverUser.email,
+          walletBalance: serverUser.wallet_balance,
+          itemsWon: serverUser.items_won,
+          itemsBidOn: serverUser.items_bid_on,
+          itemsSold: serverUser.items_sold
+        };
+        saveLocalUserProfile(mappedUser);
+        await getUserProfile(); // Refresh
+        return { success: true, user: mappedUser };
+      } else {
+        const err = await res.json();
+        return { success: false, message: err.detail || "Top-up failed." };
+      }
+    } catch (e) {
+      return { success: false, message: "Backend connection error during transaction." };
+    }
+  }
+  
+  // Local fallback top-up
+  const user = getLocalUserProfile(currentUsername);
+  user.walletBalance += amount;
+  saveLocalUserProfile(user);
+  return { success: true, user };
+}
+
+// ===================================================
+// TRANSACTION BUSINESS APIS
+// ===================================================
 
 async function placeBidAPI(itemId, bidder, amount) {
   if (isBackendActive) {
@@ -239,7 +441,6 @@ async function placeBidAPI(itemId, bidder, amount) {
       });
       if (res.ok) {
         const updatedAuction = await res.json();
-        // Refresh local cache by re-fetching all auctions
         await getAuctions();
         await getUserProfile();
         return { success: true, item: mapBackendAuction(updatedAuction) };
@@ -258,14 +459,13 @@ async function placeBidAPI(itemId, bidder, amount) {
   if (itemIndex === -1) return { success: false, message: "Item not found." };
   
   const item = auctions[itemIndex];
-  const user = getLocalUserProfile();
+  const user = getLocalUserProfile(bidder);
   
   const minIncrement = 5;
   const minAllowed = item.bids.length > 0 ? (item.currentBid + minIncrement) : item.startingBid;
   if (amount < minAllowed) return { success: false, message: `Bid must be at least $${minAllowed}` };
   if (user.walletBalance < amount) return { success: false, message: "Insufficient wallet balance." };
   
-  // Apply local bid
   item.bids.push({ bidder, amount, timestamp: new Date().toISOString() });
   item.currentBid = amount;
   
@@ -307,7 +507,7 @@ async function buyOutAPI(itemId, bidder) {
   if (itemIndex === -1) return { success: false, message: "Item not found." };
   
   const item = auctions[itemIndex];
-  const user = getLocalUserProfile();
+  const user = getLocalUserProfile(bidder);
   
   if (!item.buyNowPrice) return { success: false, message: "Item doesn't support buyout." };
   if (user.walletBalance < item.buyNowPrice) return { success: false, message: "Insufficient wallet balance." };
@@ -371,6 +571,11 @@ async function createListingAPI(title, description, category, startingBid, buyNo
   const auctions = getLocalAuctions();
   auctions.unshift(newAuction);
   saveLocalAuctions(auctions);
+  
+  const user = getLocalUserProfile(seller);
+  user.itemsSold.push(newAuction.id);
+  saveLocalUserProfile(user);
+  
   return { success: true, item: newAuction };
 }
 
@@ -384,11 +589,12 @@ async function resetDatabaseAPI() {
         return true;
       }
     } catch (e) {
-      // ignore and reset locally
+      // ignore
     }
   }
   localStorage.removeItem("bidsphere_auctions");
   localStorage.removeItem("bidsphere_user");
+  localStorage.removeItem("bidsphere_users_base");
   initializeStore();
   return true;
 }

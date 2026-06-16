@@ -6,7 +6,6 @@ import {
   ScrollView, 
   TextInput, 
   TouchableOpacity, 
-  FlatList, 
   Alert, 
   SafeAreaView, 
   StatusBar,
@@ -113,15 +112,6 @@ const INITIAL_AUCTIONS = [
   }
 ];
 
-const INITIAL_USER = {
-  username: "BidMaster_X",
-  email: "bidmaster@bidsphere.io",
-  walletBalance: 2500,
-  itemsWon: [],
-  itemsBidOn: ["auc-1", "auc-2", "auc-4"], 
-  itemsSold: []
-};
-
 const CATEGORIES = ["All", "Electronics", "Fashion & Luxury", "Gaming & Entertainment", "Art & Collectibles"];
 
 const THEME_PRESETS = [
@@ -139,8 +129,31 @@ export default function App() {
 
   // Core App States
   const [auctions, setAuctions] = useState(INITIAL_AUCTIONS);
-  const [user, setUser] = useState(INITIAL_USER);
   const [currentTime, setCurrentTime] = useState(Date.now());
+
+  // User Authentication State
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState({
+    username: "Guest",
+    email: "guest@bidsphere.io",
+    walletBalance: 0,
+    itemsWon: [],
+    itemsBidOn: [],
+    itemsSold: []
+  });
+
+  // Auth Forms State
+  const [authTab, setAuthTab] = useState('login'); // 'login' | 'register'
+  const [usernameInput, setUsernameInput] = useState('');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+
+  // Payment Form State
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [topUpAmount, setTopUpAmount] = useState('500');
 
   // Search & Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -258,8 +271,9 @@ export default function App() {
 
   // Sync data from Server helper
   const fetchFromServer = async (url) => {
+    if (!isLoggedIn) return false;
     try {
-      const uRes = await fetch(`${url}/user/${INITIAL_USER.username}`);
+      const uRes = await fetch(`${url}/user/${user.username}`);
       const aRes = await fetch(`${url}/auctions`);
       if (uRes.ok && aRes.ok) {
         const uData = await uRes.json();
@@ -305,7 +319,7 @@ export default function App() {
 
   // Periodic server polling effect
   useEffect(() => {
-    if (!isOnline) return;
+    if (!isOnline || !isLoggedIn) return;
     const url = getBackendUrl();
     if (!url) return;
 
@@ -314,7 +328,7 @@ export default function App() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isOnline, serverIp]);
+  }, [isOnline, serverIp, isLoggedIn]);
 
   // 1-Second Timer Ticker Engine
   useEffect(() => {
@@ -323,7 +337,7 @@ export default function App() {
       setCurrentTime(now);
 
       // Only settle finished auctions locally if Offline
-      if (!isOnline) {
+      if (!isOnline && isLoggedIn) {
         setAuctions(prevAuctions => {
           let stateChanged = false;
           const updated = prevAuctions.map(item => {
@@ -366,7 +380,7 @@ export default function App() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [user.username, isOnline]);
+  }, [user.username, isOnline, isLoggedIn]);
 
   // ----------------------------------------------------
   // BUSINESS TRANSACTIONS
@@ -374,6 +388,14 @@ export default function App() {
   
   // 1. Submit Bid
   const handlePlaceBid = async (itemId) => {
+    if (!isLoggedIn) {
+      Alert.alert("Authentication Required", "Please sign in or register to place bids.", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Sign In", onPress: () => { setActiveDetailId(null); setActiveTab('profile'); } }
+      ]);
+      return;
+    }
+
     const amount = parseFloat(bidAmountInput);
     if (isNaN(amount) || amount <= 0) {
       triggerToast("Please enter a valid bid amount.", "error");
@@ -452,6 +474,14 @@ export default function App() {
 
   // 2. Buy Out Outright
   const handleBuyOut = async (itemId) => {
+    if (!isLoggedIn) {
+      Alert.alert("Authentication Required", "Please sign in or register to buy items outright.", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Sign In", onPress: () => { setActiveDetailId(null); setActiveTab('profile'); } }
+      ]);
+      return;
+    }
+
     const item = auctions.find(a => a.id === itemId);
     if (!item || !item.buyNowPrice) return;
 
@@ -537,6 +567,8 @@ export default function App() {
 
     // Try live server API call
     const backendUrl = getBackendUrl();
+    const mappedIcon = selectedTheme.icon === '⌨️' ? 'keyboard' : (selectedTheme.icon === '⌚' ? 'watch' : (selectedTheme.icon === '👟' ? 'shoe' : (selectedTheme.icon === '🎮' ? 'gamepad' : 'image')));
+    
     if (isOnline && backendUrl) {
       try {
         const res = await fetch(`${backendUrl}/auctions`, {
@@ -550,7 +582,7 @@ export default function App() {
             buy_now_price: buyNowPrice,
             duration_hours: duration,
             bg_color: selectedTheme.color,
-            icon: getIconName(selectedTheme.icon),
+            icon: mappedIcon,
             seller: user.username
           })
         });
@@ -596,6 +628,12 @@ export default function App() {
 
     setAuctions(prev => [newAuctionItem, ...prev]);
 
+    // Update seller listings locally
+    setUser(prev => ({
+      ...prev,
+      itemsSold: [...prev.itemsSold, newAuctionItem.id]
+    }));
+
     // Reset Form
     setNewTitle('');
     setNewStartingBid('');
@@ -605,6 +643,213 @@ export default function App() {
 
     triggerToast("Listing published locally!", "success");
     setActiveTab('home');
+  };
+
+  // ===================================================
+  // USER ACCOUNT AUTHENTICATION SUBMIT HANDLERS
+  // ===================================================
+
+  const handleAuthSubmit = async () => {
+    const username = usernameInput.trim();
+    const email = emailInput.trim();
+    const password = passwordInput;
+
+    if (!username || !password) {
+      triggerToast("Username and password are required.", "error");
+      return;
+    }
+
+    const backendUrl = getBackendUrl();
+
+    if (authTab === 'login') {
+      triggerToast("Verifying credentials...", "info");
+      
+      if (isOnline && backendUrl) {
+        try {
+          const res = await fetch(`${backendUrl}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          if (res.ok) {
+            const uData = await res.json();
+            setUser({
+              username: uData.username,
+              email: uData.email,
+              walletBalance: uData.wallet_balance,
+              itemsWon: uData.items_won,
+              itemsBidOn: uData.items_bid_on,
+              itemsSold: uData.items_sold
+            });
+            setIsLoggedIn(true);
+            triggerToast(`Welcome back, @${username}!`, "success");
+            
+            // Clean forms
+            setUsernameInput('');
+            setPasswordInput('');
+            // Sync Auctions list
+            await fetchFromServer(backendUrl);
+          } else {
+            const err = await res.json();
+            triggerToast(err.detail || "Invalid login credentials.", "error");
+          }
+        } catch (e) {
+          triggerToast("Connection failed to server.", "error");
+        }
+      } else {
+        // Offline demo account login (auto-create if doesn't exist)
+        setUser({
+          username: username,
+          email: `${username.toLowerCase()}@bidsphere.io`,
+          walletBalance: 2500,
+          itemsWon: [],
+          itemsBidOn: [],
+          itemsSold: []
+        });
+        setIsLoggedIn(true);
+        triggerToast(`Signed in offline as @${username}!`, "success");
+        setUsernameInput('');
+        setPasswordInput('');
+      }
+    } else {
+      // REGISTER
+      if (!email) {
+        triggerToast("Email is required for registration.", "error");
+        return;
+      }
+      if (password.length < 6) {
+        triggerToast("Password must be at least 6 char.", "error");
+        return;
+      }
+
+      triggerToast("Registering account...", "info");
+      
+      if (isOnline && backendUrl) {
+        try {
+          const res = await fetch(`${backendUrl}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+          });
+          if (res.ok) {
+            const uData = await res.json();
+            setUser({
+              username: uData.username,
+              email: uData.email,
+              walletBalance: uData.wallet_balance,
+              itemsWon: uData.items_won,
+              itemsBidOn: uData.items_bid_on,
+              itemsSold: uData.items_sold
+            });
+            setIsLoggedIn(true);
+            triggerToast(`Registration complete! Welcome, @${username}!`, "success");
+            
+            setUsernameInput('');
+            setEmailInput('');
+            setPasswordInput('');
+            await fetchFromServer(backendUrl);
+          } else {
+            const err = await res.json();
+            triggerToast(err.detail || "Registration failed.", "error");
+          }
+        } catch (e) {
+          triggerToast("Connection failed to server.", "error");
+        }
+      } else {
+        // Offline registration
+        setUser({
+          username: username,
+          email: email,
+          walletBalance: 2500.0,
+          itemsWon: [],
+          itemsBidOn: [],
+          itemsSold: []
+        });
+        setIsLoggedIn(true);
+        triggerToast(`Registered offline as @${username}!`, "success");
+        setUsernameInput('');
+        setEmailInput('');
+        setPasswordInput('');
+      }
+    }
+  };
+
+  const handleSignOut = () => {
+    setIsLoggedIn(false);
+    setUser({
+      username: "Guest",
+      email: "guest@bidsphere.io",
+      walletBalance: 0,
+      itemsWon: [],
+      itemsBidOn: [],
+      itemsSold: []
+    });
+    triggerToast("Signed out successfully.", "info");
+    setActiveTab('home');
+  };
+
+  // ===================================================
+  // WALLET PAYMENT TOP-UP HANDLER
+  // ===================================================
+
+  const handleTopUpSubmit = async () => {
+    const amount = parseFloat(topUpAmount);
+    if (isNaN(amount) || amount <= 0) {
+      triggerToast("Please enter a valid amount.", "error");
+      return;
+    }
+
+    if (!cardHolder.trim() || cardNumber.length < 16 || cardExpiry.length < 5 || cardCvv.length < 3) {
+      triggerToast("Please fill all payment fields correctly.", "error");
+      return;
+    }
+
+    triggerToast("Processing simulated payment...", "info");
+
+    const backendUrl = getBackendUrl();
+    if (isOnline && backendUrl) {
+      try {
+        const res = await fetch(`${backendUrl}/user/${user.username}/topup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount,
+            card_number: cardNumber,
+            expiry: cardExpiry,
+            cvv: cardCvv
+          })
+        });
+        if (res.ok) {
+          triggerToast(`Success! Credited ${formatCurrency(amount)} to wallet.`, "success");
+          // Clear payment inputs
+          setCardHolder('');
+          setCardNumber('');
+          setCardExpiry('');
+          setCardCvv('');
+          
+          await fetchFromServer(backendUrl);
+          return;
+        } else {
+          const err = await res.json();
+          triggerToast(err.detail || "Simulated payment failed.", "error");
+          return;
+        }
+      } catch (e) {
+        triggerToast("Payment connection failure.", "error");
+        return;
+      }
+    }
+
+    // Offline Top Up
+    setUser(prev => ({
+      ...prev,
+      walletBalance: prev.walletBalance + amount
+    }));
+    triggerToast(`Success! Mock Refilled wallet by ${formatCurrency(amount)}.`, "success");
+    setCardHolder('');
+    setCardNumber('');
+    setCardExpiry('');
+    setCardCvv('');
   };
 
   // ----------------------------------------------------
@@ -655,7 +900,7 @@ export default function App() {
         </View>
 
         {/* Listings Scroll */}
-        <ScrollView contentContainerStyle={styles.listContainer}>
+        <ScrollView contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false}>
           {filteredAuctions.length === 0 ? (
             <View style={styles.emptyCard}>
               <Text style={styles.emptyText}>No Active Auctions Found</Text>
@@ -718,7 +963,7 @@ export default function App() {
     const isLive = item.status === 'active' && item.endsAt > currentTime;
     const minIncrement = 5;
     const minAllowedBid = item.bids.length > 0 ? (item.currentBid + minIncrement) : item.startingBid;
-    const isSeller = item.seller === user.username;
+    const isSeller = isLoggedIn && item.seller === user.username;
 
     const sortedBids = [...item.bids].reverse();
 
@@ -806,7 +1051,7 @@ export default function App() {
                   <View key={index} style={[styles.historyRow, index === 0 && styles.historyRowHighest]}>
                     <View>
                       <Text style={styles.historyBidder}>
-                        {bid.bidder} {bid.bidder === user.username && "(You)"}
+                        {bid.bidder} {isLoggedIn && bid.bidder === user.username && "(You)"}
                       </Text>
                       <Text style={styles.historyTime}>{new Date(bid.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                     </View>
@@ -821,10 +1066,14 @@ export default function App() {
     );
   };
 
-  // 3. Sell Screen
+  // 3. Sell Screen (Protected)
   const renderSellScreen = () => {
+    if (!isLoggedIn) {
+      return renderAuthScreen();
+    }
+
     return (
-      <ScrollView contentContainerStyle={styles.tabContentScroll}>
+      <ScrollView contentContainerStyle={styles.tabContentScroll} showsVerticalScrollIndicator={false}>
         <View style={styles.formContainer}>
           <Text style={styles.formHeadline}>Launch Your Listing</Text>
           <Text style={styles.formSubHeadline}>Setup starting bids and optional instant buyouts for the marketplace.</Text>
@@ -933,8 +1182,93 @@ export default function App() {
     );
   };
 
-  // 4. Profile Screen
+  // 4. Account Authentication Screen (Guest Fallback)
+  const renderAuthScreen = () => {
+    return (
+      <ScrollView contentContainerStyle={styles.tabContentScroll} showsVerticalScrollIndicator={false}>
+        <View style={styles.formContainer}>
+          {/* Auth tabs */}
+          <View style={styles.authTabsRow}>
+            <TouchableOpacity 
+              style={[styles.authTabBtn, authTab === 'login' && styles.authTabBtnActive]} 
+              onPress={() => setAuthTab('login')}
+            >
+              <Text style={[styles.authTabText, authTab === 'login' && styles.authTabTextActive]}>Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.authTabBtn, authTab === 'register' && styles.authTabBtnActive]} 
+              onPress={() => setAuthTab('register')}
+            >
+              <Text style={[styles.authTabText, authTab === 'register' && styles.authTabTextActive]}>Register</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.formHeadline}>
+            {authTab === 'login' ? "Welcome Back" : "Create Account"}
+          </Text>
+          <Text style={styles.formSubHeadline}>
+            {authTab === 'login' 
+              ? "Login to bid, buy outright, and list items for sale." 
+              : "Register to participate in the real-time cyberpunk auctions."}
+          </Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Username</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. BuyerOne"
+              placeholderTextColor="#6b6675"
+              value={usernameInput}
+              onChangeText={setUsernameInput}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+
+          {authTab === 'register' && (
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Email Address</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. buyer@bidsphere.io"
+                placeholderTextColor="#6b6675"
+                value={emailInput}
+                onChangeText={setEmailInput}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+            </View>
+          )}
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="••••••••"
+              placeholderTextColor="#6b6675"
+              value={passwordInput}
+              onChangeText={setPasswordInput}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+          </View>
+
+          <TouchableOpacity style={styles.publishBtn} onPress={handleAuthSubmit}>
+            <Text style={styles.publishBtnText}>
+              {authTab === 'login' ? "Sign In" : "Register Account"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  };
+
+  // 5. Profile Screen
   const renderProfileScreen = () => {
+    if (!isLoggedIn) {
+      return renderAuthScreen();
+    }
+
     const userListed = auctions.filter(a => a.seller === user.username);
     const userWon = auctions.filter(a => user.itemsWon.includes(a.id));
     const userBidding = auctions.filter(a => user.itemsBidOn.includes(a.id) && a.status === 'active');
@@ -945,7 +1279,7 @@ export default function App() {
           {/* User Card */}
           <View style={styles.profileHeaderCard}>
             <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>B</Text>
+              <Text style={styles.avatarText}>{user.username.slice(0, 1).toUpperCase()}</Text>
             </View>
             <Text style={styles.profileName}>@{user.username}</Text>
             <Text style={styles.profileEmail}>{user.email}</Text>
@@ -977,7 +1311,7 @@ export default function App() {
             <View style={styles.connectionRow}>
               <TextInput
                 style={styles.connectionInput}
-                placeholder="Computer IP e.g. 192.168.1.15"
+                placeholder="Computer IP e.g. 192.168.1.5"
                 placeholderTextColor="#6b6675"
                 value={serverIp}
                 onChangeText={setServerIp}
@@ -996,6 +1330,70 @@ export default function App() {
               <Text style={styles.statusIndicatorText}>
                 {isOnline ? `Live Database (${serverIp})` : "Local Offline Demo Mode"}
               </Text>
+            </View>
+          </View>
+
+          {/* Payment Card / Wallet Refill */}
+          <View style={styles.connectionCard}>
+            <Text style={styles.connectionTitle}>Refill Wallet Balance</Text>
+            <Text style={styles.connectionSubtitle}>
+              Enter card details to simulate adding funds to your account instantly.
+            </Text>
+
+            <View style={{ marginTop: 8 }}>
+              <TextInput
+                style={[styles.connectionInput, { marginBottom: 8, marginRight: 0 }]}
+                placeholder="Cardholder Name"
+                placeholderTextColor="#6b6675"
+                value={cardHolder}
+                onChangeText={setCardHolder}
+              />
+              <TextInput
+                style={[styles.connectionInput, { marginBottom: 8, marginRight: 0 }]}
+                placeholder="Card Number (16 digits)"
+                placeholderTextColor="#6b6675"
+                keyboardType="numeric"
+                maxLength={16}
+                value={cardNumber}
+                onChangeText={setCardNumber}
+              />
+              <View style={{ flexDirection: 'row', marginBottom: 8 }}>
+                <TextInput
+                  style={[styles.connectionInput, { flex: 1, marginRight: 8 }]}
+                  placeholder="Expiry (MM/YY)"
+                  placeholderTextColor="#6b6675"
+                  maxLength={5}
+                  value={cardExpiry}
+                  onChangeText={setCardExpiry}
+                />
+                <TextInput
+                  style={[styles.connectionInput, { width: 90, marginRight: 0 }]}
+                  placeholder="CVV"
+                  placeholderTextColor="#6b6675"
+                  secureTextEntry
+                  maxLength={4}
+                  keyboardType="numeric"
+                  value={cardCvv}
+                  onChangeText={setCardCvv}
+                />
+              </View>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                <TextInput
+                  style={[styles.connectionInput, { width: 120, marginRight: 10 }]}
+                  placeholder="Amount ($)"
+                  placeholderTextColor="#6b6675"
+                  keyboardType="numeric"
+                  value={topUpAmount}
+                  onChangeText={setTopUpAmount}
+                />
+                <TouchableOpacity 
+                  style={[styles.connectBtn, { flex: 1, backgroundColor: '#ffd000' }]} 
+                  onPress={handleTopUpSubmit}
+                >
+                  <Text style={styles.connectBtnText}>Pay & Refill Wallet</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -1080,6 +1478,14 @@ export default function App() {
               )
             )}
           </View>
+
+          {/* Logout Button */}
+          <TouchableOpacity 
+            style={[styles.publishBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#ff007f', marginTop: 30 }]} 
+            onPress={handleSignOut}
+          >
+            <Text style={[styles.publishBtnText, { color: '#ff007f' }]}>Sign Out Profile</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     );
@@ -1958,5 +2364,30 @@ const styles = StyleSheet.create({
     color: '#f5f4f8',
     fontSize: 13,
     fontWeight: '600',
+  },
+
+  // Auth screen specific styles
+  authTabsRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.08)',
+    marginBottom: 20,
+  },
+  authTabBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  authTabBtnActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#00f0ff',
+  },
+  authTabText: {
+    color: '#6b6675',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  authTabTextActive: {
+    color: '#00f0ff',
   }
 });

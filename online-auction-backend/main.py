@@ -1,9 +1,11 @@
 import time
+import hashlib
+import secrets
 from datetime import datetime
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from database import SessionLocal, init_db, DBUser, DBAuction, DBBid
@@ -30,6 +32,21 @@ def get_db():
     finally:
         db.close()
 
+# Password hashing utilities
+def hash_password(password: str) -> str:
+    salt = secrets.token_hex(8)
+    h = hashlib.sha256((password + salt).encode('utf-8')).hexdigest()
+    return f"{salt}${h}"
+
+def verify_password(password: str, hashed: str) -> bool:
+    if not hashed:
+        return False
+    try:
+        salt, h = hashed.split('$')
+        return hashlib.sha256((password + salt).encode('utf-8')).hexdigest() == h
+    except Exception:
+        return False
+
 # Pydantic Schemas
 class BidCreate(BaseModel):
     bidder: str
@@ -45,6 +62,21 @@ class AuctionCreate(BaseModel):
     duration_hours: float
     bg_color: str
     icon: str
+
+class UserRegister(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class CardTopUp(BaseModel):
+    amount: float
+    card_number: str
+    expiry: str
+    cvv: str
 
 class BidResponse(BaseModel):
     id: int
@@ -93,9 +125,6 @@ def settle_auctions(db: Session):
     ).all()
 
     for auction in active_expired:
-        # Get bids sorted by amount ascending
-        bids = db.query(DBBid).filter(DBBid.auction_id == auction.id).order_name = "amount"
-        # Wait, order_by instead of order_name
         bids = db.query(DBBid).filter(DBBid.auction_id == auction.id).order_by(DBBid.amount.asc()).all()
         
         if bids:
@@ -132,22 +161,24 @@ def seed_data(db: Session):
     if db.query(DBUser).first() is not None:
         return
         
+    default_hashed = hash_password("password123")
+    
     # Seed Users
     users = [
-        DBUser(username="BidMaster_X", email="bidmaster@bidsphere.io", wallet_balance=2500.0),
-        DBUser(username="NeonCustoms", email="neon@bidsphere.io", wallet_balance=1000.0),
-        DBUser(username="LegacyTimepieces", email="legacy@bidsphere.io", wallet_balance=1000.0),
-        DBUser(username="SoleSynth", email="soles@bidsphere.io", wallet_balance=1000.0),
-        DBUser(username="PixelNostalgia", email="pixel@bidsphere.io", wallet_balance=1000.0),
-        DBUser(username="VaporVector", email="vapor@bidsphere.io", wallet_balance=1000.0),
-        DBUser(username="ShiftKey99", email="shift@bidsphere.io", wallet_balance=500.0),
-        DBUser(username="CyberRider", email="rider@bidsphere.io", wallet_balance=800.0),
-        DBUser(username="AeroCollector", email="aero@bidsphere.io", wallet_balance=3000.0),
-        DBUser(username="TimeLord", email="timelord@bidsphere.io", wallet_balance=2500.0),
-        DBUser(username="MarioBros85", email="mario@bidsphere.io", wallet_balance=600.0),
-        DBUser(username="SegaFanatic", email="sega@bidsphere.io", wallet_balance=700.0),
-        DBUser(username="GalleryDirector", email="gallery@bidsphere.io", wallet_balance=2000.0),
-        DBUser(username="CryptoCurator", email="crypto@bidsphere.io", wallet_balance=3500.0)
+        DBUser(username="BidMaster_X", email="bidmaster@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0),
+        DBUser(username="NeonCustoms", email="neon@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
+        DBUser(username="LegacyTimepieces", email="legacy@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
+        DBUser(username="SoleSynth", email="soles@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
+        DBUser(username="PixelNostalgia", email="pixel@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
+        DBUser(username="VaporVector", email="vapor@bidsphere.io", hashed_password=default_hashed, wallet_balance=1000.0),
+        DBUser(username="ShiftKey99", email="shift@bidsphere.io", hashed_password=default_hashed, wallet_balance=500.0),
+        DBUser(username="CyberRider", email="rider@bidsphere.io", hashed_password=default_hashed, wallet_balance=800.0),
+        DBUser(username="AeroCollector", email="aero@bidsphere.io", hashed_password=default_hashed, wallet_balance=3000.0),
+        DBUser(username="TimeLord", email="timelord@bidsphere.io", hashed_password=default_hashed, wallet_balance=2500.0),
+        DBUser(username="MarioBros85", email="mario@bidsphere.io", hashed_password=default_hashed, wallet_balance=600.0),
+        DBUser(username="SegaFanatic", email="sega@bidsphere.io", hashed_password=default_hashed, wallet_balance=700.0),
+        DBUser(username="GalleryDirector", email="gallery@bidsphere.io", hashed_password=default_hashed, wallet_balance=2000.0),
+        DBUser(username="CryptoCurator", email="crypto@bidsphere.io", hashed_password=default_hashed, wallet_balance=3500.0)
     ]
     for u in users:
         db.add(u)
@@ -297,14 +328,95 @@ def startup_event():
     finally:
         db.close()
 
-# API Endpoints
+
+# ===================================================
+# AUTHENTICATION API ENDPOINTS
+# ===================================================
+
+@app.post("/api/auth/register", response_model=UserResponse)
+def register_user(reg: UserRegister, db: Session = Depends(get_db)):
+    # Validate username length/chars
+    username = reg.username.strip()
+    if not username:
+        raise HTTPException(status_code=400, detail="Username cannot be empty")
+    
+    # Check if user already exists
+    existing = db.query(DBUser).filter(DBUser.username == username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+        
+    email = reg.email.strip()
+    
+    # Create user
+    db_user = DBUser(
+        username=username,
+        email=email,
+        hashed_password=hash_password(reg.password),
+        wallet_balance=2500.0 # Default starting money
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@app.post("/api/auth/login", response_model=UserResponse)
+def login_user(login: UserLogin, db: Session = Depends(get_db)):
+    user = db.query(DBUser).filter(DBUser.username == login.username.strip()).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid username or password")
+        
+    if not verify_password(login.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Invalid username or password")
+        
+    return user
+
+
+# ===================================================
+# WALLET TOP-UP / PAYMENT API ENDPOINT
+# ===================================================
+
+@app.post("/api/user/{username}/topup", response_model=UserResponse)
+def topup_wallet(username: str, card_in: CardTopUp, db: Session = Depends(get_db)):
+    user = db.query(DBUser).filter(DBUser.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    if card_in.amount <= 0:
+        raise HTTPException(status_code=400, detail="Top-up amount must be positive")
+        
+    # Basic mock credit card checksum/format checks
+    card_clean = card_in.card_number.replace(" ", "").replace("-", "")
+    if len(card_clean) < 13 or len(card_clean) > 19 or not card_clean.isdigit():
+        raise HTTPException(status_code=400, detail="Invalid card number format")
+        
+    # Expiry format MM/YY check
+    expiry = card_in.expiry.strip()
+    if "/" not in expiry or len(expiry) != 5:
+        raise HTTPException(status_code=400, detail="Invalid expiry date (Expected MM/YY)")
+        
+    # CVV check (3 or 4 digits)
+    cvv = card_in.cvv.strip()
+    if len(cvv) < 3 or len(cvv) > 4 or not cvv.isdigit():
+        raise HTTPException(status_code=400, detail="Invalid CVV code")
+        
+    # Process simulated credit card top-up
+    user.wallet_balance += card_in.amount
+    db.commit()
+    db.refresh(user)
+    
+    return user
+
+
+# ===================================================
+# STANDARD AUCTION API ENDPOINTS
+# ===================================================
+
 @app.get("/api/auctions", response_model=List[AuctionResponse])
 def get_auctions(category: Optional[str] = None, db: Session = Depends(get_db)):
     settle_auctions(db)
     query = db.query(DBAuction)
     if category and category != "All":
         query = query.filter(DBAuction.category == category)
-    # Order by ends_at ascending
     return query.order_by(DBAuction.ends_at.asc()).all()
 
 @app.get("/api/auctions/{auction_id}", response_model=AuctionResponse)
@@ -320,14 +432,13 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db)):
     # Verify user exists
     user = db.query(DBUser).filter(DBUser.username == auction_in.seller).first()
     if not user:
-        # Create seller on the fly
-        user = DBUser(username=auction_in.seller, email=f"{auction_in.seller}@bidsphere.io", wallet_balance=1000.0)
+        # Create seller on the fly (for backwards compatibility)
+        user = DBUser(username=auction_in.seller, email=f"{auction_in.seller}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=1000.0)
         db.add(user)
         db.commit()
 
     now_ms = time.time() * 1000
     ends_at_ms = now_ms + (auction_in.duration_hours * 60 * 60 * 1000)
-    
     new_id = f"auc-{int(time.time() * 1000)}"
 
     db_auc = DBAuction(
@@ -359,7 +470,6 @@ def create_auction(auction_in: AuctionCreate, db: Session = Depends(get_db)):
 def place_bid(auction_id: str, bid_in: BidCreate, db: Session = Depends(get_db)):
     settle_auctions(db)
     
-    # Get auction
     auction = db.query(DBAuction).filter(DBAuction.id == auction_id).first()
     if not auction:
         raise HTTPException(status_code=404, detail="Auction not found")
@@ -370,16 +480,13 @@ def place_bid(auction_id: str, bid_in: BidCreate, db: Session = Depends(get_db))
     if auction.seller == bid_in.bidder:
         raise HTTPException(status_code=400, detail="Sellers cannot bid on their own listings")
     
-    # Get user (bidder)
     user = db.query(DBUser).filter(DBUser.username == bid_in.bidder).first()
     if not user:
-        # Create user on the fly
-        user = DBUser(username=bid_in.bidder, email=f"{bid_in.bidder}@bidsphere.io", wallet_balance=2500.0)
+        user = DBUser(username=bid_in.bidder, email=f"{bid_in.bidder}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0)
         db.add(user)
         db.commit()
 
     min_increment = 5.0
-    # Minimum bid allowed
     bids = db.query(DBBid).filter(DBBid.auction_id == auction_id).all()
     min_allowed = (auction.current_bid + min_increment) if bids else auction.starting_bid
     
@@ -434,7 +541,7 @@ def buyout_auction(auction_id: str, payload: dict = Body(...), db: Session = Dep
         
     user = db.query(DBUser).filter(DBUser.username == bidder).first()
     if not user:
-        user = DBUser(username=bidder, email=f"{bidder}@bidsphere.io", wallet_balance=2500.0)
+        user = DBUser(username=bidder, email=f"{bidder}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0)
         db.add(user)
         db.commit()
         
@@ -480,8 +587,8 @@ def get_user(username: str, db: Session = Depends(get_db)):
     settle_auctions(db)
     user = db.query(DBUser).filter(DBUser.username == username).first()
     if not user:
-        # Create on the fly
-        user = DBUser(username=username, email=f"{username}@bidsphere.io", wallet_balance=2500.0)
+        # Create default on the fly
+        user = DBUser(username=username, email=f"{username}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0)
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -489,12 +596,10 @@ def get_user(username: str, db: Session = Depends(get_db)):
 
 @app.post("/api/user/reset")
 def reset_database(db: Session = Depends(get_db)):
-    # Drop all rows
     db.query(DBBid).delete()
     db.query(DBAuction).delete()
     db.query(DBUser).delete()
     db.commit()
     
-    # Seed data
     seed_data(db)
     return {"message": "Database successfully reset to mock data"}

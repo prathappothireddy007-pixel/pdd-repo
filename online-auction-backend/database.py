@@ -17,6 +17,7 @@ class DBUser(Base):
 
     username = Column(String, primary_key=True, index=True)
     email = Column(String)
+    hashed_password = Column(String, nullable=True) # Hashed password using hashlib
     wallet_balance = Column(Float, default=2500.0)
     
     # Store list of item IDs as JSON string
