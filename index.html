@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BidSphere | Premium Online Auction & Reselling</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0813'/><path d='M30 70 L50 30 L70 70 Z' fill='none' stroke='url(%23g)' stroke-width='8'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300f0ff'/><stop offset='100%25' stop-color='%23ff007f'/></linearGradient></defs></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="glass">
+      <div class="logo" onclick="navigateTo('dashboard')">
+        <div class="logo-icon">B</div>
+        <h1 class="logo-text">Bid<span>Sphere</span></h1>
+      </div>
+      
+      <nav>
+        <ul>
+          <li>
+            <button id="nav-dashboard" class="nav-btn active" onclick="navigateTo('dashboard')">
+              <i data-lucide="gavel"></i> Browse Auctions
+            </button>
+          </li>
+          <li>
+            <button id="nav-sell" class="nav-btn" onclick="navigateTo('sell')">
+              <i data-lucide="plus-circle"></i> Sell Item
+            </button>
+          </li>
+          <li>
+            <button id="nav-profile" class="nav-btn" onclick="navigateTo('profile')">
+              <i data-lucide="user"></i> My Profile
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="user-status">
+        <div id="backend-status-badge" class="status-badge badge-fallback" title="Shows connection status to Python FastAPI backend">
+          <span class="status-dot orange"></span> Offline (Demo Mode)
+        </div>
+        <div class="wallet-pill">
+          <i data-lucide="wallet"></i>
+          <span id="wallet-balance">$0.00</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Page 1: Dashboard (Browse) -->
+      <section id="page-dashboard" class="page active">
+        <div class="hero">
+          <h2>Collect, Trade & Bid on <span>Premium Finds</span></h2>
+          <p>The ultimate cyberpunk-themed arena for rare digital art, retro collectibles, custom setups, and high-fashion streetwear.</p>
+        </div>
+
+        <div class="controls-bar">
+          <div class="search-box">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search active auctions, consoles, keycaps..." oninput="handleSearchFilter()">
+          </div>
+          
+          <div class="filters" id="category-filters">
+            <button class="filter-btn active" onclick="filterCategory('All')">All Categories</button>
+            <button class="filter-btn" onclick="filterCategory('Electronics')">Electronics</button>
+            <button class="filter-btn" onclick="filterCategory('Fashion & Luxury')">Fashion & Luxury</button>
+            <button class="filter-btn" onclick="filterCategory('Gaming & Entertainment')">Gaming</button>
+            <button class="filter-btn" onclick="filterCategory('Art & Collectibles')">Art</button>
+          </div>
+        </div>
+
+        <div class="listings-grid" id="listings-container">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- Page 2: Product Detail & Bidding Page -->
+      <section id="page-detail" class="page">
+        <button class="btn btn-secondary" style="width: fit-content; margin-bottom: 20px;" onclick="navigateTo('dashboard')">
+          <i data-lucide="arrow-left"></i> Back to Auctions
+        </button>
+
+        <div class="detail-container" id="detail-container-target">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- Page 3: Sell an Item Form -->
+      <section id="page-sell" class="page">
+        <div class="form-container glass">
+          <h2 class="form-title">Launch Your Auction</h2>
+          <p class="form-subtitle">Put your items up for bid in our global community. Set starting bids and optional instant buyouts.</p>
+          
+          <form id="sell-form" onsubmit="handleCreateListing(event)">
+            <div class="form-grid">
+              <div class="form-group form-full-width">
+                <label for="item-title">Item Title</label>
+                <input type="text" id="item-title" required placeholder="e.g. Vintage Mechanical Keyboard">
+              </div>
+
+              <div class="form-group">
+                <label for="item-category">Category</label>
+                <select id="item-category" required>
+                  <option value="" disabled selected>Select Category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Fashion & Luxury">Fashion & Luxury</option>
+                  <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                  <option value="Art & Collectibles">Art & Collectibles</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="item-duration">Auction Duration (Hours)</label>
+                <input type="number" id="item-duration" required min="1" max="168" value="24" placeholder="e.g. 24">
+              </div>
+
+              <div class="form-group">
+                <label for="item-starting-bid">Starting Bid ($)</label>
+                <input type="number" id="item-starting-bid" required min="1" placeholder="e.g. 50">
+              </div>
+
+              <div class="form-group">
+                <label for="item-buyout">Buy Now Price ($ - Optional)</label>
+                <input type="number" id="item-buyout" min="1" placeholder="e.g. 150">
+              </div>
+
+              <div class="form-group form-full-width">
+                <label for="item-description">Description & Details</label>
+                <textarea id="item-description" required placeholder="Describe item condition, authenticity, custom mods, and details..."></textarea>
+              </div>
+
+              <div class="form-group form-full-width">
+                <label>Select Item Visual Theme</label>
+                <div class="image-preset-picker">
+                  <div class="preset-option selected" style="background: linear-gradient(135deg, #2b1055, #7597de)" data-gradient="linear-gradient(135deg, #2b1055, #7597de)" data-icon="keyboard" onclick="selectPreset(this)">
+                    <i data-lucide="keyboard"></i>
+                  </div>
+                  <div class="preset-option" style="background: linear-gradient(135deg, #1f4037, #99f2c8)" data-gradient="linear-gradient(135deg, #1f4037, #99f2c8)" data-icon="watch" onclick="selectPreset(this)">
+                    <i data-lucide="watch"></i>
+                  </div>
+                  <div class="preset-option" style="background: linear-gradient(135deg, #f857a6, #ff5858)" data-gradient="linear-gradient(135deg, #f857a6, #ff5858)" data-icon="shoe" onclick="selectPreset(this)">
+                    <i data-lucide="footprints"></i>
+                  </div>
+                  <div class="preset-option" style="background: linear-gradient(135deg, #0f2027, #2c5364)" data-gradient="linear-gradient(135deg, #0f2027, #2c5364)" data-icon="gamepad" onclick="selectPreset(this)">
+                    <i data-lucide="gamepad-2"></i>
+                  </div>
+                  <div class="preset-option" style="background: linear-gradient(135deg, #fc00ff, #00dbde)" data-gradient="linear-gradient(135deg, #fc00ff, #00dbde)" data-icon="image" onclick="selectPreset(this)">
+                    <i data-lucide="image"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 30px; width: 100%;">
+              <i data-lucide="upload-cloud"></i> Publish Active Auction
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Page 4: User Profile -->
+      <section id="page-profile" class="page">
+        <div class="profile-grid">
+          <!-- Sidebar Info -->
+          <div class="profile-sidebar glass">
+            <div class="avatar">B</div>
+            <h3 class="profile-username" id="profile-user-name">Loading...</h3>
+            <p class="profile-email" id="profile-user-email">loading@bidsphere.io</p>
+            
+            <div class="stats-container">
+              <div class="stat-item">
+                <span class="stat-label">Available Balance</span>
+                <span class="stat-value highlight" id="profile-wallet">$0.00</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Auctions Won</span>
+                <span class="stat-value" id="profile-won-count">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Items Listed</span>
+                <span class="stat-value" id="profile-listed-count">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Actions & History -->
+          <div class="profile-main">
+            <div class="tabs-sub">
+              <button class="tab-sub-btn active" onclick="switchProfileTab('bids', this)">Active Bids</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('won', this)">Purchases & Wins</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('listed', this)">My Listings</button>
+            </div>
+
+            <div id="profile-tab-content">
+              <!-- Rendered dynamically based on sub-tab -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass">
+      <p>&copy; 2026 BidSphere Inc. Built using futuristic glassmorphism UI. All rights reserved.</p>
+      <p style="margin-top: 5px;">Created for pair programming demonstration.</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- App JS Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
