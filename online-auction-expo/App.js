@@ -112,7 +112,7 @@ const INITIAL_AUCTIONS = [
   }
 ];
 
-const CATEGORIES = ["All", "Electronics", "Fashion & Luxury", "Gaming & Entertainment", "Art & Collectibles"];
+const CATEGORIES = ["All", "Electronics", "Fashion & Luxury", "Gaming & Entertainment", "Art & Collectibles", "Vehicles & Motors", "Home & Living", "Books & Comics", "Sports & Outdoors"];
 
 const THEME_PRESETS = [
   { color: "#2b1055", icon: "⌨️" },
