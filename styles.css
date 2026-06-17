@@ -1385,3 +1385,100 @@ footer a:hover {
   letter-spacing: 1px;
 }
 
+/* Admin Strips and Headers */
+.admin-strip {
+  background: linear-gradient(90deg, #ff0055, #990033);
+  color: #ffffff;
+  padding: 8px 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);
+  border-bottom: 2px solid #ff0055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: admin-glow 3s infinite alternate;
+}
+
+@keyframes admin-glow {
+  0% { text-shadow: 0 0 4px #fff; box-shadow: 0 4px 10px rgba(255, 0, 85, 0.3); }
+  100% { text-shadow: 0 0 10px #ff99bb; box-shadow: 0 4px 20px rgba(255, 0, 85, 0.6); }
+}
+
+/* Payment Tab Switcher styles */
+.payment-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff !important;
+}
+
+.payment-tab.active-tab {
+  background: rgba(0, 240, 255, 0.1) !important;
+  color: var(--accent-cyan) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+}
+
+/* laser-line scan keyframe */
+@keyframes scan-line {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+/* Ledger Tables */
+.ledger-table th, .ledger-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ledger-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Delivery Status Badges */
+.delivery-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending-shipment {
+  background: rgba(255, 170, 0, 0.15);
+  color: #ffaa00;
+  border: 1px solid rgba(255, 170, 0, 0.3);
+}
+
+.status-in-transit {
+  background: rgba(0, 180, 255, 0.15);
+  color: #00b4ff;
+  border: 1px solid rgba(0, 180, 255, 0.3);
+}
+
+.status-delivered {
+  background: rgba(0, 230, 115, 0.15);
+  color: #00e673;
+  border: 1px solid rgba(0, 230, 115, 0.3);
+}
+
+.tracking-info-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+}
+
+.tracking-info-box p {
+  margin: 4px 0;
+  color: var(--text-secondary);
+}
+

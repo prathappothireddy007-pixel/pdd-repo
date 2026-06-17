@@ -9,6 +9,9 @@
 </head>
 <body>
   <div class="app-container">
+    <div id="admin-header-strip" class="admin-strip" style="display: none;">
+      <i data-lucide="shield-alert"></i> SYSTEM ADMINISTRATOR INTERFACE ACTIVE • SECURE CONNECTION STABLE
+    </div>
     <!-- Header -->
     <header class="glass">
       <div class="logo" onclick="navigateTo('dashboard')">
@@ -216,6 +219,7 @@
               <button class="tab-sub-btn active" onclick="switchProfileTab('bids', this)">Active Bids</button>
               <button class="tab-sub-btn" onclick="switchProfileTab('won', this)">Purchases & Wins</button>
               <button class="tab-sub-btn" onclick="switchProfileTab('listed', this)">My Listings</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('payments', this)">Deposits History</button>
             </div>
 
             <div id="profile-tab-content">
@@ -228,29 +232,145 @@
       <!-- Page 5: Admin Moderation Panel -->
       <section id="page-admin" class="page">
         <div class="admin-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
-          <!-- Pending Approvals Box -->
-          <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-              <i data-lucide="clock" style="color: var(--accent-cyan);"></i> Pending Listings Approvals
-            </h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
-              Review items submitted by normal users. Approved items will go live immediately with their requested duration.
-            </p>
-            <div id="admin-pending-container" style="display: flex; flex-direction: column; gap: 15px;">
-              <!-- Dynamically populated -->
+          <!-- Left and Right Top Columns: Direct Listing & Approvals/Active stacked -->
+          <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start;">
+            <!-- Left Column: Create Live Listing -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px; height: 100%;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="plus-circle" style="color: var(--accent-cyan);"></i> Create Live Auction Listing
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Directly list an auction. It will bypass the pending approval process and go active immediately.
+              </p>
+              <form id="admin-sell-form" onsubmit="handleAdminCreateListing(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="admin-item-title">Item Title</label>
+                    <input type="text" id="admin-item-title" required placeholder="e.g. Rare Cyberpunk GPU">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-category">Category</label>
+                    <select id="admin-item-category" required>
+                      <option value="" disabled selected>Select Category</option>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Fashion & Luxury">Fashion & Luxury</option>
+                      <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                      <option value="Art & Collectibles">Art & Collectibles</option>
+                      <option value="Vehicles & Motors">Vehicles & Motors</option>
+                      <option value="Home & Living">Home & Living</option>
+                      <option value="Books & Comics">Books & Comics</option>
+                      <option value="Sports & Outdoors">Sports & Outdoors</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-duration">Duration (Hours)</label>
+                    <input type="number" id="admin-item-duration" required min="1" max="168" value="24">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-starting-bid">Starting Bid ($)</label>
+                    <input type="number" id="admin-item-starting-bid" required min="1" placeholder="e.g. 150">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-buyout">Buy Now Price ($ - Optional)</label>
+                    <input type="number" id="admin-item-buyout" min="1" placeholder="e.g. 500">
+                  </div>
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="admin-item-description">Description & Details</label>
+                    <textarea id="admin-item-description" required placeholder="Details..." style="height: 90px;"></textarea>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%;">
+                  <i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Publish Live Auction
+                </button>
+              </form>
+            </div>
+
+            <!-- Right Column: Approvals and Active Stack -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+              <!-- Pending Approvals Box -->
+              <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                  <i data-lucide="clock" style="color: var(--accent-cyan);"></i> Pending Listings Approvals
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                  Review items submitted by normal users. Approved items will go live immediately.
+                </p>
+                <div id="admin-pending-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Active Listings Box -->
+              <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                  <i data-lucide="shield-alert" style="color: var(--accent-magenta);"></i> Active Auctions Moderation
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                  Moderators can delete active listings violating rules or causing disputes.
+                </p>
+                <div id="admin-active-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Active Listings Box -->
-          <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-              <i data-lucide="shield-alert" style="color: var(--accent-magenta);"></i> Active Auctions Moderation
-            </h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
-              Moderators can delete any active marketplace listings violating rules or causing disputes.
-            </p>
-            <div id="admin-active-container" style="display: flex; flex-direction: column; gap: 15px;">
-              <!-- Dynamically populated -->
+          <!-- Bottom: Shipments Board and Payments Ledger -->
+          <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+            <!-- Shipments board -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="truck" style="color: var(--accent-cyan);"></i> Marketplace Shipments Tracker
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Manage delivery statuses for won/bought auctions. Update statuses from Pending Shipment to In Transit and Delivered.
+              </p>
+              <div style="overflow-x: auto;">
+                <table class="ledger-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                      <th style="padding: 12px 10px;">Item Title</th>
+                      <th style="padding: 12px 10px;">Buyer</th>
+                      <th style="padding: 12px 10px;">Seller</th>
+                      <th style="padding: 12px 10px;">Price</th>
+                      <th style="padding: 12px 10px;">Tracking ID</th>
+                      <th style="padding: 12px 10px;">Shipping Address</th>
+                      <th style="padding: 12px 10px;">Status</th>
+                      <th style="padding: 12px 10px; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-deliveries-tbody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Payments Ledger -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="receipt" style="color: var(--accent-magenta);"></i> Payments History Ledger
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Audit log of all deposit activities, credit card transactions, and UPI scan refills.
+              </p>
+              <div style="overflow-x: auto;">
+                <table class="ledger-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                      <th style="padding: 12px 10px;">ID</th>
+                      <th style="padding: 12px 10px;">Username</th>
+                      <th style="padding: 12px 10px;">Amount</th>
+                      <th style="padding: 12px 10px;">Payment Method</th>
+                      <th style="padding: 12px 10px;">Transaction Ref</th>
+                      <th style="padding: 12px 10px;">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-payments-tbody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -320,65 +440,107 @@
         Add simulated funds to your BidSphere account instantly.
       </p>
       
-      <!-- Credit Card Graphic -->
-      <div class="credit-card-wrapper">
-        <div class="credit-card" id="visual-card">
-          <div class="card-front">
-            <div class="card-chip"></div>
-            <div class="card-logo">VISA</div>
-            <div class="card-number-display" id="visual-card-number">•••• •••• •••• ••••</div>
-            <div class="card-holder-row">
-              <div class="card-holder-info">
-                <div class="card-label">CARDHOLDER</div>
-                <div class="card-val" id="visual-card-holder">YOUR NAME</div>
-              </div>
-              <div class="card-expiry-info">
-                <div class="card-label">EXPIRES</div>
-                <div class="card-val" id="visual-card-expiry">MM/YY</div>
-              </div>
-            </div>
-          </div>
-          <div class="card-back">
-            <div class="card-magnetic-strip"></div>
-            <div class="card-signature-box">
-              <span class="card-cvv-display" id="visual-card-cvv">•••</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Payment Form -->
-      <form id="payment-form" onsubmit="handleTopUpSubmit(event)">
-        <div class="form-group">
-          <label for="card-holder">Cardholder Name</label>
-          <input type="text" id="card-holder" required placeholder="Enter full name" oninput="updateVisualCard()">
-        </div>
-        
-        <div class="form-group">
-          <label for="card-number">Card Number</label>
-          <input type="text" id="card-number" required placeholder="4000 1234 5678 9010" maxlength="19" oninput="formatCardNumber(this); updateVisualCard()">
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group" style="flex:1;margin-right:10px;">
-            <label for="card-expiry">Expiry Date</label>
-            <input type="text" id="card-expiry" required placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateVisualCard()">
-          </div>
-          <div class="form-group" style="width:100px;">
-            <label for="card-cvv">CVV</label>
-            <input type="password" id="card-cvv" required placeholder="123" maxlength="4" onfocus="flipCard(true)" onblur="flipCard(false)" oninput="updateVisualCard()">
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="topup-amount">Deposit Amount ($)</label>
-          <input type="number" id="topup-amount" required min="10" max="10000" placeholder="e.g. 500" value="500">
-        </div>
-        
-        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px;display:block;">
-          <i data-lucide="credit-card" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Pay & Deposit Funds
+      <!-- Payment Tabs -->
+      <div class="payment-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 10px;">
+        <button type="button" id="btn-pay-tab-card" class="payment-tab active-tab" onclick="switchPaymentTab('Card')" style="flex: 1; background: none; border: none; color: #fff; padding: 10px; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">
+          <i data-lucide="credit-card" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Credit Card
         </button>
-      </form>
+        <button type="button" id="btn-pay-tab-upi" class="payment-tab" onclick="switchPaymentTab('UPI')" style="flex: 1; background: none; border: none; color: var(--text-secondary); padding: 10px; cursor: pointer; border-radius: 8px; font-weight: 600; font-size: 0.9rem; transition: background 0.2s;">
+          <i data-lucide="qr-code" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> UPI Scan QR
+        </button>
+      </div>
+
+      <!-- Card Section -->
+      <div id="payment-card-section">
+        <!-- Credit Card Graphic -->
+        <div class="credit-card-wrapper">
+          <div class="credit-card" id="visual-card">
+            <div class="card-front">
+              <div class="card-chip"></div>
+              <div class="card-logo">VISA</div>
+              <div class="card-number-display" id="visual-card-number">•••• •••• •••• ••••</div>
+              <div class="card-holder-row">
+                <div class="card-holder-info">
+                  <div class="card-label">CARDHOLDER</div>
+                  <div class="card-val" id="visual-card-holder">YOUR NAME</div>
+                </div>
+                <div class="card-expiry-info">
+                  <div class="card-label">EXPIRES</div>
+                  <div class="card-val" id="visual-card-expiry">MM/YY</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="card-magnetic-strip"></div>
+              <div class="card-signature-box">
+                <span class="card-cvv-display" id="visual-card-cvv">•••</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment Form -->
+        <form id="payment-form" onsubmit="handleTopUpSubmit(event)">
+          <div class="form-group">
+            <label for="card-holder">Cardholder Name</label>
+            <input type="text" id="card-holder" placeholder="Enter full name" oninput="updateVisualCard()">
+          </div>
+          
+          <div class="form-group">
+            <label for="card-number">Card Number</label>
+            <input type="text" id="card-number" placeholder="4000 1234 5678 9010" maxlength="19" oninput="formatCardNumber(this); updateVisualCard()">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group" style="flex:1;margin-right:10px;">
+              <label for="card-expiry">Expiry Date</label>
+              <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this); updateVisualCard()">
+            </div>
+            <div class="form-group" style="width:100px;">
+              <label for="card-cvv">CVV</label>
+              <input type="password" id="card-cvv" placeholder="123" maxlength="4" onfocus="flipCard(true)" onblur="flipCard(false)" oninput="updateVisualCard()">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="topup-amount">Deposit Amount ($)</label>
+            <input type="number" id="topup-amount" min="10" max="10000" placeholder="e.g. 500" value="500">
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px;display:block;">
+            <i data-lucide="credit-card" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Pay & Deposit Funds
+          </button>
+        </form>
+      </div>
+
+      <!-- UPI Section -->
+      <div id="payment-upi-section" style="display: none;">
+        <!-- UPI QR Code Scanner Graphic -->
+        <div class="upi-scanner-container" style="position: relative; width: 180px; height: 180px; margin: 0 auto 20px auto; border: 2px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(0, 240, 255, 0.05); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);">
+          <div class="laser-line" style="position: absolute; width: 100%; height: 3px; background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); animation: scan-line 2s infinite ease-in-out;"></div>
+          <!-- SVG QR Code -->
+          <svg width="120" height="120" viewBox="0 0 100 100" style="fill: #fff;">
+            <path d="M0 0h30v10H10v20H0V0zm70 0h30v30H90V10H70V0zM0 70h10v20h20v10H0V70zm100 0v30H70v-10h20V70h10z" />
+            <path d="M15 15h10v10H15zm0 60h10v10H15zm60-60h10v10H75z" />
+            <path d="M35 15h5v5h-5zm10 0h5v5h-5zm0 10h5v5h-5zm10 0h5v5h-5zm0-10h5v5h-5zm10 0h5v5h-5zm0 10h5v5h-5zm10 0h5v5h-5zm-35 15h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm0 10h5v5h-5zm-10 0h5v5h-5zm-10 0h5v5h-5zm-10 0h5v5h-5zm-10 0h5v5h-5zm0 10h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm10 0h5v5h-5zm-45 10h5v5h-5zm10 0h5v5h-5zm20 0h5v5h-5zm10 0h5v5h-5z" />
+          </svg>
+        </div>
+        
+        <form id="upi-payment-form" onsubmit="handleUpiTopUpSubmit(event)">
+          <div class="form-group">
+            <label for="upi-amount">Deposit Amount ($)</label>
+            <input type="number" id="upi-amount" min="10" max="10000" value="500" placeholder="e.g. 500">
+          </div>
+          
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed rgba(0, 240, 255, 0.3); font-size: 0.8rem; text-align: center; color: var(--text-secondary);">
+            Scan the QR code with your UPI app. Click below to simulate instant payment approval.
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <i data-lucide="check-circle" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Simulate UPI Scan Approval
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
