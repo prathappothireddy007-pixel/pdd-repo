@@ -341,6 +341,36 @@ function updateVisualCard() {
   document.getElementById('visual-card-cvv').textContent = cvv;
 }
 
+let activePaymentMethod = 'Card';
+
+function switchPaymentTab(paymentType) {
+  activePaymentMethod = paymentType;
+  const btnCard = document.getElementById('btn-pay-tab-card');
+  const btnUpi = document.getElementById('btn-pay-tab-upi');
+  const secCard = document.getElementById('payment-card-section');
+  const secUpi = document.getElementById('payment-upi-section');
+
+  if (paymentType === 'Card') {
+    if (btnCard) btnCard.classList.add('active-tab');
+    if (btnUpi) btnUpi.classList.remove('active-tab');
+    if (secCard) secCard.style.display = 'block';
+    if (secUpi) secUpi.style.display = 'none';
+  } else {
+    if (btnCard) btnCard.classList.remove('active-tab');
+    if (btnUpi) btnUpi.classList.add('active-tab');
+    if (secCard) secCard.style.display = 'none';
+    if (secUpi) secUpi.style.display = 'block';
+  }
+}
+
+function resetPaymentForm() {
+  document.getElementById('payment-form').reset();
+  document.getElementById('upi-payment-form').reset();
+  switchPaymentTab('Card');
+  flipCard(false);
+  updateVisualCard();
+}
+
 async function handleTopUpSubmit(event) {
   event.preventDefault();
   const amount = parseFloat(document.getElementById('topup-amount').value);
@@ -356,9 +386,32 @@ async function handleTopUpSubmit(event) {
   
   showToast("Processing payment gateway check...", "info");
   
-  const res = await userTopupAPI(amount, number, expiry, cvv);
+  const res = await userTopupAPI(amount, "Card", number, expiry, cvv);
   if (res.success) {
     showToast(`Refilled! Deposited ${formatCurrency(amount)} to your wallet balance.`, "success");
+    closeTopUpModal();
+    await updateHeaderWallet();
+    if (activePage === 'profile') await renderProfilePage();
+  } else {
+    showToast(res.message, "error");
+  }
+}
+
+async function handleUpiTopUpSubmit(event) {
+  event.preventDefault();
+  const amount = parseFloat(document.getElementById('upi-amount').value);
+  
+  if (isNaN(amount) || amount <= 0) {
+    showToast("Please enter a valid deposit amount.", "error");
+    return;
+  }
+  
+  showToast("Simulating UPI scan verification...", "info");
+  
+  const txRef = `TXN-UPI-${Math.floor(10000000 + Math.random() * 90000000)}`;
+  const res = await userTopupAPI(amount, "UPI", null, null, null, txRef);
+  if (res.success) {
+    showToast(`Refilled! Deposited ${formatCurrency(amount)} via UPI (Ref: ${txRef}).`, "success");
     closeTopUpModal();
     await updateHeaderWallet();
     if (activePage === 'profile') await renderProfilePage();
@@ -652,21 +705,40 @@ async function renderProfileTab() {
   } else if (activeProfileTab === 'won') {
     // Won items
     const wonItems = auctions.filter(a => user.itemsWon.includes(a.id));
+    const deliveries = await getDeliveries();
     
     if (wonItems.length === 0) {
       htmlContent = `<div class="glass" style="text-align:center; padding: 40px; border-radius: 12px; color: var(--text-secondary);">You haven't won any auctions yet.</div>`;
     } else {
       htmlContent = wonItems.map(item => {
+        const delivery = deliveries.find(d => d.auction_id === item.id);
+        let trackingHTML = "";
+        if (delivery) {
+          let statusClass = "status-pending-shipment";
+          if (delivery.delivery_status === "In Transit") statusClass = "status-in-transit";
+          if (delivery.delivery_status === "Delivered") statusClass = "status-delivered";
+          
+          trackingHTML = `
+            <div class="tracking-info-box" style="margin-top: 10px; width: 100%; text-align: left;">
+              <p style="margin: 4px 0;"><strong>Shipping Status:</strong> <span class="delivery-badge ${statusClass}">${delivery.delivery_status}</span></p>
+              <p style="margin: 4px 0;"><strong>Tracking ID:</strong> <code>${delivery.tracking_number}</code></p>
+              <p style="margin: 4px 0;"><strong>Shipping Address:</strong> ${delivery.shipping_address}</p>
+            </div>
+          `;
+        }
         return `
-          <div class="glass" style="display:flex; justify-content:space-between; align-items:center; padding: 18px 24px; border-radius:12px; margin-bottom:12px; border-left: 4px solid var(--accent-yellow);">
-            <div>
-              <h4 style="margin-bottom:4px;">${item.title}</h4>
-              <span class="price-label">Purchased from: <span style="color:var(--accent-cyan);">@${item.seller}</span></span>
+          <div class="glass" style="display:flex; flex-direction:column; padding: 18px 24px; border-radius:12px; margin-bottom:12px; border-left: 4px solid var(--accent-yellow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+              <div>
+                <h4 style="margin-bottom:4px;">${item.title}</h4>
+                <span class="price-label">Purchased from: <span style="color:var(--accent-cyan);">@${item.seller}</span></span>
+              </div>
+              <div style="text-align:right;">
+                <div class="price-value" style="color:var(--accent-yellow); font-weight:800;">${formatCurrency(item.currentBid)}</div>
+                <span class="price-label" style="font-size:0.75rem; color:var(--accent-green); font-weight:700;">Transaction Settled</span>
+              </div>
             </div>
-            <div style="text-align:right;">
-              <div class="price-value" style="color:var(--accent-yellow); font-weight:800;">${formatCurrency(item.currentBid)}</div>
-              <span class="price-label" style="font-size:0.75rem; color:var(--accent-green); font-weight:700;">Transaction Settled</span>
-            </div>
+            ${trackingHTML}
           </div>
         `;
       }).join('');
@@ -674,26 +746,83 @@ async function renderProfileTab() {
   } else if (activeProfileTab === 'listed') {
     // User listings
     const userListings = auctions.filter(a => a.seller === user.username);
+    const deliveries = await getDeliveries();
     
     if (userListings.length === 0) {
       htmlContent = `<div class="glass" style="text-align:center; padding: 40px; border-radius: 12px; color: var(--text-secondary);">You haven't listed any items for sale.</div>`;
     } else {
       htmlContent = userListings.map(item => {
         const isLive = item.status === 'active' && item.endsAt > Date.now();
+        const delivery = deliveries.find(d => d.auction_id === item.id);
+        let trackingHTML = "";
+        if (delivery) {
+          let statusClass = "status-pending-shipment";
+          if (delivery.delivery_status === "In Transit") statusClass = "status-in-transit";
+          if (delivery.delivery_status === "Delivered") statusClass = "status-delivered";
+          
+          trackingHTML = `
+            <div class="tracking-info-box" style="margin-top: 10px; width: 100%; text-align: left;">
+              <p style="margin: 4px 0;"><strong>Shipment to @${delivery.buyer}:</strong> <span class="delivery-badge ${statusClass}">${delivery.delivery_status}</span></p>
+              <p style="margin: 4px 0;"><strong>Tracking ID:</strong> <code>${delivery.tracking_number}</code></p>
+            </div>
+          `;
+        }
         return `
-          <div class="glass" style="display:flex; justify-content:space-between; align-items:center; padding: 18px 24px; border-radius:12px; margin-bottom:12px;">
-            <div>
-              <h4 style="margin-bottom:4px;">${item.title}</h4>
-              <span class="price-label">Status: <span style="color:${isLive ? 'var(--accent-green)' : 'var(--text-muted)'}; font-weight:700;">${isLive ? 'Active' : 'Closed'}</span></span>
+          <div class="glass" style="display:flex; flex-direction:column; padding: 18px 24px; border-radius:12px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+              <div>
+                <h4 style="margin-bottom:4px;">${item.title}</h4>
+                <span class="price-label">Status: <span style="color:${isLive ? 'var(--accent-green)' : 'var(--text-muted)'}; font-weight:700;">${isLive ? 'Active' : 'Closed'}</span></span>
+              </div>
+              <div style="text-align:right; margin-right:15px; display:flex; flex-direction:column; align-items:flex-end; flex:1;">
+                <div class="price-value">${formatCurrency(item.currentBid)}</div>
+                <span class="price-label" style="font-size:0.75rem;">${item.bids.length} bids placed</span>
+              </div>
+              <button class="btn btn-secondary" style="flex: 0 0 100px; padding: 8px;" onclick="navigateTo('detail', '${item.id}')">View</button>
             </div>
-            <div style="text-align:right; margin-right:15px;">
-              <div class="price-value">${formatCurrency(item.currentBid)}</div>
-              <span class="price-label" style="font-size:0.75rem;">${item.bids.length} bids placed</span>
-            </div>
-            <button class="btn btn-secondary" style="flex: 0 0 100px; padding: 8px;" onclick="navigateTo('detail', '${item.id}')">View</button>
+            ${trackingHTML}
           </div>
         `;
       }).join('');
+    }
+  } else if (activeProfileTab === 'payments') {
+    const userPayments = await getPayments();
+    
+    if (userPayments.length === 0) {
+      htmlContent = `<div class="glass" style="text-align:center; padding: 40px; border-radius: 12px; color: var(--text-secondary);">You have no deposit transactions.</div>`;
+    } else {
+      htmlContent = `
+        <div class="glass" style="padding: 20px; border-radius: 12px; overflow-x: auto;">
+          <table class="ledger-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                <th style="padding: 10px;">ID</th>
+                <th style="padding: 10px;">Amount</th>
+                <th style="padding: 10px;">Payment Method</th>
+                <th style="padding: 10px;">Transaction Ref</th>
+                <th style="padding: 10px;">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${userPayments.map(p => {
+                const dateStr = new Date(p.timestamp).toLocaleString();
+                const methodBadge = p.payment_method === "UPI" 
+                  ? `<span style="color: var(--accent-cyan); font-weight: 700;">UPI Refill</span>` 
+                  : `<span style="color: var(--accent-purple); font-weight: 700;">Credit Card</span>`;
+                return `
+                  <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                    <td style="padding: 10px;">${p.id}</td>
+                    <td style="padding: 10px; color: var(--accent-green); font-weight: 700;">+${formatCurrency(p.amount)}</td>
+                    <td style="padding: 10px;">${methodBadge}</td>
+                    <td style="padding: 10px; font-family: monospace; font-size: 0.8rem; color: var(--text-secondary);">${p.transaction_reference}</td>
+                    <td style="padding: 10px; color: var(--text-muted); font-size: 0.8rem;">${dateStr}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
   }
 
@@ -1007,6 +1136,77 @@ async function renderAdminPage() {
     }).join('');
   }
 
+  // 3. Render Shipments Tracker
+  const deliveries = await getDeliveries();
+  const elDeliveriesTbody = document.getElementById('admin-deliveries-tbody');
+  if (elDeliveriesTbody) {
+    if (deliveries.length === 0) {
+      elDeliveriesTbody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 20px; color: var(--text-muted);">No shipping records found.</td>
+        </tr>
+      `;
+    } else {
+      elDeliveriesTbody.innerHTML = deliveries.map(d => {
+        let statusClass = "status-pending-shipment";
+        if (d.delivery_status === "In Transit") statusClass = "status-in-transit";
+        if (d.delivery_status === "Delivered") statusClass = "status-delivered";
+        
+        let actionBtn = "";
+        if (d.delivery_status === "Pending Shipment") {
+          actionBtn = `<button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; border-color: var(--accent-cyan); color: var(--accent-cyan);" onclick="updateDeliveryStatus('${d.id}', 'In Transit')">Ship Item</button>`;
+        } else if (d.delivery_status === "In Transit") {
+          actionBtn = `<button class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; border-color: var(--accent-green); color: var(--accent-green);" onclick="updateDeliveryStatus('${d.id}', 'Delivered')">Deliver</button>`;
+        } else {
+          actionBtn = `<span style="color: var(--text-muted); font-size: 0.75rem;">Completed</span>`;
+        }
+
+        return `
+          <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+            <td style="padding: 12px 10px; font-weight: 600;">${d.item_title}</td>
+            <td style="padding: 12px 10px;">@${d.buyer}</td>
+            <td style="padding: 12px 10px;">@${d.seller}</td>
+            <td style="padding: 12px 10px; color: var(--accent-yellow); font-weight: 700;">${formatCurrency(d.price)}</td>
+            <td style="padding: 12px 10px; font-family: monospace;">${d.tracking_number}</td>
+            <td style="padding: 12px 10px; color: var(--text-secondary); font-size: 0.8rem; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${d.shipping_address}">${d.shipping_address}</td>
+            <td style="padding: 12px 10px;"><span class="delivery-badge ${statusClass}">${d.delivery_status}</span></td>
+            <td style="padding: 12px 10px; text-align: right;">${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // 4. Render Payments History Ledger
+  const payments = await getPayments();
+  const elPaymentsTbody = document.getElementById('admin-payments-tbody');
+  if (elPaymentsTbody) {
+    if (payments.length === 0) {
+      elPaymentsTbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">No payment transaction records found.</td>
+        </tr>
+      `;
+    } else {
+      elPaymentsTbody.innerHTML = payments.map(p => {
+        const dateStr = new Date(p.timestamp).toLocaleString();
+        const methodBadge = p.payment_method === "UPI" 
+          ? `<span style="color: var(--accent-cyan); font-weight: 700;">UPI Refill</span>` 
+          : `<span style="color: var(--accent-purple); font-weight: 700;">Credit Card</span>`;
+        return `
+          <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+            <td style="padding: 12px 10px;">${p.id}</td>
+            <td style="padding: 12px 10px; font-weight: 600;">@${p.username}</td>
+            <td style="padding: 12px 10px; color: var(--accent-green); font-weight: 700;">+${formatCurrency(p.amount)}</td>
+            <td style="padding: 12px 10px;">${methodBadge}</td>
+            <td style="padding: 12px 10px; font-family: monospace; font-size: 0.8rem; color: var(--text-secondary);">${p.transaction_reference}</td>
+            <td style="padding: 12px 10px; color: var(--text-muted); font-size: 0.8rem;">${dateStr}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
   lucide.createIcons();
 }
 
@@ -1044,5 +1244,51 @@ async function deleteAuction(itemId) {
     } else {
       showToast(res.message, "error");
     }
+  }
+}
+
+async function updateDeliveryStatus(deliveryId, status) {
+  showToast(`Updating shipping status to ${status}...`, "info");
+  const res = await updateDeliveryStatusAPI(deliveryId, status);
+  if (res.success) {
+    showToast(`Shipping status updated to "${status}"!`, "success");
+    await renderAdminPage();
+  } else {
+    showToast(res.message, "error");
+  }
+}
+
+async function handleAdminCreateListing(event) {
+  event.preventDefault();
+
+  const title = document.getElementById('admin-item-title').value.trim();
+  const category = document.getElementById('admin-item-category').value;
+  const durationHours = parseFloat(document.getElementById('admin-item-duration').value);
+  const startingBid = parseFloat(document.getElementById('admin-item-starting-bid').value);
+  const buyNowVal = document.getElementById('admin-item-buyout').value;
+  const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
+  const description = document.getElementById('admin-item-description').value.trim();
+
+  if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
+    showToast("Please fill all required fields.", "error");
+    return;
+  }
+
+  showToast("Publishing live auction...", "info");
+
+  // Admin listed items bypass pending status and start active
+  const result = await createListingAPI(
+    title, description, category, startingBid, buyNowPrice, durationHours,
+    selectedPresetGradient, selectedPresetIcon, currentUsername
+  );
+
+  if (result.success) {
+    document.getElementById('admin-sell-form').reset();
+    showToast(`"${title}" is now active in the browse grid!`, "success");
+    await renderAdminPage();
+    // Refresh dashboard if active
+    if (activePage === 'dashboard') await renderDashboard();
+  } else {
+    showToast(result.message, "error");
   }
 }

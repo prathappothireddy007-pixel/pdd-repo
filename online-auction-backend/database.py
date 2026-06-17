@@ -89,5 +89,29 @@ class DBBid(Base):
 
     auction = relationship("DBAuction", back_populates="bids")
 
+class DBPayment(Base):
+    __tablename__ = "payments"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    username = Column(String, index=True)
+    amount = Column(Float)
+    payment_method = Column(String)  # "Card" or "UPI"
+    transaction_reference = Column(String)
+    timestamp = Column(String)
+
+class DBDelivery(Base):
+    __tablename__ = "deliveries"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    auction_id = Column(String, unique=True, index=True)
+    item_title = Column(String)
+    buyer = Column(String)
+    seller = Column(String)
+    price = Column(Float)
+    shipping_address = Column(String)
+    tracking_number = Column(String, unique=True)
+    delivery_status = Column(String, default="Pending Shipment") # "Pending Shipment", "In Transit", "Delivered"
+    last_updated = Column(String)
+
 def init_db():
     Base.metadata.create_all(bind=engine)

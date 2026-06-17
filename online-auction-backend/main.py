@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
-from database import SessionLocal, init_db, DBUser, DBAuction, DBBid
+from database import SessionLocal, init_db, DBUser, DBAuction, DBBid, DBPayment, DBDelivery
 
 # Initialize Database tables
 init_db()
@@ -74,9 +74,40 @@ class UserLogin(BaseModel):
 
 class CardTopUp(BaseModel):
     amount: float
-    card_number: str
-    expiry: str
-    cvv: str
+    card_number: Optional[str] = None
+    expiry: Optional[str] = None
+    cvv: Optional[str] = None
+    payment_method: str = "Card" # "Card" or "UPI"
+    transaction_reference: Optional[str] = None
+
+class PaymentResponse(BaseModel):
+    id: int
+    username: str
+    amount: float
+    payment_method: str
+    transaction_reference: str
+    timestamp: str
+
+    class Config:
+        from_attributes = True
+
+class DeliveryResponse(BaseModel):
+    id: int
+    auction_id: str
+    item_title: str
+    buyer: str
+    seller: str
+    price: float
+    shipping_address: str
+    tracking_number: str
+    delivery_status: str
+    last_updated: str
+
+    class Config:
+        from_attributes = True
+
+class DeliveryStatusUpdate(BaseModel):
+    delivery_status: str
 
 class BidResponse(BaseModel):
     id: int
@@ -150,6 +181,23 @@ def settle_auctions(db: Session):
                     sold_list.append(auction.id)
                     seller.items_sold = sold_list
                     seller.wallet_balance = seller.wallet_balance + winning_bid.amount
+
+            # Create delivery record
+            existing_delivery = db.query(DBDelivery).filter(DBDelivery.auction_id == auction.id).first()
+            if not existing_delivery:
+                tracking_num = f"TRK-{''.join(secrets.choice('0123456789') for _ in range(10))}"
+                delivery = DBDelivery(
+                    auction_id=auction.id,
+                    item_title=auction.title,
+                    buyer=winning_bid.bidder,
+                    seller=auction.seller,
+                    price=winning_bid.amount,
+                    shipping_address="104 Cyberpunk Blvd, Sector 7",
+                    tracking_number=tracking_num,
+                    delivery_status="Pending Shipment",
+                    last_updated=datetime.utcnow().isoformat() + "Z"
+                )
+                db.add(delivery)
         else:
             auction.status = "ended"
             
@@ -388,23 +436,42 @@ def topup_wallet(username: str, card_in: CardTopUp, db: Session = Depends(get_db
     if card_in.amount <= 0:
         raise HTTPException(status_code=400, detail="Top-up amount must be positive")
         
-    # Basic mock credit card checksum/format checks
-    card_clean = card_in.card_number.replace(" ", "").replace("-", "")
-    if len(card_clean) < 13 or len(card_clean) > 19 or not card_clean.isdigit():
-        raise HTTPException(status_code=400, detail="Invalid card number format")
+    if card_in.payment_method == "Card":
+        if not card_in.card_number or not card_in.expiry or not card_in.cvv:
+            raise HTTPException(status_code=400, detail="Card number, expiry, and CVV are required for Card payment")
+        # Basic mock credit card checksum/format checks
+        card_clean = card_in.card_number.replace(" ", "").replace("-", "")
+        if len(card_clean) < 13 or len(card_clean) > 19 or not card_clean.isdigit():
+            raise HTTPException(status_code=400, detail="Invalid card number format")
         
-    # Expiry format MM/YY check
-    expiry = card_in.expiry.strip()
-    if "/" not in expiry or len(expiry) != 5:
-        raise HTTPException(status_code=400, detail="Invalid expiry date (Expected MM/YY)")
+        # Expiry format MM/YY check
+        expiry = card_in.expiry.strip()
+        if "/" not in expiry or len(expiry) != 5:
+            raise HTTPException(status_code=400, detail="Invalid expiry date (Expected MM/YY)")
         
-    # CVV check (3 or 4 digits)
-    cvv = card_in.cvv.strip()
-    if len(cvv) < 3 or len(cvv) > 4 or not cvv.isdigit():
-        raise HTTPException(status_code=400, detail="Invalid CVV code")
+        # CVV check (3 or 4 digits)
+        cvv = card_in.cvv.strip()
+        if len(cvv) < 3 or len(cvv) > 4 or not cvv.isdigit():
+            raise HTTPException(status_code=400, detail="Invalid CVV code")
+            
+        tx_ref = f"TXN-CARD-{''.join(secrets.choice('0123456789') for _ in range(8))}"
+    elif card_in.payment_method == "UPI":
+        tx_ref = card_in.transaction_reference or f"TXN-UPI-{''.join(secrets.choice('0123456789') for _ in range(8))}"
+    else:
+        raise HTTPException(status_code=400, detail="Unsupported payment method")
         
-    # Process simulated credit card top-up
+    # Process simulated card/UPI top-up
     user.wallet_balance += card_in.amount
+    
+    # Save payment record
+    payment_rec = DBPayment(
+        username=username,
+        amount=card_in.amount,
+        payment_method=card_in.payment_method,
+        transaction_reference=tx_ref,
+        timestamp=datetime.utcnow().isoformat() + "Z"
+    )
+    db.add(payment_rec)
     db.commit()
     db.refresh(user)
     
@@ -584,6 +651,23 @@ def buyout_auction(auction_id: str, payload: dict = Body(...), db: Session = Dep
         sold_list.append(auction_id)
         seller.items_sold = sold_list
         seller.wallet_balance = seller.wallet_balance + buyout_amount
+
+    # Create delivery record
+    existing_delivery = db.query(DBDelivery).filter(DBDelivery.auction_id == auction_id).first()
+    if not existing_delivery:
+        tracking_num = f"TRK-{''.join(secrets.choice('0123456789') for _ in range(10))}"
+        delivery = DBDelivery(
+            auction_id=auction_id,
+            item_title=auction.title,
+            buyer=bidder,
+            seller=auction.seller,
+            price=buyout_amount,
+            shipping_address="104 Cyberpunk Blvd, Sector 7",
+            tracking_number=tracking_num,
+            delivery_status="Pending Shipment",
+            last_updated=datetime.utcnow().isoformat() + "Z"
+        )
+        db.add(delivery)
         
     db.commit()
     db.refresh(auction)
@@ -648,3 +732,39 @@ def delete_auction(auction_id: str, db: Session = Depends(get_db)):
     db.delete(auction)
     db.commit()
     return {"message": "Auction successfully deleted"}
+
+# ===================================================
+# PAYMENTS & DELIVERIES API ENDPOINTS
+# ===================================================
+
+@app.get("/api/payments", response_model=List[PaymentResponse])
+def get_payments(username: str, db: Session = Depends(get_db)):
+    if username == "admin":
+        return db.query(DBPayment).order_by(DBPayment.id.desc()).all()
+    else:
+        return db.query(DBPayment).filter(DBPayment.username == username).order_by(DBPayment.id.desc()).all()
+
+@app.get("/api/deliveries", response_model=List[DeliveryResponse])
+def get_deliveries(username: str, db: Session = Depends(get_db)):
+    if username == "admin":
+        return db.query(DBDelivery).order_by(DBDelivery.id.desc()).all()
+    else:
+        return db.query(DBDelivery).filter(
+            (DBDelivery.buyer == username) | (DBDelivery.seller == username)
+        ).order_by(DBDelivery.id.desc()).all()
+
+@app.post("/api/admin/deliveries/{delivery_id}/status", response_model=DeliveryResponse)
+def update_delivery_status(delivery_id: int, status_in: DeliveryStatusUpdate, db: Session = Depends(get_db)):
+    delivery = db.query(DBDelivery).filter(DBDelivery.id == delivery_id).first()
+    if not delivery:
+        raise HTTPException(status_code=404, detail="Delivery record not found")
+        
+    valid_statuses = ["Pending Shipment", "In Transit", "Delivered"]
+    if status_in.delivery_status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"Invalid delivery status. Must be one of {valid_statuses}")
+        
+    delivery.delivery_status = status_in.delivery_status
+    delivery.last_updated = datetime.utcnow().isoformat() + "Z"
+    db.commit()
+    db.refresh(delivery)
+    return delivery

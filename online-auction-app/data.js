@@ -392,7 +392,20 @@ function authLogout() {
 // WALLET PAYMENT / TOP-UP API
 // ===================================================
 
-async function userTopupAPI(amount, cardNumber, expiry, cvv) {
+function getLocalPayments() {
+  return JSON.parse(localStorage.getItem("bidsphere_payments")) || [];
+}
+function saveLocalPayments(payments) {
+  localStorage.setItem("bidsphere_payments", JSON.stringify(payments));
+}
+function getLocalDeliveries() {
+  return JSON.parse(localStorage.getItem("bidsphere_deliveries")) || [];
+}
+function saveLocalDeliveries(deliveries) {
+  localStorage.setItem("bidsphere_deliveries", JSON.stringify(deliveries));
+}
+
+async function userTopupAPI(amount, paymentMethod = "Card", cardNumber = null, expiry = null, cvv = null, transactionReference = null) {
   if (!currentUsername) {
     return { success: false, message: "Must be logged in to add balance." };
   }
@@ -402,7 +415,14 @@ async function userTopupAPI(amount, cardNumber, expiry, cvv) {
       const res = await fetch(`${API_BASE}/user/${currentUsername}/topup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, card_number: cardNumber, expiry, cvv })
+        body: JSON.stringify({ 
+          amount, 
+          payment_method: paymentMethod, 
+          card_number: cardNumber, 
+          expiry, 
+          cvv,
+          transaction_reference: transactionReference
+        })
       });
       if (res.ok) {
         const serverUser = await res.json();
@@ -431,6 +451,24 @@ async function userTopupAPI(amount, cardNumber, expiry, cvv) {
   const user = getLocalUserProfile(currentUsername);
   user.walletBalance += amount;
   saveLocalUserProfile(user);
+
+  // Log payment record locally
+  const payments = getLocalPayments();
+  const txRef = paymentMethod === "Card" 
+    ? `TXN-CARD-${Math.floor(10000000 + Math.random() * 90000000)}` 
+    : (transactionReference || `TXN-UPI-${Math.floor(10000000 + Math.random() * 90000000)}`);
+  
+  const newPayment = {
+    id: Date.now(),
+    username: currentUsername,
+    amount: amount,
+    payment_method: paymentMethod,
+    transaction_reference: txRef,
+    timestamp: new Date().toISOString()
+  };
+  payments.unshift(newPayment);
+  saveLocalPayments(payments);
+  
   return { success: true, user };
 }
 
@@ -530,6 +568,25 @@ async function buyOutAPI(itemId, bidder) {
   auctions[itemIndex] = item;
   saveLocalAuctions(auctions);
   saveLocalUserProfile(user);
+
+  // Log delivery record locally
+  const deliveries = getLocalDeliveries();
+  const trackingNum = `TRK-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+  const newDelivery = {
+    id: Date.now(),
+    auction_id: itemId,
+    item_title: item.title,
+    buyer: bidder,
+    seller: item.seller,
+    price: item.buyNowPrice,
+    shipping_address: "104 Cyberpunk Blvd, Sector 7",
+    tracking_number: trackingNum,
+    delivery_status: "Pending Shipment",
+    last_updated: new Date().toISOString()
+  };
+  deliveries.unshift(newDelivery);
+  saveLocalDeliveries(deliveries);
+
   return { success: true, item };
 }
 
@@ -722,4 +779,76 @@ async function deleteAuctionAPI(auctionId) {
   const filtered = auctions.filter(a => a.id !== auctionId);
   saveLocalAuctions(filtered);
   return { success: true };
+}
+
+async function getPayments() {
+  if (!currentUsername) return [];
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/payments?username=${currentUsername}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // fallback
+    }
+  }
+  
+  // Local fallback
+  const localPay = getLocalPayments();
+  if (currentUsername === "admin") {
+    return localPay;
+  }
+  return localPay.filter(p => p.username === currentUsername);
+}
+
+async function getDeliveries() {
+  if (!currentUsername) return [];
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/deliveries?username=${currentUsername}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // fallback
+    }
+  }
+  
+  // Local fallback
+  const localDel = getLocalDeliveries();
+  if (currentUsername === "admin") {
+    return localDel;
+  }
+  return localDel.filter(d => d.buyer === currentUsername || d.seller === currentUsername);
+}
+
+async function updateDeliveryStatusAPI(deliveryId, status) {
+  if (isBackendActive) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/deliveries/${deliveryId}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ delivery_status: status })
+      });
+      if (res.ok) {
+        return { success: true, delivery: await res.json() };
+      }
+      const err = await res.json();
+      return { success: false, message: err.detail || "Failed to update status." };
+    } catch (e) {
+      return { success: false, message: "Backend server connection error." };
+    }
+  }
+  
+  // Local fallback
+  const deliveries = getLocalDeliveries();
+  const idx = deliveries.findIndex(d => d.id === parseInt(deliveryId) || d.id === deliveryId);
+  if (idx !== -1) {
+    deliveries[idx].delivery_status = status;
+    deliveries[idx].last_updated = new Date().toISOString();
+    saveLocalDeliveries(deliveries);
+    return { success: true, delivery: deliveries[idx] };
+  }
+  return { success: false, message: "Delivery record not found." };
 }
