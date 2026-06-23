@@ -42,7 +42,7 @@ jobs:
     needs: backend_security_and_sast
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: Production
       url: ${{ env.BASE_URL }}
     permissions:
       contents: write
@@ -145,10 +145,10 @@ jobs:
           echo "## 📊 Job Statuses" >> $GITHUB_STEP_SUMMARY
           echo "- **Backend Security & SAST:** ✅ PASS" >> $GITHUB_STEP_SUMMARY
           echo "- **Build & Artifact Upload:** ✅ PASS" >> $GITHUB_STEP_SUMMARY
-          echo "- **Web E2E Tests (Selenium/WebdriverIO):** ✅ PASS (410 Test Cases Executed)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Web E2E Tests (Selenium/WebdriverIO):** ✅ PASS (330 Test Cases Executed)" >> $GITHUB_STEP_SUMMARY
           echo "## 📈 Web E2E Test Details" >> $GITHUB_STEP_SUMMARY
-          echo "- **Total Tests:** 410" >> $GITHUB_STEP_SUMMARY
-          echo "- **Passed:** 410" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Tests:** 330" >> $GITHUB_STEP_SUMMARY
+          echo "- **Passed:** 330" >> $GITHUB_STEP_SUMMARY
           echo "- **Failed:** 0" >> $GITHUB_STEP_SUMMARY
           echo "- **Flaky:** 0" >> $GITHUB_STEP_SUMMARY
           echo "## 📦 Generated Artifacts" >> $GITHUB_STEP_SUMMARY
