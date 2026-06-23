@@ -554,16 +554,22 @@ async function buyOutAPI(itemId, bidder) {
   const item = auctions[itemIndex];
   const user = getLocalUserProfile(bidder);
   
-  if (!item.buyNowPrice) return { success: false, message: "Item doesn't support buyout." };
-  if (user.walletBalance < item.buyNowPrice) return { success: false, message: "Insufficient wallet balance." };
-  
-  item.status = "sold";
-  item.endsAt = Date.now();
-  item.currentBid = item.buyNowPrice;
-  item.bids.push({ bidder, amount: item.buyNowPrice, timestamp: new Date().toISOString() });
-  
-  user.walletBalance -= item.buyNowPrice;
-  user.itemsWon.push(itemId);
+  const isWonBid = item.status === 'ended' && user.itemsWon.includes(itemId);
+  const paymentAmount = isWonBid ? item.currentBid : item.buyNowPrice;
+
+  if (!paymentAmount) return { success: false, message: "Item cannot be purchased." };
+
+  if (!isWonBid) {
+      item.status = "sold";
+      item.endsAt = Date.now();
+      item.currentBid = item.buyNowPrice;
+      item.bids.push({ bidder, amount: item.buyNowPrice, timestamp: new Date().toISOString() });
+      if (!user.itemsWon.includes(itemId)) {
+          user.itemsWon.push(itemId);
+      }
+  } else {
+      item.status = "sold";
+  }
   
   auctions[itemIndex] = item;
   saveLocalAuctions(auctions);
@@ -578,7 +584,7 @@ async function buyOutAPI(itemId, bidder) {
     item_title: item.title,
     buyer: bidder,
     seller: item.seller,
-    price: item.buyNowPrice,
+    price: paymentAmount,
     shipping_address: "104 Cyberpunk Blvd, Sector 7",
     tracking_number: trackingNum,
     delivery_status: "Pending Shipment",
@@ -590,7 +596,7 @@ async function buyOutAPI(itemId, bidder) {
   return { success: true, item };
 }
 
-async function createListingAPI(title, description, category, startingBid, buyNowPrice, durationHours, bgColor, icon, seller) {
+async function createListingAPI(title, description, category, startingBid, buyNowPrice, durationHours, bgColor, icon, seller, imageUrl) {
   if (isBackendActive) {
     try {
       const res = await fetch(`${API_BASE}/auctions`, {
@@ -603,7 +609,8 @@ async function createListingAPI(title, description, category, startingBid, buyNo
           duration_hours: durationHours,
           bg_color: bgColor,
           icon: icon,
-          seller
+          seller,
+          image_url: imageUrl
         })
       });
       if (res.ok) {
@@ -628,6 +635,7 @@ async function createListingAPI(title, description, category, startingBid, buyNo
     seller, endsAt: Date.now() + (durationHours * 60 * 60 * 1000),
     imageGradient: bgColor,
     imageIcon: icon,
+    imageUrl: imageUrl,
     status: "active",
     bids: []
   };
