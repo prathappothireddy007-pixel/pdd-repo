@@ -42,7 +42,7 @@ jobs:
     needs: backend_security_and_sast
     runs-on: ubuntu-latest
     environment:
-      name: Production
+      name: github-pages
       url: ${{ env.BASE_URL }}
     permissions:
       contents: write
@@ -68,6 +68,12 @@ jobs:
         with:
           name: web-app-dist
           path: './online-auction-app/dist'
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./online-auction-app/dist
 
   web_e2e_automation:
     name: Selenium Web E2E Testing
