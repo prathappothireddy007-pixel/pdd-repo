@@ -77,6 +77,11 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
       - name: Generate Github Action Summary
         run: |
           echo "# 📱 Android Appium E2E Execution Summary" >> $GITHUB_STEP_SUMMARY
@@ -91,3 +96,6 @@ jobs:
           echo "## 📦 Generated Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "The following mobile test artifacts are available for download in this run:" >> $GITHUB_STEP_SUMMARY
           echo "- \`mobile-e2e-artifacts\` - HTML/Excel Test Reports and Mobile Device Screenshots" >> $GITHUB_STEP_SUMMARY
+          
+          # Append 300+ Test Cases names for mobile suite
+          node .github/scripts/generate_test_summary.js mobile
