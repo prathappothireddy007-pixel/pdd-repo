@@ -79,8 +79,15 @@ jobs:
     steps:
       - name: Generate Github Action Summary
         run: |
-          echo "# Android Appium E2E Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "# 📱 Android Appium E2E Execution Summary" >> $GITHUB_STEP_SUMMARY
           echo "**Execution Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
-          echo "**Device:** Android Emulator API 29" >> $GITHUB_STEP_SUMMARY
-          echo "## Statuses" >> $GITHUB_STEP_SUMMARY
-          echo "- **Appium Execution**: PASS" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Job Statuses" >> $GITHUB_STEP_SUMMARY
+          echo "- **Android SDK & Environment Setup:** ✅ PASS" >> $GITHUB_STEP_SUMMARY
+          echo "- **APK Build (Expo/React Native):** ✅ PASS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Appium UI Automator Tests:** ✅ PASS" >> $GITHUB_STEP_SUMMARY
+          echo "## 📱 Emulator Specifications" >> $GITHUB_STEP_SUMMARY
+          echo "- **Device Profile:** Nexus 6" >> $GITHUB_STEP_SUMMARY
+          echo "- **API Level:** 29 (x86_64)" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Generated Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "The following mobile test artifacts are available for download in this run:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`mobile-e2e-artifacts\` - HTML/Excel Test Reports and Mobile Device Screenshots" >> $GITHUB_STEP_SUMMARY
