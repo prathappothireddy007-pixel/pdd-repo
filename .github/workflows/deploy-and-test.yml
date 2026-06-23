@@ -41,6 +41,9 @@ jobs:
     name: Build & Deploy to GitHub Pages
     needs: backend_security_and_sast
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ env.BASE_URL }}
     permissions:
       contents: write
       pages: write
