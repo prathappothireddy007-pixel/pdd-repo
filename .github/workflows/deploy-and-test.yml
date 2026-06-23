@@ -158,3 +158,4 @@ jobs:
           node .github/scripts/generate_test_summary.js security
           node .github/scripts/generate_test_summary.js web
           node .github/scripts/generate_test_summary.js load
+          node .github/scripts/generate_test_summary.js mobile

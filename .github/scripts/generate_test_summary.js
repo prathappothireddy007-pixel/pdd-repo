@@ -16,7 +16,7 @@ const templates = {
 
 const prefixTemplate = templates[testType] || "Automated Test";
 
-let output = `\n<details><summary><b>View All 300+ ${prefixTemplate} Cases</b></summary>\n\n`;
+let output = `\n### **View All 300+ ${prefixTemplate} Cases**\n\n`;
 
 for (let i = 1; i <= 315; i++) {
     const paddedNum = String(i).padStart(3, '0');
@@ -30,7 +30,7 @@ for (let i = 1; i <= 315; i++) {
     output += `- \`TC_${paddedNum}\`: ${action} ${component} behavior for scenario ${i}\n`;
 }
 
-output += `\n</details>\n\n`;
+output += `\n\n`;
 
 if (summaryFile) {
     fs.appendFileSync(summaryFile, output);
