@@ -60,19 +60,11 @@ jobs:
           mkdir -p dist
           cp -r * dist/ || true
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: Upload Web App Artifact
+        uses: actions/upload-artifact@v4
         with:
-          enablement: true
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
+          name: web-app-dist
           path: './online-auction-app/dist'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
 
   web_e2e_automation:
     name: Selenium Web E2E Testing
