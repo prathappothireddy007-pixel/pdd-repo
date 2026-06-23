@@ -1,0 +1,17 @@
+{
+  "name": "bidsphere-automation-tests",
+  "version": "1.0.0",
+  "description": "Enterprise E2E, Security, and Performance Testing for BidSphere Auction App",
+  "scripts": {
+    "test": "node runner.js",
+    "test:web": "node runner.js --suite=web",
+    "test:security": "node runner.js --suite=security",
+    "test:performance": "node runner.js --suite=performance",
+    "report": "node utils/generate-reports.js"
+  },
+  "dependencies": {
+    "autocannon": "^8.0.0",
+    "puppeteer": "^22.0.0",
+    "xlsx": "^0.18.5"
+  }
+}

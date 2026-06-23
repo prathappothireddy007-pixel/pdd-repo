@@ -24,7 +24,7 @@ const elProfileTabContent = document.getElementById('profile-tab-content');
 // Navigate to different tabs/pages
 async function navigateTo(pageId, itemId = null) {
   // Authentication Guard for protected pages
-  if ((pageId === 'sell' || pageId === 'profile' || pageId === 'admin') && !currentUsername) {
+  if ((pageId === 'address' || pageId === 'payment' || pageId === 'profile' || pageId === 'admin') && !currentUsername) {
     showToast("Authentication required. Please sign in first.", "error");
     openAuthModal();
     return;
@@ -73,6 +73,21 @@ async function navigateTo(pageId, itemId = null) {
     await renderProfilePage();
   } else if (pageId === 'admin') {
     await renderAdminPage();
+  } else if (pageId === 'payment') {
+    const auctions = getLocalAuctions();
+    const item = auctions.find(a => a.id === activeAuctionId);
+    if (item) {
+        const user = currentUsername ? getLocalUserProfile(currentUsername) : null;
+        const isWonBid = item.status === 'ended' && user && user.itemsWon.includes(activeAuctionId);
+        const amount = isWonBid ? item.currentBid : item.buyNowPrice;
+        const elAmount = document.getElementById('easebuzz-pay-amount');
+        if (elAmount) {
+            elAmount.textContent = `Pay ${formatCurrency(amount)}`;
+            elAmount.style.color = '#1f2937';
+            const shieldIcon = elAmount.previousElementSibling;
+            if (shieldIcon) shieldIcon.style.color = '#1f2937';
+        }
+    }
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -156,7 +171,7 @@ function formatTimeRemaining(ms) {
 
 // Format Currency
 function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount);
 }
 
 // ----------------------------------------------------
@@ -282,143 +297,17 @@ async function handleLogout() {
 }
 
 // ----------------------------------------------------
-// WALLET PAYMENT & TOP-UP CONTROLS
+// CHECKOUT & PAYMENT CONTROLS
 // ----------------------------------------------------
 
-function openTopUpModal() {
-  if (!currentUsername) {
-    openAuthModal();
-    return;
-  }
-  const modal = document.getElementById('payment-modal');
-  if (modal) modal.classList.add('active');
-  resetPaymentForm();
+function resetCheckoutForm() {
+  const addrForm = document.getElementById('address-form');
+  const payForm = document.getElementById('payment-checkout-form');
+  if (addrForm) addrForm.reset();
+  if (payForm) payForm.reset();
 }
 
-function closeTopUpModal() {
-  const modal = document.getElementById('payment-modal');
-  if (modal) modal.classList.remove('active');
-}
 
-function resetPaymentForm() {
-  document.getElementById('payment-form').reset();
-  flipCard(false);
-  updateVisualCard();
-}
-
-function flipCard(state) {
-  const card = document.getElementById('visual-card');
-  if (card) {
-    if (state) card.classList.add('flipped');
-    else card.classList.remove('flipped');
-  }
-}
-
-function formatCardNumber(input) {
-  let val = input.value.replace(/\D/g, '');
-  let matches = val.match(/.{1,4}/g);
-  input.value = matches ? matches.join(' ') : '';
-}
-
-function formatExpiry(input) {
-  let val = input.value.replace(/\D/g, '');
-  if (val.length >= 2) {
-    input.value = val.slice(0, 2) + '/' + val.slice(2, 4);
-  } else {
-    input.value = val;
-  }
-}
-
-function updateVisualCard() {
-  const number = document.getElementById('card-number').value || '•••• •••• •••• ••••';
-  const holder = document.getElementById('card-holder').value || 'YOUR NAME';
-  const expiry = document.getElementById('card-expiry').value || 'MM/YY';
-  const cvv = document.getElementById('card-cvv').value || '•••';
-  
-  document.getElementById('visual-card-number').textContent = number;
-  document.getElementById('visual-card-holder').textContent = holder.toUpperCase();
-  document.getElementById('visual-card-expiry').textContent = expiry;
-  document.getElementById('visual-card-cvv').textContent = cvv;
-}
-
-let activePaymentMethod = 'Card';
-
-function switchPaymentTab(paymentType) {
-  activePaymentMethod = paymentType;
-  const btnCard = document.getElementById('btn-pay-tab-card');
-  const btnUpi = document.getElementById('btn-pay-tab-upi');
-  const secCard = document.getElementById('payment-card-section');
-  const secUpi = document.getElementById('payment-upi-section');
-
-  if (paymentType === 'Card') {
-    if (btnCard) btnCard.classList.add('active-tab');
-    if (btnUpi) btnUpi.classList.remove('active-tab');
-    if (secCard) secCard.style.display = 'block';
-    if (secUpi) secUpi.style.display = 'none';
-  } else {
-    if (btnCard) btnCard.classList.remove('active-tab');
-    if (btnUpi) btnUpi.classList.add('active-tab');
-    if (secCard) secCard.style.display = 'none';
-    if (secUpi) secUpi.style.display = 'block';
-  }
-}
-
-function resetPaymentForm() {
-  document.getElementById('payment-form').reset();
-  document.getElementById('upi-payment-form').reset();
-  switchPaymentTab('Card');
-  flipCard(false);
-  updateVisualCard();
-}
-
-async function handleTopUpSubmit(event) {
-  event.preventDefault();
-  const amount = parseFloat(document.getElementById('topup-amount').value);
-  const holder = document.getElementById('card-holder').value.trim();
-  const number = document.getElementById('card-number').value.trim();
-  const expiry = document.getElementById('card-expiry').value.trim();
-  const cvv = document.getElementById('card-cvv').value.trim();
-  
-  if (isNaN(amount) || amount <= 0) {
-    showToast("Please enter a valid deposit amount.", "error");
-    return;
-  }
-  
-  showToast("Processing payment gateway check...", "info");
-  
-  const res = await userTopupAPI(amount, "Card", number, expiry, cvv);
-  if (res.success) {
-    showToast(`Refilled! Deposited ${formatCurrency(amount)} to your wallet balance.`, "success");
-    closeTopUpModal();
-    await updateHeaderWallet();
-    if (activePage === 'profile') await renderProfilePage();
-  } else {
-    showToast(res.message, "error");
-  }
-}
-
-async function handleUpiTopUpSubmit(event) {
-  event.preventDefault();
-  const amount = parseFloat(document.getElementById('upi-amount').value);
-  
-  if (isNaN(amount) || amount <= 0) {
-    showToast("Please enter a valid deposit amount.", "error");
-    return;
-  }
-  
-  showToast("Simulating UPI scan verification...", "info");
-  
-  const txRef = `TXN-UPI-${Math.floor(10000000 + Math.random() * 90000000)}`;
-  const res = await userTopupAPI(amount, "UPI", null, null, null, txRef);
-  if (res.success) {
-    showToast(`Refilled! Deposited ${formatCurrency(amount)} via UPI (Ref: ${txRef}).`, "success");
-    closeTopUpModal();
-    await updateHeaderWallet();
-    if (activePage === 'profile') await renderProfilePage();
-  } else {
-    showToast(res.message, "error");
-  }
-}
 
 // ----------------------------------------------------
 // UI RENDERING FUNCTIONS
@@ -429,10 +318,11 @@ async function renderDashboard() {
   const auctions = await getAuctions();
   
   const filtered = auctions.filter(item => {
+    const isLive = item.status === 'active' && item.endsAt > Date.now();
     const matchesSearch = item.title.toLowerCase().includes(searchQuery) || 
                           item.description.toLowerCase().includes(searchQuery);
     const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory && isLive;
   });
 
   if (filtered.length === 0) {
@@ -461,11 +351,11 @@ async function renderDashboard() {
 
     return `
       <div class="glass-card listing-card" id="card-${item.id}">
-        <div class="card-image-wrapper" style="background: ${item.imageGradient};">
+        <div class="card-image-wrapper" style="${item.imageUrl ? `background-image: url('${item.imageUrl}'); background-size: cover; background-position: center;` : `background: ${item.imageGradient};`}">
           <span class="card-badge ${isLive ? 'badge-live' : 'badge-ended'}">
             ${isLive ? `<i data-lucide="flame" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i> <span class="timer-text">${timeRemainingStr}</span>` : 'Ended'}
           </span>
-          <i data-lucide="${iconName}" class="card-icon"></i>
+          ${item.imageUrl ? '' : `<i data-lucide="${iconName}" class="card-icon"></i>`}
         </div>
         
         <div class="card-content">
@@ -549,10 +439,9 @@ async function renderDetailPage(itemId) {
   // Render Page Content
   elDetailContainer.innerHTML = `
     <!-- Gallery/Image representation -->
-    <div class="detail-gallery" style="background: ${item.imageGradient};">
-      <i data-lucide="${iconName}" class="detail-gallery-icon"></i>
-      
-      <div class="detail-timer-bar">
+    <div class="detail-gallery" style="${item.imageUrl ? `background-image: url('${item.imageUrl}'); background-size: cover; background-position: center;` : `background: ${item.imageGradient};`}">
+      ${item.imageUrl ? '' : `<i data-lucide="${iconName}" class="detail-gallery-icon"></i>`}
+      <div class="detail-clock-container">
         <div>
           <span class="countdown-label">Time Remaining</span>
           <div class="countdown-clock" id="detail-clock">${timeRemainingStr}</div>
@@ -599,7 +488,7 @@ async function renderDetailPage(itemId) {
               <span class="price-label">Enter Bid (Min. ${formatCurrency(minAllowedBid)})</span>
               <div class="bid-input-group">
                 <div class="bid-input-wrapper">
-                  <span class="bid-currency">$</span>
+                  <span class="bid-currency">₹</span>
                   <input type="number" id="bid-amount-input" min="${minAllowedBid}" value="${minAllowedBid}" required>
                 </div>
                 <button class="btn btn-primary" style="flex:0 0 140px;" onclick="placeBid('${item.id}')">
@@ -713,7 +602,9 @@ async function renderProfileTab() {
       htmlContent = wonItems.map(item => {
         const delivery = deliveries.find(d => d.auction_id === item.id);
         let trackingHTML = "";
+        let statusBadge = "";
         if (delivery) {
+          statusBadge = `<span class="price-label" style="font-size:0.75rem; color:var(--accent-green); font-weight:700;">Transaction Settled</span>`;
           let statusClass = "status-pending-shipment";
           if (delivery.delivery_status === "In Transit") statusClass = "status-in-transit";
           if (delivery.delivery_status === "Delivered") statusClass = "status-delivered";
@@ -723,6 +614,15 @@ async function renderProfileTab() {
               <p style="margin: 4px 0;"><strong>Shipping Status:</strong> <span class="delivery-badge ${statusClass}">${delivery.delivery_status}</span></p>
               <p style="margin: 4px 0;"><strong>Tracking ID:</strong> <code>${delivery.tracking_number}</code></p>
               <p style="margin: 4px 0;"><strong>Shipping Address:</strong> ${delivery.shipping_address}</p>
+            </div>
+          `;
+        } else {
+          statusBadge = `<span class="price-label" style="font-size:0.75rem; color:var(--accent-yellow); font-weight:700;">Payment Pending</span>`;
+          trackingHTML = `
+            <div style="margin-top: 15px;">
+              <button class="btn btn-primary" style="width: 100%;" onclick="buyOutItem('${item.id}')">
+                Provide Address & Checkout
+              </button>
             </div>
           `;
         }
@@ -735,7 +635,7 @@ async function renderProfileTab() {
               </div>
               <div style="text-align:right;">
                 <div class="price-value" style="color:var(--accent-yellow); font-weight:800;">${formatCurrency(item.currentBid)}</div>
-                <span class="price-label" style="font-size:0.75rem; color:var(--accent-green); font-weight:700;">Transaction Settled</span>
+                ${statusBadge}
               </div>
             </div>
             ${trackingHTML}
@@ -861,7 +761,7 @@ async function placeBid(itemId) {
   }
 }
 
-// 2. Buy Out Item Outright
+// 2. Buy Out Item Outright -> Proceed to Address
 async function buyOutItem(itemId) {
   if (!currentUsername) {
     showToast("Authentication required. Please sign in to buy out.", "error");
@@ -869,67 +769,89 @@ async function buyOutItem(itemId) {
     return;
   }
 
-  // Call database buyout API
-  const result = await buyOutAPI(itemId, currentUsername);
-  if (result.success) {
-    showToast(`Congratulations! You bought ${result.item.title} outright!`, "success");
-    activeProfileTab = 'won';
-    await navigateTo('profile');
-    await updateHeaderWallet();
-  } else {
-    showToast(result.message, "error");
-  }
+  activeAuctionId = itemId;
+  resetCheckoutForm();
+  await navigateTo('address');
 }
 
-// 3. Create Listing Submission
-async function handleCreateListing(event) {
+// 3. Checkout Flow Handlers
+function handleAddressSubmit(event) {
   event.preventDefault();
+  navigateTo('payment');
+}
 
-  if (!currentUsername) {
-    showToast("Authentication required. Please sign in first.", "error");
-    openAuthModal();
-    return;
+// Interactive Easebuzz UI Tabs
+function selectEasebuzzTab(formId, tabElement) {
+  // 1. Reset all tabs
+  document.querySelectorAll('.eb-tab').forEach(tab => {
+    tab.style.background = 'transparent';
+    tab.style.border = 'none';
+    tab.style.boxShadow = 'none';
+    const icon = tab.querySelector('.eb-tab-icon');
+    if (icon) icon.style.color = '#64748b';
+    const text = tab.querySelector('.eb-tab-text');
+    if (text) text.style.color = '#475569';
+  });
+
+  // 2. Set active tab
+  if (tabElement) {
+    tabElement.style.background = '#f8fafc';
+    tabElement.style.border = '1px solid #e2e8f0';
+    tabElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+    const icon = tabElement.querySelector('.eb-tab-icon');
+    if (icon) icon.style.color = '#4f46e5';
+    const text = tabElement.querySelector('.eb-tab-text');
+    if (text) text.style.color = '#0f172a';
   }
 
-  const title = document.getElementById('item-title').value.trim();
-  const category = document.getElementById('item-category').value;
-  const durationHours = parseFloat(document.getElementById('item-duration').value);
-  const startingBid = parseFloat(document.getElementById('item-starting-bid').value);
-  const buyNowVal = document.getElementById('item-buyout').value;
-  const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
-  const description = document.getElementById('item-description').value.trim();
+  // 3. Hide all form sections
+  document.querySelectorAll('.eb-form-section').forEach(section => {
+    section.style.display = 'none';
+  });
 
-  // Validations
-  if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
-    showToast("Please fill all required fields.", "error");
-    return;
-  }
-
-  if (buyNowPrice !== null && buyNowPrice <= startingBid) {
-    showToast("Buy Out Price must be higher than the starting bid.", "error");
-    return;
-  }
-
-  const result = await createListingAPI(
-    title, description, category, startingBid, buyNowPrice, durationHours,
-    selectedPresetGradient, selectedPresetIcon, currentUsername
-  );
-
-  if (result.success) {
-    document.getElementById('sell-form').reset();
-    const isPending = result.item.status === 'pending';
-    if (isPending) {
-      showToast("Listing submitted successfully! Awaiting Admin approval.", "success");
-      activeProfileTab = 'listed';
-      await navigateTo('profile');
-    } else {
-      showToast("Your auction has been published successfully!", "success");
-      await navigateTo('dashboard');
-    }
-  } else {
-    showToast(result.message, "error");
+  // 4. Show selected form section
+  const activeForm = document.getElementById(`eb-form-${formId}`);
+  if (activeForm) {
+    activeForm.style.display = 'block';
   }
 }
+
+async function handlePaymentSubmit(event) {
+  event.preventDefault();
+  if (!activeAuctionId) {
+    showToast("No active item selected for checkout.", "error");
+    return;
+  }
+  
+  const elAmount = document.getElementById('easebuzz-pay-amount');
+  if (elAmount) {
+      elAmount.textContent = "Processing...";
+      elAmount.style.color = '#eab308';
+  }
+  
+  // Simulate network delay for Easebuzz
+  setTimeout(async () => {
+    if (elAmount) {
+        elAmount.textContent = "Success!";
+        elAmount.style.color = '#16a34a';
+    }
+    
+    // Process transaction after showing success
+    setTimeout(async () => {
+      const result = await buyOutAPI(activeAuctionId, currentUsername);
+      if (result.success) {
+        showToast(`Payment successful! You bought ${result.item.title}.`, "success");
+        activeProfileTab = 'won';
+        await navigateTo('profile');
+        await updateHeaderWallet();
+      } else {
+        showToast(result.message, "error");
+      }
+    }, 1500);
+  }, 2000);
+}
+
+
 
 // Update wallet balance in header
 async function updateHeaderWallet() {
@@ -1268,6 +1190,8 @@ async function handleAdminCreateListing(event) {
   const buyNowVal = document.getElementById('admin-item-buyout').value;
   const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
   const description = document.getElementById('admin-item-description').value.trim();
+  const elImage = document.getElementById('admin-item-image');
+  const imageUrl = elImage ? elImage.value.trim() : null;
 
   if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
     showToast("Please fill all required fields.", "error");
@@ -1279,7 +1203,7 @@ async function handleAdminCreateListing(event) {
   // Admin listed items bypass pending status and start active
   const result = await createListingAPI(
     title, description, category, startingBid, buyNowPrice, durationHours,
-    selectedPresetGradient, selectedPresetIcon, currentUsername
+    selectedPresetGradient, selectedPresetIcon, currentUsername, imageUrl
   );
 
   if (result.success) {

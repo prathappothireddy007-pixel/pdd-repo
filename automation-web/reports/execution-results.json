@@ -1,0 +1,3699 @@
+{
+  "total": 410,
+  "passed": 386,
+  "failed": 24,
+  "skipped": 0,
+  "duration": "467.6s",
+  "tests": [
+    {
+      "id": "TC_001",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Home page loads successfully",
+      "status": "PASSED",
+      "duration": 440,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_002",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Sign In button is visible when logged out",
+      "status": "PASSED",
+      "duration": 256,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_003",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Clicking Sign In opens auth modal",
+      "status": "PASSED",
+      "duration": 1454,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_004",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Login form has username field",
+      "status": "PASSED",
+      "duration": 333,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_005",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Login form has password field",
+      "status": "PASSED",
+      "duration": 336,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_006",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Login with valid credentials (reddy/123456)",
+      "status": "FAILED",
+      "duration": 3590,
+      "errorMsg": "User button should appear after login"
+    },
+    {
+      "id": "TC_007",
+      "module": "Authentication",
+      "priority": "Critical",
+      "name": "Username displays correctly after login",
+      "status": "FAILED",
+      "duration": 3616,
+      "errorMsg": "Expected username reddy, got: Guest"
+    },
+    {
+      "id": "TC_008",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Login with empty username shows error",
+      "status": "PASSED",
+      "duration": 1003,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_009",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Login with empty password shows error",
+      "status": "PASSED",
+      "duration": 946,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_010",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Login with wrong password shows toast error",
+      "status": "PASSED",
+      "duration": 2355,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_011",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Register tab is clickable",
+      "status": "PASSED",
+      "duration": 386,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_012",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Register form has username field",
+      "status": "PASSED",
+      "duration": 361,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_013",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Register form has email field",
+      "status": "PASSED",
+      "duration": 398,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_014",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Register form has password field",
+      "status": "PASSED",
+      "duration": 337,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_015",
+      "module": "Authentication",
+      "priority": "High",
+      "name": "Switch back to Login tab from Register",
+      "status": "PASSED",
+      "duration": 425,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_016",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Close auth modal with X button",
+      "status": "PASSED",
+      "duration": 875,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_017",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Login username field placeholder text correct",
+      "status": "PASSED",
+      "duration": 318,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_018",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Login password field is type=password",
+      "status": "PASSED",
+      "duration": 322,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_019",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Register with new user succeeds",
+      "status": "PASSED",
+      "duration": 2290,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_020",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Login form submit button text says Sign In",
+      "status": "FAILED",
+      "duration": 10181,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_021",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #1: \"admin'--\"",
+      "status": "FAILED",
+      "duration": 10158,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_022",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #2: \"<script>alert(1)</script>\"",
+      "status": "FAILED",
+      "duration": 10173,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_023",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #3: \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"",
+      "status": "FAILED",
+      "duration": 10175,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_024",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #4: \"   \"",
+      "status": "FAILED",
+      "duration": 10224,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_025",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #5: \"user@#$%\"",
+      "status": "FAILED",
+      "duration": 10180,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_026",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #6: \"SELECT * FROM\"",
+      "status": "FAILED",
+      "duration": 10186,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_027",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #7: \"../../../etc/passwd\"",
+      "status": "PASSED",
+      "duration": 1460,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_028",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #8: \"null\"",
+      "status": "FAILED",
+      "duration": 334,
+      "errorMsg": "Node is either not clickable or not an Element"
+    },
+    {
+      "id": "TC_029",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #9: \"undefined\"",
+      "status": "FAILED",
+      "duration": 10219,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_030",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #10: \"true\"",
+      "status": "FAILED",
+      "duration": 10165,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_031",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #11: \"0\"",
+      "status": "FAILED",
+      "duration": 10167,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_032",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #12: \"-1\"",
+      "status": "FAILED",
+      "duration": 10216,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_033",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #13: \"{}\"",
+      "status": "FAILED",
+      "duration": 10188,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_034",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #14: \"[]\"",
+      "status": "FAILED",
+      "duration": 10167,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_035",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #15: \"NaN\"",
+      "status": "FAILED",
+      "duration": 10201,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_036",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #16: \"Infinity\"",
+      "status": "FAILED",
+      "duration": 10141,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_037",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #17: \"\t\n\"",
+      "status": "FAILED",
+      "duration": 10158,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_038",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #18: \"DROP TABLE\"",
+      "status": "FAILED",
+      "duration": 10215,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_039",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #19: \"reddy; rm -rf /\"",
+      "status": "FAILED",
+      "duration": 10227,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_040",
+      "module": "Authentication",
+      "priority": "Medium",
+      "name": "Reject malicious username attempt #20: \"UNION SELECT\"",
+      "status": "FAILED",
+      "duration": 10149,
+      "errorMsg": "Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded"
+    },
+    {
+      "id": "TC_041",
+      "module": "Navigation",
+      "priority": "Critical",
+      "name": "Dashboard page is visible by default",
+      "status": "PASSED",
+      "duration": 159,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_042",
+      "module": "Navigation",
+      "priority": "Critical",
+      "name": "Browse Auctions nav button is active by default",
+      "status": "PASSED",
+      "duration": 146,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_043",
+      "module": "Navigation",
+      "priority": "Critical",
+      "name": "Click My Profile opens auth modal when logged out",
+      "status": "FAILED",
+      "duration": 726,
+      "errorMsg": "Auth modal should open when accessing profile without login"
+    },
+    {
+      "id": "TC_044",
+      "module": "Navigation",
+      "priority": "Critical",
+      "name": "Logo click navigates to dashboard",
+      "status": "PASSED",
+      "duration": 694,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_045",
+      "module": "Navigation",
+      "priority": "High",
+      "name": "Admin nav is hidden for non-admin users",
+      "status": "PASSED",
+      "duration": 154,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_046",
+      "module": "Navigation",
+      "priority": "High",
+      "name": "Page scrolls to top on navigation",
+      "status": "PASSED",
+      "duration": 636,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_047",
+      "module": "Navigation",
+      "priority": "High",
+      "name": "Navigate to dashboard shows correct page",
+      "status": "PASSED",
+      "duration": 654,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_048",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 1",
+      "status": "PASSED",
+      "duration": 335,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_049",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 2",
+      "status": "PASSED",
+      "duration": 353,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_050",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 3",
+      "status": "PASSED",
+      "duration": 348,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_051",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 4",
+      "status": "PASSED",
+      "duration": 348,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_052",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 5",
+      "status": "PASSED",
+      "duration": 334,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_053",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 6",
+      "status": "PASSED",
+      "duration": 428,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_054",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 7",
+      "status": "PASSED",
+      "duration": 342,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_055",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 8",
+      "status": "PASSED",
+      "duration": 349,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_056",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 9",
+      "status": "PASSED",
+      "duration": 343,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_057",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 10",
+      "status": "PASSED",
+      "duration": 394,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_058",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 11",
+      "status": "PASSED",
+      "duration": 368,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_059",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 12",
+      "status": "PASSED",
+      "duration": 371,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_060",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 13",
+      "status": "PASSED",
+      "duration": 346,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_061",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 14",
+      "status": "PASSED",
+      "duration": 376,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_062",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 15",
+      "status": "PASSED",
+      "duration": 427,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_063",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 16",
+      "status": "PASSED",
+      "duration": 347,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_064",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 17",
+      "status": "PASSED",
+      "duration": 373,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_065",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 18",
+      "status": "PASSED",
+      "duration": 353,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_066",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 19",
+      "status": "PASSED",
+      "duration": 353,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_067",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 20",
+      "status": "PASSED",
+      "duration": 353,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_068",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 21",
+      "status": "PASSED",
+      "duration": 355,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_069",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 22",
+      "status": "PASSED",
+      "duration": 363,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_070",
+      "module": "Navigation",
+      "priority": "Medium",
+      "name": "Navigation stress test iteration 23",
+      "status": "PASSED",
+      "duration": 363,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_071",
+      "module": "UI Validation",
+      "priority": "Critical",
+      "name": "Page title is BidSphere",
+      "status": "PASSED",
+      "duration": 155,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_072",
+      "module": "UI Validation",
+      "priority": "Critical",
+      "name": "Header exists and is visible",
+      "status": "PASSED",
+      "duration": 208,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_073",
+      "module": "UI Validation",
+      "priority": "Critical",
+      "name": "Footer exists",
+      "status": "PASSED",
+      "duration": 260,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_074",
+      "module": "UI Validation",
+      "priority": "Critical",
+      "name": "Logo text says BidSphere",
+      "status": "PASSED",
+      "duration": 198,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_075",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Hero section has heading",
+      "status": "PASSED",
+      "duration": 176,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_076",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Hero heading contains \"Collect, Trade\"",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_077",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Search input exists on dashboard",
+      "status": "PASSED",
+      "duration": 189,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_078",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Search input has placeholder",
+      "status": "PASSED",
+      "duration": 185,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_079",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Category filter buttons exist",
+      "status": "PASSED",
+      "duration": 156,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_080",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "All Categories button is active by default",
+      "status": "PASSED",
+      "duration": 175,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_081",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Listings container exists",
+      "status": "PASSED",
+      "duration": 155,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_082",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Auction listings are rendered",
+      "status": "FAILED",
+      "duration": 3140,
+      "errorMsg": "Expected auction cards to be rendered, got 0"
+    },
+    {
+      "id": "TC_083",
+      "module": "UI Validation",
+      "priority": "High",
+      "name": "Backend status badge exists",
+      "status": "PASSED",
+      "duration": 150,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_084",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Footer contains copyright text",
+      "status": "PASSED",
+      "duration": 137,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_085",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Admin header strip is hidden by default",
+      "status": "PASSED",
+      "duration": 143,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_086",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Lucide icons are loaded",
+      "status": "PASSED",
+      "duration": 2122,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_087",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Toast container exists",
+      "status": "PASSED",
+      "duration": 123,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_088",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "No JavaScript errors on page load",
+      "status": "PASSED",
+      "duration": 2122,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_089",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Electronics\" exists",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_090",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Fashion & Luxury\" exists",
+      "status": "PASSED",
+      "duration": 148,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_091",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Gaming\" exists",
+      "status": "PASSED",
+      "duration": 158,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_092",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Art\" exists",
+      "status": "PASSED",
+      "duration": 147,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_093",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Vehicles\" exists",
+      "status": "PASSED",
+      "duration": 162,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_094",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Home & Living\" exists",
+      "status": "PASSED",
+      "duration": 153,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_095",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Books\" exists",
+      "status": "PASSED",
+      "duration": 144,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_096",
+      "module": "UI Validation",
+      "priority": "Medium",
+      "name": "Category button \"Sports\" exists",
+      "status": "PASSED",
+      "duration": 156,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_097",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #1 - page structure intact",
+      "status": "PASSED",
+      "duration": 149,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_098",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #2 - page structure intact",
+      "status": "PASSED",
+      "duration": 144,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_099",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #3 - page structure intact",
+      "status": "PASSED",
+      "duration": 150,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_100",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #4 - page structure intact",
+      "status": "PASSED",
+      "duration": 180,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_101",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #5 - page structure intact",
+      "status": "PASSED",
+      "duration": 162,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_102",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #6 - page structure intact",
+      "status": "PASSED",
+      "duration": 194,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_103",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #7 - page structure intact",
+      "status": "PASSED",
+      "duration": 169,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_104",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #8 - page structure intact",
+      "status": "PASSED",
+      "duration": 180,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_105",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #9 - page structure intact",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_106",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #10 - page structure intact",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_107",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #11 - page structure intact",
+      "status": "PASSED",
+      "duration": 181,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_108",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #12 - page structure intact",
+      "status": "PASSED",
+      "duration": 175,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_109",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #13 - page structure intact",
+      "status": "PASSED",
+      "duration": 190,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_110",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #14 - page structure intact",
+      "status": "PASSED",
+      "duration": 168,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_111",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #15 - page structure intact",
+      "status": "PASSED",
+      "duration": 185,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_112",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #16 - page structure intact",
+      "status": "PASSED",
+      "duration": 166,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_113",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #17 - page structure intact",
+      "status": "PASSED",
+      "duration": 198,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_114",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #18 - page structure intact",
+      "status": "PASSED",
+      "duration": 185,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_115",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #19 - page structure intact",
+      "status": "PASSED",
+      "duration": 184,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_116",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #20 - page structure intact",
+      "status": "PASSED",
+      "duration": 180,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_117",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #21 - page structure intact",
+      "status": "PASSED",
+      "duration": 190,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_118",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #22 - page structure intact",
+      "status": "PASSED",
+      "duration": 159,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_119",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #23 - page structure intact",
+      "status": "PASSED",
+      "duration": 196,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_120",
+      "module": "UI Validation",
+      "priority": "Low",
+      "name": "UI consistency check #24 - page structure intact",
+      "status": "PASSED",
+      "duration": 207,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_121",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form exists",
+      "status": "PASSED",
+      "duration": 214,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_122",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form full name field exists",
+      "status": "PASSED",
+      "duration": 160,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_123",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form street field exists",
+      "status": "PASSED",
+      "duration": 206,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_124",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form city field exists",
+      "status": "PASSED",
+      "duration": 175,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_125",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form state field exists",
+      "status": "PASSED",
+      "duration": 184,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_126",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form ZIP field exists",
+      "status": "PASSED",
+      "duration": 168,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_127",
+      "module": "Forms",
+      "priority": "Critical",
+      "name": "Address form country field exists",
+      "status": "PASSED",
+      "duration": 169,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_128",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Payment form exists",
+      "status": "PASSED",
+      "duration": 174,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_129",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Payment card number field exists",
+      "status": "PASSED",
+      "duration": 202,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_130",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Payment UPI form section exists",
+      "status": "PASSED",
+      "duration": 164,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_131",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Payment NetBanking form section exists",
+      "status": "PASSED",
+      "duration": 180,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_132",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Payment Wallet form section exists",
+      "status": "PASSED",
+      "duration": 178,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_133",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Admin sell form exists",
+      "status": "PASSED",
+      "duration": 190,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_134",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Admin item title field exists",
+      "status": "PASSED",
+      "duration": 212,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_135",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Admin category select exists",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_136",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Admin starting bid field exists",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_137",
+      "module": "Forms",
+      "priority": "High",
+      "name": "Admin description textarea exists",
+      "status": "PASSED",
+      "duration": 150,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_138",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Address fullname placeholder is correct",
+      "status": "PASSED",
+      "duration": 171,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_139",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Address city placeholder is correct",
+      "status": "PASSED",
+      "duration": 158,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_140",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Admin duration field has min=1",
+      "status": "PASSED",
+      "duration": 170,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_141",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Admin duration field has max=168",
+      "status": "PASSED",
+      "duration": 161,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_142",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Admin item image field accepts URL type",
+      "status": "PASSED",
+      "duration": 159,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_143",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Full Name field is required",
+      "status": "PASSED",
+      "duration": 170,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_144",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Full Name field accepts text input",
+      "status": "PASSED",
+      "duration": 181,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_145",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Street field is required",
+      "status": "PASSED",
+      "duration": 157,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_146",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Street field accepts text input",
+      "status": "PASSED",
+      "duration": 172,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_147",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "City field is required",
+      "status": "PASSED",
+      "duration": 178,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_148",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "City field accepts text input",
+      "status": "PASSED",
+      "duration": 151,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_149",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "State field is required",
+      "status": "PASSED",
+      "duration": 160,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_150",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "State field accepts text input",
+      "status": "PASSED",
+      "duration": 157,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_151",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "ZIP field is required",
+      "status": "PASSED",
+      "duration": 165,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_152",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "ZIP field accepts text input",
+      "status": "PASSED",
+      "duration": 155,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_153",
+      "module": "Forms",
+      "priority": "Medium",
+      "name": "Country field is required",
+      "status": "PASSED",
+      "duration": 156,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_154",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Country field accepts text input",
+      "status": "PASSED",
+      "duration": 169,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_155",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #1",
+      "status": "PASSED",
+      "duration": 164,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_156",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #2",
+      "status": "PASSED",
+      "duration": 176,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_157",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #3",
+      "status": "PASSED",
+      "duration": 168,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_158",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #4",
+      "status": "PASSED",
+      "duration": 181,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_159",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #5",
+      "status": "PASSED",
+      "duration": 263,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_160",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #6",
+      "status": "PASSED",
+      "duration": 249,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_161",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #7",
+      "status": "PASSED",
+      "duration": 162,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_162",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #8",
+      "status": "PASSED",
+      "duration": 173,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_163",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #9",
+      "status": "PASSED",
+      "duration": 171,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_164",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #10",
+      "status": "PASSED",
+      "duration": 164,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_165",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #11",
+      "status": "PASSED",
+      "duration": 178,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_166",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #12",
+      "status": "PASSED",
+      "duration": 183,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_167",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #13",
+      "status": "PASSED",
+      "duration": 178,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_168",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #14",
+      "status": "PASSED",
+      "duration": 186,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_169",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #15",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_170",
+      "module": "Forms",
+      "priority": "Low",
+      "name": "Form DOM integrity check #16",
+      "status": "PASSED",
+      "duration": 174,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_171",
+      "module": "CRUD Operations",
+      "priority": "Critical",
+      "name": "Auction listings load on dashboard",
+      "status": "PASSED",
+      "duration": 1200,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_172",
+      "module": "CRUD Operations",
+      "priority": "Critical",
+      "name": "Clicking auction card navigates to detail",
+      "status": "PASSED",
+      "duration": 1143,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_173",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "Detail page has Back button",
+      "status": "PASSED",
+      "duration": 1109,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_174",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #1",
+      "status": "PASSED",
+      "duration": 908,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_175",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #2",
+      "status": "PASSED",
+      "duration": 920,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_176",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #3",
+      "status": "PASSED",
+      "duration": 954,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_177",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #4",
+      "status": "PASSED",
+      "duration": 923,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_178",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #5",
+      "status": "PASSED",
+      "duration": 918,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_179",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #6",
+      "status": "PASSED",
+      "duration": 920,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_180",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #7",
+      "status": "PASSED",
+      "duration": 937,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_181",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #8",
+      "status": "PASSED",
+      "duration": 943,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_182",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #9",
+      "status": "PASSED",
+      "duration": 922,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_183",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #10",
+      "status": "PASSED",
+      "duration": 934,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_184",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #11",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_185",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #12",
+      "status": "PASSED",
+      "duration": 935,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_186",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #13",
+      "status": "PASSED",
+      "duration": 941,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_187",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #14",
+      "status": "PASSED",
+      "duration": 931,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_188",
+      "module": "CRUD Operations",
+      "priority": "High",
+      "name": "CRUD data integrity check #15",
+      "status": "PASSED",
+      "duration": 949,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_189",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #16",
+      "status": "PASSED",
+      "duration": 996,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_190",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #17",
+      "status": "PASSED",
+      "duration": 936,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_191",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #18",
+      "status": "PASSED",
+      "duration": 945,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_192",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #19",
+      "status": "PASSED",
+      "duration": 944,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_193",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #20",
+      "status": "PASSED",
+      "duration": 947,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_194",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #21",
+      "status": "PASSED",
+      "duration": 910,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_195",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #22",
+      "status": "PASSED",
+      "duration": 939,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_196",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #23",
+      "status": "PASSED",
+      "duration": 922,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_197",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #24",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_198",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #25",
+      "status": "PASSED",
+      "duration": 923,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_199",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #26",
+      "status": "PASSED",
+      "duration": 919,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_200",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #27",
+      "status": "PASSED",
+      "duration": 924,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_201",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #28",
+      "status": "PASSED",
+      "duration": 930,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_202",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #29",
+      "status": "PASSED",
+      "duration": 915,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_203",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #30",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_204",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #31",
+      "status": "PASSED",
+      "duration": 936,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_205",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #32",
+      "status": "PASSED",
+      "duration": 920,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_206",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #33",
+      "status": "PASSED",
+      "duration": 970,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_207",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #34",
+      "status": "PASSED",
+      "duration": 921,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_208",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #35",
+      "status": "PASSED",
+      "duration": 922,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_209",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #36",
+      "status": "PASSED",
+      "duration": 919,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_210",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #37",
+      "status": "PASSED",
+      "duration": 929,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_211",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #38",
+      "status": "PASSED",
+      "duration": 935,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_212",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #39",
+      "status": "PASSED",
+      "duration": 924,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_213",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #40",
+      "status": "PASSED",
+      "duration": 919,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_214",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #41",
+      "status": "PASSED",
+      "duration": 925,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_215",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #42",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_216",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #43",
+      "status": "PASSED",
+      "duration": 914,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_217",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #44",
+      "status": "PASSED",
+      "duration": 918,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_218",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #45",
+      "status": "PASSED",
+      "duration": 916,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_219",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #46",
+      "status": "PASSED",
+      "duration": 929,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_220",
+      "module": "CRUD Operations",
+      "priority": "Medium",
+      "name": "CRUD data integrity check #47",
+      "status": "PASSED",
+      "duration": 910,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_221",
+      "module": "Input Validation",
+      "priority": "Critical",
+      "name": "Search input accepts text",
+      "status": "PASSED",
+      "duration": 227,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_222",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "Search filters listings",
+      "status": "PASSED",
+      "duration": 1718,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_223",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "Clear search restores all listings",
+      "status": "PASSED",
+      "duration": 2183,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_224",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #1",
+      "status": "PASSED",
+      "duration": 643,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_225",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #2",
+      "status": "PASSED",
+      "duration": 591,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_226",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #3",
+      "status": "PASSED",
+      "duration": 610,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_227",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #4",
+      "status": "PASSED",
+      "duration": 550,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_228",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #5",
+      "status": "PASSED",
+      "duration": 570,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_229",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #6",
+      "status": "PASSED",
+      "duration": 582,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_230",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #7",
+      "status": "PASSED",
+      "duration": 576,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_231",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #8",
+      "status": "PASSED",
+      "duration": 625,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_232",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #9",
+      "status": "PASSED",
+      "duration": 601,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_233",
+      "module": "Input Validation",
+      "priority": "High",
+      "name": "XSS prevention in search - payload #10",
+      "status": "PASSED",
+      "duration": 499,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_234",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #1",
+      "status": "PASSED",
+      "duration": 447,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_235",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #2",
+      "status": "PASSED",
+      "duration": 486,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_236",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #3",
+      "status": "PASSED",
+      "duration": 518,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_237",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #4",
+      "status": "PASSED",
+      "duration": 552,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_238",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #5",
+      "status": "PASSED",
+      "duration": 615,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_239",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #6",
+      "status": "PASSED",
+      "duration": 661,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_240",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #7",
+      "status": "PASSED",
+      "duration": 721,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_241",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #8",
+      "status": "PASSED",
+      "duration": 730,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_242",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #9",
+      "status": "PASSED",
+      "duration": 787,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_243",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #10",
+      "status": "PASSED",
+      "duration": 879,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_244",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #11",
+      "status": "PASSED",
+      "duration": 940,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_245",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #12",
+      "status": "PASSED",
+      "duration": 998,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_246",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #13",
+      "status": "PASSED",
+      "duration": 1177,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_247",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #14",
+      "status": "PASSED",
+      "duration": 1190,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_248",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #15",
+      "status": "PASSED",
+      "duration": 1248,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_249",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #16",
+      "status": "PASSED",
+      "duration": 1261,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_250",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #17",
+      "status": "PASSED",
+      "duration": 1598,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_251",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #18",
+      "status": "PASSED",
+      "duration": 1741,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_252",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #19",
+      "status": "PASSED",
+      "duration": 1797,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_253",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #20",
+      "status": "PASSED",
+      "duration": 1948,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_254",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #21",
+      "status": "PASSED",
+      "duration": 1813,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_255",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #22",
+      "status": "PASSED",
+      "duration": 1714,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_256",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #23",
+      "status": "PASSED",
+      "duration": 1911,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_257",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #24",
+      "status": "PASSED",
+      "duration": 1810,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_258",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #25",
+      "status": "PASSED",
+      "duration": 1775,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_259",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #26",
+      "status": "PASSED",
+      "duration": 1914,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_260",
+      "module": "Input Validation",
+      "priority": "Medium",
+      "name": "Input boundary test #27",
+      "status": "PASSED",
+      "duration": 2004,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_261",
+      "module": "Error Handling",
+      "priority": "High",
+      "name": "Error resilience test #1",
+      "status": "PASSED",
+      "duration": 942,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_262",
+      "module": "Error Handling",
+      "priority": "High",
+      "name": "Error resilience test #2",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_263",
+      "module": "Error Handling",
+      "priority": "High",
+      "name": "Error resilience test #3",
+      "status": "PASSED",
+      "duration": 924,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_264",
+      "module": "Error Handling",
+      "priority": "High",
+      "name": "Error resilience test #4",
+      "status": "PASSED",
+      "duration": 921,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_265",
+      "module": "Error Handling",
+      "priority": "High",
+      "name": "Error resilience test #5",
+      "status": "PASSED",
+      "duration": 927,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_266",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #6",
+      "status": "PASSED",
+      "duration": 943,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_267",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #7",
+      "status": "PASSED",
+      "duration": 947,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_268",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #8",
+      "status": "PASSED",
+      "duration": 941,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_269",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #9",
+      "status": "PASSED",
+      "duration": 941,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_270",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #10",
+      "status": "PASSED",
+      "duration": 951,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_271",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #11",
+      "status": "PASSED",
+      "duration": 943,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_272",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #12",
+      "status": "PASSED",
+      "duration": 919,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_273",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #13",
+      "status": "PASSED",
+      "duration": 916,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_274",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #14",
+      "status": "PASSED",
+      "duration": 925,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_275",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #15",
+      "status": "PASSED",
+      "duration": 936,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_276",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #16",
+      "status": "PASSED",
+      "duration": 931,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_277",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #17",
+      "status": "PASSED",
+      "duration": 929,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_278",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #18",
+      "status": "PASSED",
+      "duration": 919,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_279",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #19",
+      "status": "PASSED",
+      "duration": 922,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_280",
+      "module": "Error Handling",
+      "priority": "Medium",
+      "name": "Error resilience test #20",
+      "status": "PASSED",
+      "duration": 937,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_281",
+      "module": "Session Management",
+      "priority": "High",
+      "name": "Session persistence test #1",
+      "status": "PASSED",
+      "duration": 105,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_282",
+      "module": "Session Management",
+      "priority": "High",
+      "name": "Session persistence test #2",
+      "status": "PASSED",
+      "duration": 103,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_283",
+      "module": "Session Management",
+      "priority": "High",
+      "name": "Session persistence test #3",
+      "status": "PASSED",
+      "duration": 109,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_284",
+      "module": "Session Management",
+      "priority": "High",
+      "name": "Session persistence test #4",
+      "status": "PASSED",
+      "duration": 106,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_285",
+      "module": "Session Management",
+      "priority": "High",
+      "name": "Session persistence test #5",
+      "status": "PASSED",
+      "duration": 121,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_286",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #6",
+      "status": "PASSED",
+      "duration": 115,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_287",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #7",
+      "status": "PASSED",
+      "duration": 128,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_288",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #8",
+      "status": "PASSED",
+      "duration": 135,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_289",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #9",
+      "status": "PASSED",
+      "duration": 139,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_290",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #10",
+      "status": "PASSED",
+      "duration": 162,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_291",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #11",
+      "status": "PASSED",
+      "duration": 135,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_292",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #12",
+      "status": "PASSED",
+      "duration": 160,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_293",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #13",
+      "status": "PASSED",
+      "duration": 150,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_294",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #14",
+      "status": "PASSED",
+      "duration": 137,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_295",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #15",
+      "status": "PASSED",
+      "duration": 138,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_296",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #16",
+      "status": "PASSED",
+      "duration": 138,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_297",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #17",
+      "status": "PASSED",
+      "duration": 131,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_298",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #18",
+      "status": "PASSED",
+      "duration": 128,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_299",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #19",
+      "status": "PASSED",
+      "duration": 152,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_300",
+      "module": "Session Management",
+      "priority": "Medium",
+      "name": "Session persistence test #20",
+      "status": "PASSED",
+      "duration": 147,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_301",
+      "module": "Accessibility",
+      "priority": "High",
+      "name": "Page has lang attribute",
+      "status": "PASSED",
+      "duration": 163,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_302",
+      "module": "Accessibility",
+      "priority": "High",
+      "name": "Page has viewport meta tag",
+      "status": "PASSED",
+      "duration": 189,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_303",
+      "module": "Accessibility",
+      "priority": "High",
+      "name": "Page has charset meta tag",
+      "status": "PASSED",
+      "duration": 163,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_304",
+      "module": "Accessibility",
+      "priority": "Medium",
+      "name": "All images have alt text or are decorative",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_305",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #1",
+      "status": "PASSED",
+      "duration": 174,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_306",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #2",
+      "status": "PASSED",
+      "duration": 207,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_307",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #3",
+      "status": "PASSED",
+      "duration": 189,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_308",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #4",
+      "status": "PASSED",
+      "duration": 206,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_309",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #5",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_310",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #6",
+      "status": "PASSED",
+      "duration": 204,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_311",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #7",
+      "status": "PASSED",
+      "duration": 198,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_312",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #8",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_313",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #9",
+      "status": "PASSED",
+      "duration": 219,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_314",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #10",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_315",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #11",
+      "status": "PASSED",
+      "duration": 247,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_316",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #12",
+      "status": "PASSED",
+      "duration": 211,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_317",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #13",
+      "status": "PASSED",
+      "duration": 221,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_318",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #14",
+      "status": "PASSED",
+      "duration": 177,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_319",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #15",
+      "status": "PASSED",
+      "duration": 220,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_320",
+      "module": "Accessibility",
+      "priority": "Low",
+      "name": "Accessibility DOM structure check #16",
+      "status": "PASSED",
+      "duration": 187,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_321",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at iPhone SE (375x667)",
+      "status": "PASSED",
+      "duration": 688,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_322",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at iPhone SE",
+      "status": "PASSED",
+      "duration": 665,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_323",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at iPhone 12 (390x844)",
+      "status": "PASSED",
+      "duration": 645,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_324",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at iPhone 12",
+      "status": "PASSED",
+      "duration": 622,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_325",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at iPhone XR (414x896)",
+      "status": "PASSED",
+      "duration": 643,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_326",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at iPhone XR",
+      "status": "PASSED",
+      "duration": 633,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_327",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at iPad (768x1024)",
+      "status": "PASSED",
+      "duration": 631,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_328",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at iPad",
+      "status": "PASSED",
+      "duration": 635,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_329",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at iPad Landscape (1024x768)",
+      "status": "PASSED",
+      "duration": 647,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_330",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at iPad Landscape",
+      "status": "PASSED",
+      "duration": 666,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_331",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at 720p (1280x720)",
+      "status": "PASSED",
+      "duration": 650,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_332",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at 720p",
+      "status": "PASSED",
+      "duration": 635,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_333",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at Laptop (1366x768)",
+      "status": "PASSED",
+      "duration": 657,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_334",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at Laptop",
+      "status": "PASSED",
+      "duration": 633,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_335",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at MacBook (1440x900)",
+      "status": "PASSED",
+      "duration": 722,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_336",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at MacBook",
+      "status": "PASSED",
+      "duration": 717,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_337",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at Full HD (1920x1080)",
+      "status": "PASSED",
+      "duration": 685,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_338",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at Full HD",
+      "status": "PASSED",
+      "duration": 670,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_339",
+      "module": "Responsive Design",
+      "priority": "Medium",
+      "name": "Layout renders at 2K (2560x1440)",
+      "status": "PASSED",
+      "duration": 821,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_340",
+      "module": "Responsive Design",
+      "priority": "Low",
+      "name": "No horizontal overflow at 2K",
+      "status": "PASSED",
+      "duration": 761,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_341",
+      "module": "Performance",
+      "priority": "Critical",
+      "name": "Page loads within 5 seconds",
+      "status": "PASSED",
+      "duration": 236,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_342",
+      "module": "Performance",
+      "priority": "High",
+      "name": "DOM has fewer than 5000 elements",
+      "status": "PASSED",
+      "duration": 190,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_343",
+      "module": "Performance",
+      "priority": "High",
+      "name": "No memory-heavy inline styles over 10KB",
+      "status": "PASSED",
+      "duration": 167,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_344",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #1",
+      "status": "PASSED",
+      "duration": 145,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_345",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #2",
+      "status": "PASSED",
+      "duration": 135,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_346",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #3",
+      "status": "PASSED",
+      "duration": 159,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_347",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #4",
+      "status": "PASSED",
+      "duration": 178,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_348",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #5",
+      "status": "PASSED",
+      "duration": 224,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_349",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #6",
+      "status": "PASSED",
+      "duration": 204,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_350",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #7",
+      "status": "PASSED",
+      "duration": 145,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_351",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #8",
+      "status": "PASSED",
+      "duration": 186,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_352",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #9",
+      "status": "PASSED",
+      "duration": 175,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_353",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #10",
+      "status": "PASSED",
+      "duration": 155,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_354",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #11",
+      "status": "PASSED",
+      "duration": 179,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_355",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #12",
+      "status": "PASSED",
+      "duration": 146,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_356",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #13",
+      "status": "PASSED",
+      "duration": 174,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_357",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #14",
+      "status": "PASSED",
+      "duration": 157,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_358",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #15",
+      "status": "PASSED",
+      "duration": 155,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_359",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #16",
+      "status": "PASSED",
+      "duration": 170,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_360",
+      "module": "Performance",
+      "priority": "Medium",
+      "name": "Performance consistency check #17",
+      "status": "PASSED",
+      "duration": 167,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_361",
+      "module": "Regression",
+      "priority": "Critical",
+      "name": "App does not crash on load",
+      "status": "PASSED",
+      "duration": 2199,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_362",
+      "module": "Regression",
+      "priority": "Critical",
+      "name": "All major pages have DOM elements",
+      "status": "PASSED",
+      "duration": 292,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_363",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #1",
+      "status": "PASSED",
+      "duration": 453,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_364",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #2",
+      "status": "PASSED",
+      "duration": 657,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_365",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #3",
+      "status": "PASSED",
+      "duration": 476,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_366",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #4",
+      "status": "PASSED",
+      "duration": 472,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_367",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #5",
+      "status": "PASSED",
+      "duration": 571,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_368",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #6",
+      "status": "PASSED",
+      "duration": 556,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_369",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #7",
+      "status": "PASSED",
+      "duration": 537,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_370",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #8",
+      "status": "PASSED",
+      "duration": 470,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_371",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #9",
+      "status": "PASSED",
+      "duration": 491,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_372",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #10",
+      "status": "PASSED",
+      "duration": 526,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_373",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #11",
+      "status": "PASSED",
+      "duration": 521,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_374",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #12",
+      "status": "PASSED",
+      "duration": 481,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_375",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #13",
+      "status": "PASSED",
+      "duration": 460,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_376",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #14",
+      "status": "PASSED",
+      "duration": 445,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_377",
+      "module": "Regression",
+      "priority": "High",
+      "name": "Regression smoke #15",
+      "status": "PASSED",
+      "duration": 438,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_378",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #16",
+      "status": "PASSED",
+      "duration": 428,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_379",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #17",
+      "status": "PASSED",
+      "duration": 435,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_380",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #18",
+      "status": "PASSED",
+      "duration": 480,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_381",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #19",
+      "status": "PASSED",
+      "duration": 451,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_382",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #20",
+      "status": "PASSED",
+      "duration": 439,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_383",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #21",
+      "status": "PASSED",
+      "duration": 426,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_384",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #22",
+      "status": "PASSED",
+      "duration": 423,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_385",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #23",
+      "status": "PASSED",
+      "duration": 440,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_386",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #24",
+      "status": "PASSED",
+      "duration": 419,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_387",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #25",
+      "status": "PASSED",
+      "duration": 422,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_388",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #26",
+      "status": "PASSED",
+      "duration": 463,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_389",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #27",
+      "status": "PASSED",
+      "duration": 423,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_390",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #28",
+      "status": "PASSED",
+      "duration": 431,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_391",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #29",
+      "status": "PASSED",
+      "duration": 428,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_392",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #30",
+      "status": "PASSED",
+      "duration": 426,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_393",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #31",
+      "status": "PASSED",
+      "duration": 423,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_394",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #32",
+      "status": "PASSED",
+      "duration": 432,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_395",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #33",
+      "status": "PASSED",
+      "duration": 443,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_396",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #34",
+      "status": "PASSED",
+      "duration": 440,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_397",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #35",
+      "status": "PASSED",
+      "duration": 434,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_398",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #36",
+      "status": "PASSED",
+      "duration": 429,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_399",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #37",
+      "status": "PASSED",
+      "duration": 417,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_400",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #38",
+      "status": "PASSED",
+      "duration": 428,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_401",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #39",
+      "status": "PASSED",
+      "duration": 420,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_402",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #40",
+      "status": "PASSED",
+      "duration": 421,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_403",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #41",
+      "status": "PASSED",
+      "duration": 410,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_404",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #42",
+      "status": "PASSED",
+      "duration": 416,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_405",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #43",
+      "status": "PASSED",
+      "duration": 417,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_406",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #44",
+      "status": "PASSED",
+      "duration": 427,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_407",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #45",
+      "status": "PASSED",
+      "duration": 426,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_408",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #46",
+      "status": "PASSED",
+      "duration": 426,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_409",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #47",
+      "status": "PASSED",
+      "duration": 441,
+      "errorMsg": ""
+    },
+    {
+      "id": "TC_410",
+      "module": "Regression",
+      "priority": "Medium",
+      "name": "Regression smoke #48",
+      "status": "PASSED",
+      "duration": 445,
+      "errorMsg": ""
+    }
+  ]
+}

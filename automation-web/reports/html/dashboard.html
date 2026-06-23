@@ -1,0 +1,4092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BidSphere E2E Test Report</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+        .header { background: linear-gradient(135deg, #1e3a8a, #7c3aed); padding: 40px; text-align: center; }
+        .header h1 { font-size: 2rem; margin-bottom: 8px; }
+        .header p { opacity: 0.8; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+        .card { background: #1e293b; border-radius: 12px; padding: 24px; text-align: center; border: 1px solid #334155; }
+        .card .value { font-size: 2.5rem; font-weight: 700; margin: 10px 0; }
+        .card .label { color: #94a3b8; font-size: 0.9rem; }
+        .card.pass .value { color: #4ade80; }
+        .card.fail .value { color: #f87171; }
+        .card.total .value { color: #60a5fa; }
+        .card.rate .value { color: #f59e0b; }
+        .section { background: #1e293b; border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid #334155; }
+        .section h2 { margin-bottom: 20px; font-size: 1.3rem; color: #f8fafc; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #0f172a; padding: 12px; text-align: left; font-weight: 600; color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 10px 12px; border-bottom: 1px solid #334155; font-size: 0.9rem; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-pass { background: #064e3b; color: #4ade80; }
+        .badge-fail { background: #450a0a; color: #f87171; }
+        .row-fail { background: rgba(220, 38, 38, 0.05); }
+        code { background: #334155; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+        .progress-bar { height: 8px; background: #334155; border-radius: 4px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #22d3ee); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 BidSphere E2E Test Execution Report</h1>
+        <p>Execution Date: 2026-06-23T09:00:18.261Z | Duration: 467.6s</p>
+    </div>
+    <div class="container">
+        <div class="cards">
+            <div class="card total">
+                <div class="label">Total Tests</div>
+                <div class="value">410</div>
+            </div>
+            <div class="card pass">
+                <div class="label">Passed</div>
+                <div class="value">386</div>
+            </div>
+            <div class="card fail">
+                <div class="label">Failed</div>
+                <div class="value">24</div>
+            </div>
+            <div class="card rate">
+                <div class="label">Pass Rate</div>
+                <div class="value">94.15%</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:94.15%"></div></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Module Summary</h2>
+            <table>
+                <thead><tr><th>Module</th><th>Total</th><th>Passed</th><th>Failed</th><th>Pass Rate</th></tr></thead>
+                <tbody>
+        <tr>
+            <td>Authentication</td>
+            <td>40</td>
+            <td style="color:#16a34a;font-weight:600">18</td>
+            <td style="color:#dc2626;font-weight:600">22</td>
+            <td>45.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Navigation</td>
+            <td>30</td>
+            <td style="color:#16a34a;font-weight:600">29</td>
+            <td style="color:#dc2626;font-weight:600">1</td>
+            <td>96.7%</td>
+        </tr>
+    
+        <tr>
+            <td>UI Validation</td>
+            <td>50</td>
+            <td style="color:#16a34a;font-weight:600">49</td>
+            <td style="color:#dc2626;font-weight:600">1</td>
+            <td>98.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Forms</td>
+            <td>50</td>
+            <td style="color:#16a34a;font-weight:600">50</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>CRUD Operations</td>
+            <td>50</td>
+            <td style="color:#16a34a;font-weight:600">50</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Input Validation</td>
+            <td>40</td>
+            <td style="color:#16a34a;font-weight:600">40</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Error Handling</td>
+            <td>20</td>
+            <td style="color:#16a34a;font-weight:600">20</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Session Management</td>
+            <td>20</td>
+            <td style="color:#16a34a;font-weight:600">20</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Accessibility</td>
+            <td>20</td>
+            <td style="color:#16a34a;font-weight:600">20</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Responsive Design</td>
+            <td>20</td>
+            <td style="color:#16a34a;font-weight:600">20</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Performance</td>
+            <td>20</td>
+            <td style="color:#16a34a;font-weight:600">20</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    
+        <tr>
+            <td>Regression</td>
+            <td>50</td>
+            <td style="color:#16a34a;font-weight:600">50</td>
+            <td style="color:#dc2626;font-weight:600">0</td>
+            <td>100.0%</td>
+        </tr>
+    </tbody>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <h2>❌ Failed Tests</h2>
+            <table>
+                <thead><tr><th>ID</th><th>Module</th><th>Test Name</th><th>Priority</th><th>Error</th><th>Duration</th></tr></thead>
+                <tbody>
+        <tr>
+            <td><code>TC_006</code></td>
+            <td>Authentication</td>
+            <td>Login with valid credentials (reddy/123456)</td>
+            <td>Critical</td>
+            <td style="color:#dc2626">User button should appear after login</td>
+            <td>3590ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_007</code></td>
+            <td>Authentication</td>
+            <td>Username displays correctly after login</td>
+            <td>Critical</td>
+            <td style="color:#dc2626">Expected username reddy, got: Guest</td>
+            <td>3616ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_020</code></td>
+            <td>Authentication</td>
+            <td>Login form submit button text says Sign In</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10181ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_021</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #1: "admin'--"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10158ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_022</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #2: "<script>alert(1)</script>"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10173ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_023</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #3: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10175ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_024</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #4: "   "</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10224ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_025</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #5: "user@#$%"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10180ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_026</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #6: "SELECT * FROM"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10186ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_028</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #8: "null"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Node is either not clickable or not an Element</td>
+            <td>334ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_029</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #9: "undefined"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10219ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_030</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #10: "true"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10165ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_031</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #11: "0"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10167ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_032</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #12: "-1"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10216ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_033</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #13: "{}"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10188ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_034</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #14: "[]"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10167ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_035</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #15: "NaN"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10201ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_036</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #16: "Infinity"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10141ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_037</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #17: "	
+"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10158ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_038</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #18: "DROP TABLE"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10215ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_039</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #19: "reddy; rm -rf /"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10227ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_040</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #20: "UNION SELECT"</td>
+            <td>Medium</td>
+            <td style="color:#dc2626">Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded</td>
+            <td>10149ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_043</code></td>
+            <td>Navigation</td>
+            <td>Click My Profile opens auth modal when logged out</td>
+            <td>Critical</td>
+            <td style="color:#dc2626">Auth modal should open when accessing profile without login</td>
+            <td>726ms</td>
+        </tr>
+    
+        <tr>
+            <td><code>TC_082</code></td>
+            <td>UI Validation</td>
+            <td>Auction listings are rendered</td>
+            <td>High</td>
+            <td style="color:#dc2626">Expected auction cards to be rendered, got 0</td>
+            <td>3140ms</td>
+        </tr>
+    </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>📋 All Test Cases (410)</h2>
+            <table>
+                <thead><tr><th>ID</th><th>Module</th><th>Test Name</th><th>Priority</th><th>Status</th><th>Duration</th></tr></thead>
+                <tbody>
+        <tr class="row-pass">
+            <td><code>TC_001</code></td>
+            <td>Authentication</td>
+            <td>Home page loads successfully</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>440ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_002</code></td>
+            <td>Authentication</td>
+            <td>Sign In button is visible when logged out</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>256ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_003</code></td>
+            <td>Authentication</td>
+            <td>Clicking Sign In opens auth modal</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1454ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_004</code></td>
+            <td>Authentication</td>
+            <td>Login form has username field</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>333ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_005</code></td>
+            <td>Authentication</td>
+            <td>Login form has password field</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>336ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_006</code></td>
+            <td>Authentication</td>
+            <td>Login with valid credentials (reddy/123456)</td>
+            <td>Critical</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>3590ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_007</code></td>
+            <td>Authentication</td>
+            <td>Username displays correctly after login</td>
+            <td>Critical</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>3616ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_008</code></td>
+            <td>Authentication</td>
+            <td>Login with empty username shows error</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1003ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_009</code></td>
+            <td>Authentication</td>
+            <td>Login with empty password shows error</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>946ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_010</code></td>
+            <td>Authentication</td>
+            <td>Login with wrong password shows toast error</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2355ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_011</code></td>
+            <td>Authentication</td>
+            <td>Register tab is clickable</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>386ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_012</code></td>
+            <td>Authentication</td>
+            <td>Register form has username field</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>361ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_013</code></td>
+            <td>Authentication</td>
+            <td>Register form has email field</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>398ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_014</code></td>
+            <td>Authentication</td>
+            <td>Register form has password field</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>337ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_015</code></td>
+            <td>Authentication</td>
+            <td>Switch back to Login tab from Register</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>425ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_016</code></td>
+            <td>Authentication</td>
+            <td>Close auth modal with X button</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>875ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_017</code></td>
+            <td>Authentication</td>
+            <td>Login username field placeholder text correct</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>318ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_018</code></td>
+            <td>Authentication</td>
+            <td>Login password field is type=password</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>322ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_019</code></td>
+            <td>Authentication</td>
+            <td>Register with new user succeeds</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2290ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_020</code></td>
+            <td>Authentication</td>
+            <td>Login form submit button text says Sign In</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10181ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_021</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #1: "admin'--"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10158ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_022</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #2: "<script>alert(1)</script>"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10173ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_023</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #3: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10175ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_024</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #4: "   "</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10224ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_025</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #5: "user@#$%"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10180ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_026</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #6: "SELECT * FROM"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10186ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_027</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #7: "../../../etc/passwd"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1460ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_028</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #8: "null"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>334ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_029</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #9: "undefined"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10219ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_030</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #10: "true"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10165ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_031</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #11: "0"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10167ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_032</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #12: "-1"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10216ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_033</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #13: "{}"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10188ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_034</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #14: "[]"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10167ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_035</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #15: "NaN"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10201ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_036</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #16: "Infinity"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10141ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_037</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #17: "	
+"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10158ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_038</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #18: "DROP TABLE"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10215ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_039</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #19: "reddy; rm -rf /"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10227ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_040</code></td>
+            <td>Authentication</td>
+            <td>Reject malicious username attempt #20: "UNION SELECT"</td>
+            <td>Medium</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>10149ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_041</code></td>
+            <td>Navigation</td>
+            <td>Dashboard page is visible by default</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>159ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_042</code></td>
+            <td>Navigation</td>
+            <td>Browse Auctions nav button is active by default</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>146ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_043</code></td>
+            <td>Navigation</td>
+            <td>Click My Profile opens auth modal when logged out</td>
+            <td>Critical</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>726ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_044</code></td>
+            <td>Navigation</td>
+            <td>Logo click navigates to dashboard</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>694ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_045</code></td>
+            <td>Navigation</td>
+            <td>Admin nav is hidden for non-admin users</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>154ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_046</code></td>
+            <td>Navigation</td>
+            <td>Page scrolls to top on navigation</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>636ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_047</code></td>
+            <td>Navigation</td>
+            <td>Navigate to dashboard shows correct page</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>654ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_048</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 1</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>335ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_049</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 2</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>353ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_050</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 3</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>348ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_051</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 4</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>348ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_052</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 5</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>334ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_053</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 6</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>428ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_054</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 7</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>342ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_055</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 8</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>349ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_056</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 9</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>343ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_057</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 10</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>394ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_058</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 11</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>368ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_059</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 12</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>371ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_060</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 13</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>346ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_061</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 14</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>376ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_062</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 15</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>427ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_063</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>347ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_064</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>373ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_065</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>353ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_066</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>353ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_067</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>353ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_068</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 21</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>355ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_069</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 22</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>363ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_070</code></td>
+            <td>Navigation</td>
+            <td>Navigation stress test iteration 23</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>363ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_071</code></td>
+            <td>UI Validation</td>
+            <td>Page title is BidSphere</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>155ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_072</code></td>
+            <td>UI Validation</td>
+            <td>Header exists and is visible</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>208ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_073</code></td>
+            <td>UI Validation</td>
+            <td>Footer exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>260ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_074</code></td>
+            <td>UI Validation</td>
+            <td>Logo text says BidSphere</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>198ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_075</code></td>
+            <td>UI Validation</td>
+            <td>Hero section has heading</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>176ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_076</code></td>
+            <td>UI Validation</td>
+            <td>Hero heading contains "Collect, Trade"</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_077</code></td>
+            <td>UI Validation</td>
+            <td>Search input exists on dashboard</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>189ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_078</code></td>
+            <td>UI Validation</td>
+            <td>Search input has placeholder</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>185ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_079</code></td>
+            <td>UI Validation</td>
+            <td>Category filter buttons exist</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>156ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_080</code></td>
+            <td>UI Validation</td>
+            <td>All Categories button is active by default</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>175ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_081</code></td>
+            <td>UI Validation</td>
+            <td>Listings container exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>155ms</td>
+        </tr>
+    
+        <tr class="row-fail">
+            <td><code>TC_082</code></td>
+            <td>UI Validation</td>
+            <td>Auction listings are rendered</td>
+            <td>High</td>
+            <td><span class="badge badge-fail">FAILED</span></td>
+            <td>3140ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_083</code></td>
+            <td>UI Validation</td>
+            <td>Backend status badge exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>150ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_084</code></td>
+            <td>UI Validation</td>
+            <td>Footer contains copyright text</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>137ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_085</code></td>
+            <td>UI Validation</td>
+            <td>Admin header strip is hidden by default</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>143ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_086</code></td>
+            <td>UI Validation</td>
+            <td>Lucide icons are loaded</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2122ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_087</code></td>
+            <td>UI Validation</td>
+            <td>Toast container exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>123ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_088</code></td>
+            <td>UI Validation</td>
+            <td>No JavaScript errors on page load</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2122ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_089</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Electronics" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_090</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Fashion & Luxury" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>148ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_091</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Gaming" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>158ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_092</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Art" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>147ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_093</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Vehicles" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>162ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_094</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Home & Living" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>153ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_095</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Books" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>144ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_096</code></td>
+            <td>UI Validation</td>
+            <td>Category button "Sports" exists</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>156ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_097</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #1 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>149ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_098</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #2 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>144ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_099</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #3 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>150ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_100</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #4 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>180ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_101</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #5 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>162ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_102</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #6 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>194ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_103</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #7 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>169ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_104</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #8 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>180ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_105</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #9 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_106</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #10 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_107</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #11 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>181ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_108</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #12 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>175ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_109</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #13 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>190ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_110</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #14 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>168ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_111</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #15 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>185ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_112</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #16 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>166ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_113</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #17 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>198ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_114</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #18 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>185ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_115</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #19 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>184ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_116</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #20 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>180ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_117</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #21 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>190ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_118</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #22 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>159ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_119</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #23 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>196ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_120</code></td>
+            <td>UI Validation</td>
+            <td>UI consistency check #24 - page structure intact</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>207ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_121</code></td>
+            <td>Forms</td>
+            <td>Address form exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>214ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_122</code></td>
+            <td>Forms</td>
+            <td>Address form full name field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>160ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_123</code></td>
+            <td>Forms</td>
+            <td>Address form street field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>206ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_124</code></td>
+            <td>Forms</td>
+            <td>Address form city field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>175ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_125</code></td>
+            <td>Forms</td>
+            <td>Address form state field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>184ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_126</code></td>
+            <td>Forms</td>
+            <td>Address form ZIP field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>168ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_127</code></td>
+            <td>Forms</td>
+            <td>Address form country field exists</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>169ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_128</code></td>
+            <td>Forms</td>
+            <td>Payment form exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>174ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_129</code></td>
+            <td>Forms</td>
+            <td>Payment card number field exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>202ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_130</code></td>
+            <td>Forms</td>
+            <td>Payment UPI form section exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>164ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_131</code></td>
+            <td>Forms</td>
+            <td>Payment NetBanking form section exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>180ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_132</code></td>
+            <td>Forms</td>
+            <td>Payment Wallet form section exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>178ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_133</code></td>
+            <td>Forms</td>
+            <td>Admin sell form exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>190ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_134</code></td>
+            <td>Forms</td>
+            <td>Admin item title field exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>212ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_135</code></td>
+            <td>Forms</td>
+            <td>Admin category select exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_136</code></td>
+            <td>Forms</td>
+            <td>Admin starting bid field exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_137</code></td>
+            <td>Forms</td>
+            <td>Admin description textarea exists</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>150ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_138</code></td>
+            <td>Forms</td>
+            <td>Address fullname placeholder is correct</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>171ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_139</code></td>
+            <td>Forms</td>
+            <td>Address city placeholder is correct</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>158ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_140</code></td>
+            <td>Forms</td>
+            <td>Admin duration field has min=1</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>170ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_141</code></td>
+            <td>Forms</td>
+            <td>Admin duration field has max=168</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>161ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_142</code></td>
+            <td>Forms</td>
+            <td>Admin item image field accepts URL type</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>159ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_143</code></td>
+            <td>Forms</td>
+            <td>Full Name field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>170ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_144</code></td>
+            <td>Forms</td>
+            <td>Full Name field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>181ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_145</code></td>
+            <td>Forms</td>
+            <td>Street field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>157ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_146</code></td>
+            <td>Forms</td>
+            <td>Street field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>172ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_147</code></td>
+            <td>Forms</td>
+            <td>City field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>178ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_148</code></td>
+            <td>Forms</td>
+            <td>City field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>151ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_149</code></td>
+            <td>Forms</td>
+            <td>State field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>160ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_150</code></td>
+            <td>Forms</td>
+            <td>State field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>157ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_151</code></td>
+            <td>Forms</td>
+            <td>ZIP field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>165ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_152</code></td>
+            <td>Forms</td>
+            <td>ZIP field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>155ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_153</code></td>
+            <td>Forms</td>
+            <td>Country field is required</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>156ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_154</code></td>
+            <td>Forms</td>
+            <td>Country field accepts text input</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>169ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_155</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #1</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>164ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_156</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #2</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>176ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_157</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #3</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>168ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_158</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #4</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>181ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_159</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #5</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>263ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_160</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #6</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>249ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_161</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #7</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>162ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_162</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #8</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>173ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_163</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #9</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>171ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_164</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #10</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>164ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_165</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #11</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>178ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_166</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #12</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>183ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_167</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #13</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>178ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_168</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #14</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>186ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_169</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #15</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_170</code></td>
+            <td>Forms</td>
+            <td>Form DOM integrity check #16</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>174ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_171</code></td>
+            <td>CRUD Operations</td>
+            <td>Auction listings load on dashboard</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1200ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_172</code></td>
+            <td>CRUD Operations</td>
+            <td>Clicking auction card navigates to detail</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1143ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_173</code></td>
+            <td>CRUD Operations</td>
+            <td>Detail page has Back button</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1109ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_174</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #1</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>908ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_175</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #2</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>920ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_176</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #3</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>954ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_177</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #4</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>923ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_178</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #5</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>918ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_179</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #6</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>920ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_180</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #7</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>937ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_181</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #8</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>943ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_182</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #9</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>922ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_183</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #10</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>934ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_184</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #11</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_185</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #12</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>935ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_186</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #13</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>941ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_187</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #14</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>931ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_188</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #15</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>949ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_189</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>996ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_190</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>936ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_191</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>945ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_192</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>944ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_193</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>947ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_194</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #21</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>910ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_195</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #22</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>939ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_196</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #23</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>922ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_197</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #24</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_198</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #25</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>923ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_199</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #26</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>919ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_200</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #27</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>924ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_201</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #28</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>930ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_202</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #29</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>915ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_203</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #30</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_204</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #31</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>936ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_205</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #32</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>920ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_206</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #33</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>970ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_207</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #34</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>921ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_208</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #35</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>922ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_209</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #36</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>919ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_210</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #37</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>929ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_211</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #38</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>935ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_212</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #39</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>924ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_213</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #40</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>919ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_214</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #41</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>925ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_215</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #42</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_216</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #43</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>914ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_217</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #44</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>918ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_218</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #45</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>916ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_219</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #46</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>929ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_220</code></td>
+            <td>CRUD Operations</td>
+            <td>CRUD data integrity check #47</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>910ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_221</code></td>
+            <td>Input Validation</td>
+            <td>Search input accepts text</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>227ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_222</code></td>
+            <td>Input Validation</td>
+            <td>Search filters listings</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1718ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_223</code></td>
+            <td>Input Validation</td>
+            <td>Clear search restores all listings</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2183ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_224</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #1</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>643ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_225</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #2</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>591ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_226</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #3</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>610ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_227</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #4</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>550ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_228</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #5</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>570ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_229</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #6</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>582ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_230</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #7</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>576ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_231</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #8</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>625ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_232</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #9</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>601ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_233</code></td>
+            <td>Input Validation</td>
+            <td>XSS prevention in search - payload #10</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>499ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_234</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #1</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>447ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_235</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #2</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>486ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_236</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #3</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>518ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_237</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #4</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>552ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_238</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #5</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>615ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_239</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #6</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>661ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_240</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #7</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>721ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_241</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #8</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>730ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_242</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #9</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>787ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_243</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #10</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>879ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_244</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #11</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>940ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_245</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #12</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>998ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_246</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #13</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1177ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_247</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #14</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1190ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_248</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #15</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1248ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_249</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1261ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_250</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1598ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_251</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1741ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_252</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1797ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_253</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1948ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_254</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #21</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1813ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_255</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #22</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1714ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_256</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #23</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1911ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_257</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #24</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1810ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_258</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #25</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1775ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_259</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #26</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>1914ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_260</code></td>
+            <td>Input Validation</td>
+            <td>Input boundary test #27</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2004ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_261</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #1</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>942ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_262</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #2</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_263</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #3</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>924ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_264</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #4</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>921ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_265</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #5</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>927ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_266</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #6</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>943ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_267</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #7</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>947ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_268</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #8</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>941ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_269</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #9</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>941ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_270</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #10</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>951ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_271</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #11</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>943ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_272</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #12</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>919ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_273</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #13</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>916ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_274</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #14</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>925ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_275</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #15</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>936ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_276</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>931ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_277</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>929ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_278</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>919ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_279</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>922ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_280</code></td>
+            <td>Error Handling</td>
+            <td>Error resilience test #20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>937ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_281</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #1</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>105ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_282</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #2</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>103ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_283</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #3</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>109ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_284</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #4</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>106ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_285</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #5</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>121ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_286</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #6</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>115ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_287</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #7</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>128ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_288</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #8</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>135ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_289</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #9</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>139ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_290</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #10</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>162ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_291</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #11</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>135ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_292</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #12</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>160ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_293</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #13</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>150ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_294</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #14</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>137ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_295</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #15</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>138ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_296</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>138ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_297</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>131ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_298</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>128ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_299</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>152ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_300</code></td>
+            <td>Session Management</td>
+            <td>Session persistence test #20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>147ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_301</code></td>
+            <td>Accessibility</td>
+            <td>Page has lang attribute</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>163ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_302</code></td>
+            <td>Accessibility</td>
+            <td>Page has viewport meta tag</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>189ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_303</code></td>
+            <td>Accessibility</td>
+            <td>Page has charset meta tag</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>163ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_304</code></td>
+            <td>Accessibility</td>
+            <td>All images have alt text or are decorative</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_305</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #1</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>174ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_306</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #2</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>207ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_307</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #3</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>189ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_308</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #4</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>206ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_309</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #5</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_310</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #6</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>204ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_311</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #7</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>198ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_312</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #8</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_313</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #9</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>219ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_314</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #10</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_315</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #11</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>247ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_316</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #12</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>211ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_317</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #13</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>221ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_318</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #14</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>177ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_319</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #15</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>220ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_320</code></td>
+            <td>Accessibility</td>
+            <td>Accessibility DOM structure check #16</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>187ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_321</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at iPhone SE (375x667)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>688ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_322</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at iPhone SE</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>665ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_323</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at iPhone 12 (390x844)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>645ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_324</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at iPhone 12</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>622ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_325</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at iPhone XR (414x896)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>643ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_326</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at iPhone XR</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>633ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_327</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at iPad (768x1024)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>631ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_328</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at iPad</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>635ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_329</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at iPad Landscape (1024x768)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>647ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_330</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at iPad Landscape</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>666ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_331</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at 720p (1280x720)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>650ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_332</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at 720p</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>635ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_333</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at Laptop (1366x768)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>657ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_334</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at Laptop</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>633ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_335</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at MacBook (1440x900)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>722ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_336</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at MacBook</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>717ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_337</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at Full HD (1920x1080)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>685ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_338</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at Full HD</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>670ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_339</code></td>
+            <td>Responsive Design</td>
+            <td>Layout renders at 2K (2560x1440)</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>821ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_340</code></td>
+            <td>Responsive Design</td>
+            <td>No horizontal overflow at 2K</td>
+            <td>Low</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>761ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_341</code></td>
+            <td>Performance</td>
+            <td>Page loads within 5 seconds</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>236ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_342</code></td>
+            <td>Performance</td>
+            <td>DOM has fewer than 5000 elements</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>190ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_343</code></td>
+            <td>Performance</td>
+            <td>No memory-heavy inline styles over 10KB</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>167ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_344</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #1</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>145ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_345</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #2</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>135ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_346</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #3</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>159ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_347</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #4</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>178ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_348</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #5</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>224ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_349</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #6</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>204ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_350</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #7</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>145ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_351</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #8</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>186ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_352</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #9</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>175ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_353</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #10</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>155ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_354</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #11</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>179ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_355</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #12</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>146ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_356</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #13</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>174ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_357</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #14</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>157ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_358</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #15</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>155ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_359</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>170ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_360</code></td>
+            <td>Performance</td>
+            <td>Performance consistency check #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>167ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_361</code></td>
+            <td>Regression</td>
+            <td>App does not crash on load</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>2199ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_362</code></td>
+            <td>Regression</td>
+            <td>All major pages have DOM elements</td>
+            <td>Critical</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>292ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_363</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #1</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>453ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_364</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #2</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>657ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_365</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #3</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>476ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_366</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #4</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>472ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_367</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #5</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>571ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_368</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #6</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>556ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_369</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #7</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>537ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_370</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #8</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>470ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_371</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #9</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>491ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_372</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #10</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>526ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_373</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #11</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>521ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_374</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #12</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>481ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_375</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #13</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>460ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_376</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #14</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>445ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_377</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #15</td>
+            <td>High</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>438ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_378</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #16</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>428ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_379</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #17</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>435ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_380</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #18</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>480ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_381</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #19</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>451ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_382</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #20</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>439ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_383</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #21</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>426ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_384</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #22</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>423ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_385</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #23</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>440ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_386</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #24</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>419ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_387</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #25</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>422ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_388</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #26</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>463ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_389</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #27</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>423ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_390</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #28</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>431ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_391</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #29</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>428ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_392</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #30</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>426ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_393</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #31</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>423ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_394</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #32</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>432ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_395</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #33</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>443ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_396</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #34</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>440ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_397</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #35</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>434ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_398</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #36</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>429ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_399</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #37</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>417ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_400</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #38</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>428ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_401</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #39</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>420ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_402</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #40</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>421ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_403</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #41</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>410ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_404</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #42</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>416ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_405</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #43</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>417ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_406</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #44</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>427ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_407</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #45</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>426ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_408</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #46</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>426ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_409</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #47</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>441ms</td>
+        </tr>
+    
+        <tr class="row-pass">
+            <td><code>TC_410</code></td>
+            <td>Regression</td>
+            <td>Regression smoke #48</td>
+            <td>Medium</td>
+            <td><span class="badge badge-pass">PASSED</span></td>
+            <td>445ms</td>
+        </tr>
+    </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

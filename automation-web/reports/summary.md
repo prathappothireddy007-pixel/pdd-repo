@@ -1,0 +1,429 @@
+# BidSphere E2E Execution Summary
+
+**Execution Date:** 2026-06-23T09:00:18.265Z
+**Base URL:** file://C:\Users\Suchithra\.gemini\antigravity\scratch\online-auction-app\index.html
+
+## Results
+| Metric | Value |
+|--------|-------|
+| Total Tests | 410 |
+| Passed | 386 |
+| Failed | 24 |
+| Skipped | 0 |
+| Pass Rate | 94.15% |
+| Duration | 467.6s |
+
+## Failed Tests
+- **TC_006** - Login with valid credentials (reddy/123456): User button should appear after login
+- **TC_007** - Username displays correctly after login: Expected username reddy, got: Guest
+- **TC_020** - Login form submit button text says Sign In: Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_021** - Reject malicious username attempt #1: "admin'--": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_022** - Reject malicious username attempt #2: "<script>alert(1)</script>": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_023** - Reject malicious username attempt #3: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_024** - Reject malicious username attempt #4: "   ": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_025** - Reject malicious username attempt #5: "user@#$%": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_026** - Reject malicious username attempt #6: "SELECT * FROM": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_028** - Reject malicious username attempt #8: "null": Node is either not clickable or not an Element
+- **TC_029** - Reject malicious username attempt #9: "undefined": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_030** - Reject malicious username attempt #10: "true": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_031** - Reject malicious username attempt #11: "0": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_032** - Reject malicious username attempt #12: "-1": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_033** - Reject malicious username attempt #13: "{}": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_034** - Reject malicious username attempt #14: "[]": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_035** - Reject malicious username attempt #15: "NaN": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_036** - Reject malicious username attempt #16: "Infinity": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_037** - Reject malicious username attempt #17: "	
+": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_038** - Reject malicious username attempt #18: "DROP TABLE": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_039** - Reject malicious username attempt #19: "reddy; rm -rf /": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_040** - Reject malicious username attempt #20: "UNION SELECT": Waiting for selector `#header-login-btn` failed: Waiting failed: 10000ms exceeded
+- **TC_043** - Click My Profile opens auth modal when logged out: Auth modal should open when accessing profile without login
+- **TC_082** - Auction listings are rendered: Expected auction cards to be rendered, got 0
+
+## Passed Tests
+- ✓ TC_001 - Home page loads successfully
+- ✓ TC_002 - Sign In button is visible when logged out
+- ✓ TC_003 - Clicking Sign In opens auth modal
+- ✓ TC_004 - Login form has username field
+- ✓ TC_005 - Login form has password field
+- ✓ TC_008 - Login with empty username shows error
+- ✓ TC_009 - Login with empty password shows error
+- ✓ TC_010 - Login with wrong password shows toast error
+- ✓ TC_011 - Register tab is clickable
+- ✓ TC_012 - Register form has username field
+- ✓ TC_013 - Register form has email field
+- ✓ TC_014 - Register form has password field
+- ✓ TC_015 - Switch back to Login tab from Register
+- ✓ TC_016 - Close auth modal with X button
+- ✓ TC_017 - Login username field placeholder text correct
+- ✓ TC_018 - Login password field is type=password
+- ✓ TC_019 - Register with new user succeeds
+- ✓ TC_027 - Reject malicious username attempt #7: "../../../etc/passwd"
+- ✓ TC_041 - Dashboard page is visible by default
+- ✓ TC_042 - Browse Auctions nav button is active by default
+- ✓ TC_044 - Logo click navigates to dashboard
+- ✓ TC_045 - Admin nav is hidden for non-admin users
+- ✓ TC_046 - Page scrolls to top on navigation
+- ✓ TC_047 - Navigate to dashboard shows correct page
+- ✓ TC_048 - Navigation stress test iteration 1
+- ✓ TC_049 - Navigation stress test iteration 2
+- ✓ TC_050 - Navigation stress test iteration 3
+- ✓ TC_051 - Navigation stress test iteration 4
+- ✓ TC_052 - Navigation stress test iteration 5
+- ✓ TC_053 - Navigation stress test iteration 6
+- ✓ TC_054 - Navigation stress test iteration 7
+- ✓ TC_055 - Navigation stress test iteration 8
+- ✓ TC_056 - Navigation stress test iteration 9
+- ✓ TC_057 - Navigation stress test iteration 10
+- ✓ TC_058 - Navigation stress test iteration 11
+- ✓ TC_059 - Navigation stress test iteration 12
+- ✓ TC_060 - Navigation stress test iteration 13
+- ✓ TC_061 - Navigation stress test iteration 14
+- ✓ TC_062 - Navigation stress test iteration 15
+- ✓ TC_063 - Navigation stress test iteration 16
+- ✓ TC_064 - Navigation stress test iteration 17
+- ✓ TC_065 - Navigation stress test iteration 18
+- ✓ TC_066 - Navigation stress test iteration 19
+- ✓ TC_067 - Navigation stress test iteration 20
+- ✓ TC_068 - Navigation stress test iteration 21
+- ✓ TC_069 - Navigation stress test iteration 22
+- ✓ TC_070 - Navigation stress test iteration 23
+- ✓ TC_071 - Page title is BidSphere
+- ✓ TC_072 - Header exists and is visible
+- ✓ TC_073 - Footer exists
+- ✓ TC_074 - Logo text says BidSphere
+- ✓ TC_075 - Hero section has heading
+- ✓ TC_076 - Hero heading contains "Collect, Trade"
+- ✓ TC_077 - Search input exists on dashboard
+- ✓ TC_078 - Search input has placeholder
+- ✓ TC_079 - Category filter buttons exist
+- ✓ TC_080 - All Categories button is active by default
+- ✓ TC_081 - Listings container exists
+- ✓ TC_083 - Backend status badge exists
+- ✓ TC_084 - Footer contains copyright text
+- ✓ TC_085 - Admin header strip is hidden by default
+- ✓ TC_086 - Lucide icons are loaded
+- ✓ TC_087 - Toast container exists
+- ✓ TC_088 - No JavaScript errors on page load
+- ✓ TC_089 - Category button "Electronics" exists
+- ✓ TC_090 - Category button "Fashion & Luxury" exists
+- ✓ TC_091 - Category button "Gaming" exists
+- ✓ TC_092 - Category button "Art" exists
+- ✓ TC_093 - Category button "Vehicles" exists
+- ✓ TC_094 - Category button "Home & Living" exists
+- ✓ TC_095 - Category button "Books" exists
+- ✓ TC_096 - Category button "Sports" exists
+- ✓ TC_097 - UI consistency check #1 - page structure intact
+- ✓ TC_098 - UI consistency check #2 - page structure intact
+- ✓ TC_099 - UI consistency check #3 - page structure intact
+- ✓ TC_100 - UI consistency check #4 - page structure intact
+- ✓ TC_101 - UI consistency check #5 - page structure intact
+- ✓ TC_102 - UI consistency check #6 - page structure intact
+- ✓ TC_103 - UI consistency check #7 - page structure intact
+- ✓ TC_104 - UI consistency check #8 - page structure intact
+- ✓ TC_105 - UI consistency check #9 - page structure intact
+- ✓ TC_106 - UI consistency check #10 - page structure intact
+- ✓ TC_107 - UI consistency check #11 - page structure intact
+- ✓ TC_108 - UI consistency check #12 - page structure intact
+- ✓ TC_109 - UI consistency check #13 - page structure intact
+- ✓ TC_110 - UI consistency check #14 - page structure intact
+- ✓ TC_111 - UI consistency check #15 - page structure intact
+- ✓ TC_112 - UI consistency check #16 - page structure intact
+- ✓ TC_113 - UI consistency check #17 - page structure intact
+- ✓ TC_114 - UI consistency check #18 - page structure intact
+- ✓ TC_115 - UI consistency check #19 - page structure intact
+- ✓ TC_116 - UI consistency check #20 - page structure intact
+- ✓ TC_117 - UI consistency check #21 - page structure intact
+- ✓ TC_118 - UI consistency check #22 - page structure intact
+- ✓ TC_119 - UI consistency check #23 - page structure intact
+- ✓ TC_120 - UI consistency check #24 - page structure intact
+- ✓ TC_121 - Address form exists
+- ✓ TC_122 - Address form full name field exists
+- ✓ TC_123 - Address form street field exists
+- ✓ TC_124 - Address form city field exists
+- ✓ TC_125 - Address form state field exists
+- ✓ TC_126 - Address form ZIP field exists
+- ✓ TC_127 - Address form country field exists
+- ✓ TC_128 - Payment form exists
+- ✓ TC_129 - Payment card number field exists
+- ✓ TC_130 - Payment UPI form section exists
+- ✓ TC_131 - Payment NetBanking form section exists
+- ✓ TC_132 - Payment Wallet form section exists
+- ✓ TC_133 - Admin sell form exists
+- ✓ TC_134 - Admin item title field exists
+- ✓ TC_135 - Admin category select exists
+- ✓ TC_136 - Admin starting bid field exists
+- ✓ TC_137 - Admin description textarea exists
+- ✓ TC_138 - Address fullname placeholder is correct
+- ✓ TC_139 - Address city placeholder is correct
+- ✓ TC_140 - Admin duration field has min=1
+- ✓ TC_141 - Admin duration field has max=168
+- ✓ TC_142 - Admin item image field accepts URL type
+- ✓ TC_143 - Full Name field is required
+- ✓ TC_144 - Full Name field accepts text input
+- ✓ TC_145 - Street field is required
+- ✓ TC_146 - Street field accepts text input
+- ✓ TC_147 - City field is required
+- ✓ TC_148 - City field accepts text input
+- ✓ TC_149 - State field is required
+- ✓ TC_150 - State field accepts text input
+- ✓ TC_151 - ZIP field is required
+- ✓ TC_152 - ZIP field accepts text input
+- ✓ TC_153 - Country field is required
+- ✓ TC_154 - Country field accepts text input
+- ✓ TC_155 - Form DOM integrity check #1
+- ✓ TC_156 - Form DOM integrity check #2
+- ✓ TC_157 - Form DOM integrity check #3
+- ✓ TC_158 - Form DOM integrity check #4
+- ✓ TC_159 - Form DOM integrity check #5
+- ✓ TC_160 - Form DOM integrity check #6
+- ✓ TC_161 - Form DOM integrity check #7
+- ✓ TC_162 - Form DOM integrity check #8
+- ✓ TC_163 - Form DOM integrity check #9
+- ✓ TC_164 - Form DOM integrity check #10
+- ✓ TC_165 - Form DOM integrity check #11
+- ✓ TC_166 - Form DOM integrity check #12
+- ✓ TC_167 - Form DOM integrity check #13
+- ✓ TC_168 - Form DOM integrity check #14
+- ✓ TC_169 - Form DOM integrity check #15
+- ✓ TC_170 - Form DOM integrity check #16
+- ✓ TC_171 - Auction listings load on dashboard
+- ✓ TC_172 - Clicking auction card navigates to detail
+- ✓ TC_173 - Detail page has Back button
+- ✓ TC_174 - CRUD data integrity check #1
+- ✓ TC_175 - CRUD data integrity check #2
+- ✓ TC_176 - CRUD data integrity check #3
+- ✓ TC_177 - CRUD data integrity check #4
+- ✓ TC_178 - CRUD data integrity check #5
+- ✓ TC_179 - CRUD data integrity check #6
+- ✓ TC_180 - CRUD data integrity check #7
+- ✓ TC_181 - CRUD data integrity check #8
+- ✓ TC_182 - CRUD data integrity check #9
+- ✓ TC_183 - CRUD data integrity check #10
+- ✓ TC_184 - CRUD data integrity check #11
+- ✓ TC_185 - CRUD data integrity check #12
+- ✓ TC_186 - CRUD data integrity check #13
+- ✓ TC_187 - CRUD data integrity check #14
+- ✓ TC_188 - CRUD data integrity check #15
+- ✓ TC_189 - CRUD data integrity check #16
+- ✓ TC_190 - CRUD data integrity check #17
+- ✓ TC_191 - CRUD data integrity check #18
+- ✓ TC_192 - CRUD data integrity check #19
+- ✓ TC_193 - CRUD data integrity check #20
+- ✓ TC_194 - CRUD data integrity check #21
+- ✓ TC_195 - CRUD data integrity check #22
+- ✓ TC_196 - CRUD data integrity check #23
+- ✓ TC_197 - CRUD data integrity check #24
+- ✓ TC_198 - CRUD data integrity check #25
+- ✓ TC_199 - CRUD data integrity check #26
+- ✓ TC_200 - CRUD data integrity check #27
+- ✓ TC_201 - CRUD data integrity check #28
+- ✓ TC_202 - CRUD data integrity check #29
+- ✓ TC_203 - CRUD data integrity check #30
+- ✓ TC_204 - CRUD data integrity check #31
+- ✓ TC_205 - CRUD data integrity check #32
+- ✓ TC_206 - CRUD data integrity check #33
+- ✓ TC_207 - CRUD data integrity check #34
+- ✓ TC_208 - CRUD data integrity check #35
+- ✓ TC_209 - CRUD data integrity check #36
+- ✓ TC_210 - CRUD data integrity check #37
+- ✓ TC_211 - CRUD data integrity check #38
+- ✓ TC_212 - CRUD data integrity check #39
+- ✓ TC_213 - CRUD data integrity check #40
+- ✓ TC_214 - CRUD data integrity check #41
+- ✓ TC_215 - CRUD data integrity check #42
+- ✓ TC_216 - CRUD data integrity check #43
+- ✓ TC_217 - CRUD data integrity check #44
+- ✓ TC_218 - CRUD data integrity check #45
+- ✓ TC_219 - CRUD data integrity check #46
+- ✓ TC_220 - CRUD data integrity check #47
+- ✓ TC_221 - Search input accepts text
+- ✓ TC_222 - Search filters listings
+- ✓ TC_223 - Clear search restores all listings
+- ✓ TC_224 - XSS prevention in search - payload #1
+- ✓ TC_225 - XSS prevention in search - payload #2
+- ✓ TC_226 - XSS prevention in search - payload #3
+- ✓ TC_227 - XSS prevention in search - payload #4
+- ✓ TC_228 - XSS prevention in search - payload #5
+- ✓ TC_229 - XSS prevention in search - payload #6
+- ✓ TC_230 - XSS prevention in search - payload #7
+- ✓ TC_231 - XSS prevention in search - payload #8
+- ✓ TC_232 - XSS prevention in search - payload #9
+- ✓ TC_233 - XSS prevention in search - payload #10
+- ✓ TC_234 - Input boundary test #1
+- ✓ TC_235 - Input boundary test #2
+- ✓ TC_236 - Input boundary test #3
+- ✓ TC_237 - Input boundary test #4
+- ✓ TC_238 - Input boundary test #5
+- ✓ TC_239 - Input boundary test #6
+- ✓ TC_240 - Input boundary test #7
+- ✓ TC_241 - Input boundary test #8
+- ✓ TC_242 - Input boundary test #9
+- ✓ TC_243 - Input boundary test #10
+- ✓ TC_244 - Input boundary test #11
+- ✓ TC_245 - Input boundary test #12
+- ✓ TC_246 - Input boundary test #13
+- ✓ TC_247 - Input boundary test #14
+- ✓ TC_248 - Input boundary test #15
+- ✓ TC_249 - Input boundary test #16
+- ✓ TC_250 - Input boundary test #17
+- ✓ TC_251 - Input boundary test #18
+- ✓ TC_252 - Input boundary test #19
+- ✓ TC_253 - Input boundary test #20
+- ✓ TC_254 - Input boundary test #21
+- ✓ TC_255 - Input boundary test #22
+- ✓ TC_256 - Input boundary test #23
+- ✓ TC_257 - Input boundary test #24
+- ✓ TC_258 - Input boundary test #25
+- ✓ TC_259 - Input boundary test #26
+- ✓ TC_260 - Input boundary test #27
+- ✓ TC_261 - Error resilience test #1
+- ✓ TC_262 - Error resilience test #2
+- ✓ TC_263 - Error resilience test #3
+- ✓ TC_264 - Error resilience test #4
+- ✓ TC_265 - Error resilience test #5
+- ✓ TC_266 - Error resilience test #6
+- ✓ TC_267 - Error resilience test #7
+- ✓ TC_268 - Error resilience test #8
+- ✓ TC_269 - Error resilience test #9
+- ✓ TC_270 - Error resilience test #10
+- ✓ TC_271 - Error resilience test #11
+- ✓ TC_272 - Error resilience test #12
+- ✓ TC_273 - Error resilience test #13
+- ✓ TC_274 - Error resilience test #14
+- ✓ TC_275 - Error resilience test #15
+- ✓ TC_276 - Error resilience test #16
+- ✓ TC_277 - Error resilience test #17
+- ✓ TC_278 - Error resilience test #18
+- ✓ TC_279 - Error resilience test #19
+- ✓ TC_280 - Error resilience test #20
+- ✓ TC_281 - Session persistence test #1
+- ✓ TC_282 - Session persistence test #2
+- ✓ TC_283 - Session persistence test #3
+- ✓ TC_284 - Session persistence test #4
+- ✓ TC_285 - Session persistence test #5
+- ✓ TC_286 - Session persistence test #6
+- ✓ TC_287 - Session persistence test #7
+- ✓ TC_288 - Session persistence test #8
+- ✓ TC_289 - Session persistence test #9
+- ✓ TC_290 - Session persistence test #10
+- ✓ TC_291 - Session persistence test #11
+- ✓ TC_292 - Session persistence test #12
+- ✓ TC_293 - Session persistence test #13
+- ✓ TC_294 - Session persistence test #14
+- ✓ TC_295 - Session persistence test #15
+- ✓ TC_296 - Session persistence test #16
+- ✓ TC_297 - Session persistence test #17
+- ✓ TC_298 - Session persistence test #18
+- ✓ TC_299 - Session persistence test #19
+- ✓ TC_300 - Session persistence test #20
+- ✓ TC_301 - Page has lang attribute
+- ✓ TC_302 - Page has viewport meta tag
+- ✓ TC_303 - Page has charset meta tag
+- ✓ TC_304 - All images have alt text or are decorative
+- ✓ TC_305 - Accessibility DOM structure check #1
+- ✓ TC_306 - Accessibility DOM structure check #2
+- ✓ TC_307 - Accessibility DOM structure check #3
+- ✓ TC_308 - Accessibility DOM structure check #4
+- ✓ TC_309 - Accessibility DOM structure check #5
+- ✓ TC_310 - Accessibility DOM structure check #6
+- ✓ TC_311 - Accessibility DOM structure check #7
+- ✓ TC_312 - Accessibility DOM structure check #8
+- ✓ TC_313 - Accessibility DOM structure check #9
+- ✓ TC_314 - Accessibility DOM structure check #10
+- ✓ TC_315 - Accessibility DOM structure check #11
+- ✓ TC_316 - Accessibility DOM structure check #12
+- ✓ TC_317 - Accessibility DOM structure check #13
+- ✓ TC_318 - Accessibility DOM structure check #14
+- ✓ TC_319 - Accessibility DOM structure check #15
+- ✓ TC_320 - Accessibility DOM structure check #16
+- ✓ TC_321 - Layout renders at iPhone SE (375x667)
+- ✓ TC_322 - No horizontal overflow at iPhone SE
+- ✓ TC_323 - Layout renders at iPhone 12 (390x844)
+- ✓ TC_324 - No horizontal overflow at iPhone 12
+- ✓ TC_325 - Layout renders at iPhone XR (414x896)
+- ✓ TC_326 - No horizontal overflow at iPhone XR
+- ✓ TC_327 - Layout renders at iPad (768x1024)
+- ✓ TC_328 - No horizontal overflow at iPad
+- ✓ TC_329 - Layout renders at iPad Landscape (1024x768)
+- ✓ TC_330 - No horizontal overflow at iPad Landscape
+- ✓ TC_331 - Layout renders at 720p (1280x720)
+- ✓ TC_332 - No horizontal overflow at 720p
+- ✓ TC_333 - Layout renders at Laptop (1366x768)
+- ✓ TC_334 - No horizontal overflow at Laptop
+- ✓ TC_335 - Layout renders at MacBook (1440x900)
+- ✓ TC_336 - No horizontal overflow at MacBook
+- ✓ TC_337 - Layout renders at Full HD (1920x1080)
+- ✓ TC_338 - No horizontal overflow at Full HD
+- ✓ TC_339 - Layout renders at 2K (2560x1440)
+- ✓ TC_340 - No horizontal overflow at 2K
+- ✓ TC_341 - Page loads within 5 seconds
+- ✓ TC_342 - DOM has fewer than 5000 elements
+- ✓ TC_343 - No memory-heavy inline styles over 10KB
+- ✓ TC_344 - Performance consistency check #1
+- ✓ TC_345 - Performance consistency check #2
+- ✓ TC_346 - Performance consistency check #3
+- ✓ TC_347 - Performance consistency check #4
+- ✓ TC_348 - Performance consistency check #5
+- ✓ TC_349 - Performance consistency check #6
+- ✓ TC_350 - Performance consistency check #7
+- ✓ TC_351 - Performance consistency check #8
+- ✓ TC_352 - Performance consistency check #9
+- ✓ TC_353 - Performance consistency check #10
+- ✓ TC_354 - Performance consistency check #11
+- ✓ TC_355 - Performance consistency check #12
+- ✓ TC_356 - Performance consistency check #13
+- ✓ TC_357 - Performance consistency check #14
+- ✓ TC_358 - Performance consistency check #15
+- ✓ TC_359 - Performance consistency check #16
+- ✓ TC_360 - Performance consistency check #17
+- ✓ TC_361 - App does not crash on load
+- ✓ TC_362 - All major pages have DOM elements
+- ✓ TC_363 - Regression smoke #1
+- ✓ TC_364 - Regression smoke #2
+- ✓ TC_365 - Regression smoke #3
+- ✓ TC_366 - Regression smoke #4
+- ✓ TC_367 - Regression smoke #5
+- ✓ TC_368 - Regression smoke #6
+- ✓ TC_369 - Regression smoke #7
+- ✓ TC_370 - Regression smoke #8
+- ✓ TC_371 - Regression smoke #9
+- ✓ TC_372 - Regression smoke #10
+- ✓ TC_373 - Regression smoke #11
+- ✓ TC_374 - Regression smoke #12
+- ✓ TC_375 - Regression smoke #13
+- ✓ TC_376 - Regression smoke #14
+- ✓ TC_377 - Regression smoke #15
+- ✓ TC_378 - Regression smoke #16
+- ✓ TC_379 - Regression smoke #17
+- ✓ TC_380 - Regression smoke #18
+- ✓ TC_381 - Regression smoke #19
+- ✓ TC_382 - Regression smoke #20
+- ✓ TC_383 - Regression smoke #21
+- ✓ TC_384 - Regression smoke #22
+- ✓ TC_385 - Regression smoke #23
+- ✓ TC_386 - Regression smoke #24
+- ✓ TC_387 - Regression smoke #25
+- ✓ TC_388 - Regression smoke #26
+- ✓ TC_389 - Regression smoke #27
+- ✓ TC_390 - Regression smoke #28
+- ✓ TC_391 - Regression smoke #29
+- ✓ TC_392 - Regression smoke #30
+- ✓ TC_393 - Regression smoke #31
+- ✓ TC_394 - Regression smoke #32
+- ✓ TC_395 - Regression smoke #33
+- ✓ TC_396 - Regression smoke #34
+- ✓ TC_397 - Regression smoke #35
+- ✓ TC_398 - Regression smoke #36
+- ✓ TC_399 - Regression smoke #37
+- ✓ TC_400 - Regression smoke #38
+- ✓ TC_401 - Regression smoke #39
+- ✓ TC_402 - Regression smoke #40
+- ✓ TC_403 - Regression smoke #41
+- ✓ TC_404 - Regression smoke #42
+- ✓ TC_405 - Regression smoke #43
+- ✓ TC_406 - Regression smoke #44
+- ✓ TC_407 - Regression smoke #45
+- ✓ TC_408 - Regression smoke #46
+- ✓ TC_409 - Regression smoke #47
+- ✓ TC_410 - Regression smoke #48
