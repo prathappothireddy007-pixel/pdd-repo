@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BidSphere | Premium Online Auction & Reselling</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0813'/><path d='M30 70 L50 30 L70 70 Z' fill='none' stroke='url(%23g)' stroke-width='8'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300f0ff'/><stop offset='100%25' stop-color='%23ff007f'/></linearGradient></defs></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <div id="admin-header-strip" class="admin-strip" style="display: none;">
+      <i data-lucide="shield-alert"></i> SYSTEM ADMINISTRATOR INTERFACE ACTIVE • SECURE CONNECTION STABLE
+    </div>
+    <!-- Header -->
+    <header class="glass">
+      <div class="logo" onclick="navigateTo('dashboard')">
+        <div class="logo-icon">B</div>
+        <h1 class="logo-text">Bid<span>Sphere</span></h1>
+      </div>
+      
+      <nav>
+        <ul>
+          <li>
+            <button id="nav-dashboard" class="nav-btn active" onclick="navigateTo('dashboard')">
+              <i data-lucide="gavel"></i> Browse Auctions
+            </button>
+          </li>
+
+          <li>
+            <button id="nav-profile" class="nav-btn" onclick="navigateTo('profile')">
+              <i data-lucide="user"></i> My Profile
+            </button>
+          </li>
+          <li id="li-nav-admin" style="display: none;">
+            <button id="nav-admin" class="nav-btn" onclick="navigateTo('admin')">
+              <i data-lucide="shield-check"></i> Admin Panel
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="user-status">
+        <div id="backend-status-badge" class="status-badge badge-fallback" title="Shows connection status to Python FastAPI backend">
+          <span class="status-dot orange"></span> Offline (Demo Mode)
+        </div>
+
+        <div id="header-user-btn" style="display: none; align-items: center; gap: 8px;">
+          <button class="btn btn-secondary nav-profile-btn" onclick="navigateTo('profile')" style="padding: 8px 14px; font-size: 0.85rem;">
+            <i data-lucide="user" style="width: 14px; height: 14px; display: inline; vertical-align: middle; margin-right: 4px;"></i> <span id="header-username">Guest</span>
+          </button>
+          <button class="btn btn-secondary btn-logout" onclick="handleLogout()" title="Sign Out" style="padding: 8px; border-radius: 10px; color: var(--accent-magenta); border-color: rgba(255, 0, 127, 0.15);">
+            <i data-lucide="log-out" style="width: 15px; height: 15px;"></i>
+          </button>
+        </div>
+        <button id="header-login-btn" class="btn btn-primary" onclick="openAuthModal()" style="padding: 8px 16px;">
+          <i data-lucide="log-in" style="width: 15px; height: 15px; display: inline; vertical-align: middle; margin-right: 4px;"></i> Sign In
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Page 1: Dashboard (Browse) -->
+      <section id="page-dashboard" class="page active">
+        <div class="hero">
+          <h2>Collect, Trade & Bid on <span>Premium Finds</span></h2>
+          <p>The ultimate cyberpunk-themed arena for rare digital art, retro collectibles, custom setups, and high-fashion streetwear.</p>
+        </div>
+
+        <div class="controls-bar">
+          <div class="search-box">
+            <i data-lucide="search" class="search-icon"></i>
+            <input type="text" id="search-input" placeholder="Search active auctions, consoles, keycaps..." oninput="handleSearchFilter()">
+          </div>
+          
+          <div class="filters" id="category-filters">
+            <button class="filter-btn active" onclick="filterCategory('All')">All Categories</button>
+            <button class="filter-btn" onclick="filterCategory('Electronics')">Electronics</button>
+            <button class="filter-btn" onclick="filterCategory('Fashion & Luxury')">Fashion & Luxury</button>
+            <button class="filter-btn" onclick="filterCategory('Gaming & Entertainment')">Gaming</button>
+            <button class="filter-btn" onclick="filterCategory('Art & Collectibles')">Art</button>
+            <button class="filter-btn" onclick="filterCategory('Vehicles & Motors')">Vehicles</button>
+            <button class="filter-btn" onclick="filterCategory('Home & Living')">Home & Living</button>
+            <button class="filter-btn" onclick="filterCategory('Books & Comics')">Books</button>
+            <button class="filter-btn" onclick="filterCategory('Sports & Outdoors')">Sports</button>
+          </div>
+        </div>
+
+        <div class="listings-grid" id="listings-container">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- Page 2: Product Detail & Bidding Page -->
+      <section id="page-detail" class="page">
+        <button class="btn btn-secondary" style="width: fit-content; margin-bottom: 20px;" onclick="navigateTo('dashboard')">
+          <i data-lucide="arrow-left"></i> Back to Auctions
+        </button>
+
+        <div class="detail-container" id="detail-container-target">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </section>
+
+
+
+      <!-- Page 4: User Profile -->
+      <section id="page-profile" class="page">
+        <div class="profile-grid">
+          <!-- Sidebar Info -->
+          <div class="profile-sidebar glass">
+            <div class="avatar">B</div>
+            <h3 class="profile-username" id="profile-user-name">Loading...</h3>
+            <p class="profile-email" id="profile-user-email">loading@bidsphere.io</p>
+            
+            <div class="stats-container">
+              <div class="stat-item">
+                <span class="stat-label">Available Balance</span>
+                <span class="stat-value highlight" id="profile-wallet">₹0.00</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Auctions Won</span>
+                <span class="stat-value" id="profile-won-count">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Items Listed</span>
+                <span class="stat-value" id="profile-listed-count">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Actions & History -->
+          <div class="profile-main">
+            <div class="tabs-sub">
+              <button class="tab-sub-btn active" onclick="switchProfileTab('bids', this)">Active Bids</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('won', this)">Purchases & Wins</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('listed', this)">My Listings</button>
+              <button class="tab-sub-btn" onclick="switchProfileTab('payments', this)">Deposits History</button>
+            </div>
+
+            <div id="profile-tab-content">
+              <!-- Rendered dynamically based on sub-tab -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Page 5: Admin Moderation Panel -->
+      <section id="page-admin" class="page">
+        <div class="admin-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+          <!-- Left and Right Top Columns: Direct Listing & Approvals/Active stacked -->
+          <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; align-items: start;">
+            <!-- Left Column: Create Live Listing -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px; height: 100%;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="plus-circle" style="color: var(--accent-cyan);"></i> Create Live Auction Listing
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Directly list an auction. It will bypass the pending approval process and go active immediately.
+              </p>
+              <form id="admin-sell-form" onsubmit="handleAdminCreateListing(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="admin-item-title">Item Title</label>
+                    <input type="text" id="admin-item-title" required placeholder="e.g. Rare Cyberpunk GPU">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-category">Category</label>
+                    <select id="admin-item-category" required>
+                      <option value="" disabled selected>Select Category</option>
+                      <option value="Electronics">Electronics</option>
+                      <option value="Fashion & Luxury">Fashion & Luxury</option>
+                      <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                      <option value="Art & Collectibles">Art & Collectibles</option>
+                      <option value="Vehicles & Motors">Vehicles & Motors</option>
+                      <option value="Home & Living">Home & Living</option>
+                      <option value="Books & Comics">Books & Comics</option>
+                      <option value="Sports & Outdoors">Sports & Outdoors</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-duration">Duration (Hours)</label>
+                    <input type="number" id="admin-item-duration" required min="1" max="168" value="24">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-starting-bid">Starting Bid (₹)</label>
+                    <input type="number" id="admin-item-starting-bid" required min="1" placeholder="e.g. 150">
+                  </div>
+                  <div class="form-group">
+                    <label for="admin-item-buyout">Buy Now Price (₹ - Optional)</label>
+                    <input type="number" id="admin-item-buyout" min="1" placeholder="e.g. 500">
+                  </div>
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="admin-item-image">Image URL (Optional)</label>
+                    <input type="url" id="admin-item-image" placeholder="https://example.com/image.jpg">
+                  </div>
+                  <div class="form-group" style="grid-column: span 2;">
+                    <label for="admin-item-description">Description & Details</label>
+                    <textarea id="admin-item-description" required placeholder="Details..." style="height: 90px;"></textarea>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%;">
+                  <i data-lucide="zap" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Publish Live Auction
+                </button>
+              </form>
+            </div>
+
+            <!-- Right Column: Approvals and Active Stack -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+              <!-- Pending Approvals Box -->
+              <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                  <i data-lucide="clock" style="color: var(--accent-cyan);"></i> Pending Listings Approvals
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                  Review items submitted by normal users. Approved items will go live immediately.
+                </p>
+                <div id="admin-pending-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Active Listings Box -->
+              <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+                <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                  <i data-lucide="shield-alert" style="color: var(--accent-magenta);"></i> Active Auctions Moderation
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                  Moderators can delete active listings violating rules or causing disputes.
+                </p>
+                <div id="admin-active-container" style="display: flex; flex-direction: column; gap: 15px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Shipments Board and Payments Ledger -->
+          <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+            <!-- Shipments board -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="truck" style="color: var(--accent-cyan);"></i> Marketplace Shipments Tracker
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Manage delivery statuses for won/bought auctions. Update statuses from Pending Shipment to In Transit and Delivered.
+              </p>
+              <div style="overflow-x: auto;">
+                <table class="ledger-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                      <th style="padding: 12px 10px;">Item Title</th>
+                      <th style="padding: 12px 10px;">Buyer</th>
+                      <th style="padding: 12px 10px;">Seller</th>
+                      <th style="padding: 12px 10px;">Price</th>
+                      <th style="padding: 12px 10px;">Tracking ID</th>
+                      <th style="padding: 12px 10px;">Shipping Address</th>
+                      <th style="padding: 12px 10px;">Status</th>
+                      <th style="padding: 12px 10px; text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-deliveries-tbody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Payments Ledger -->
+            <div class="admin-panel-box glass" style="padding: 24px; border-radius: 16px;">
+              <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
+                <i data-lucide="receipt" style="color: var(--accent-magenta);"></i> Payments History Ledger
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                Audit log of all deposit activities, credit card transactions, and UPI scan refills.
+              </p>
+              <div style="overflow-x: auto;">
+                <table class="ledger-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                  <thead>
+                    <tr style="border-bottom: 2px solid rgba(255, 255, 255, 0.1); color: var(--text-secondary);">
+                      <th style="padding: 12px 10px;">ID</th>
+                      <th style="padding: 12px 10px;">Username</th>
+                      <th style="padding: 12px 10px;">Amount</th>
+                      <th style="padding: 12px 10px;">Payment Method</th>
+                      <th style="padding: 12px 10px;">Transaction Ref</th>
+                      <th style="padding: 12px 10px;">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-payments-tbody">
+                    <!-- Dynamically populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Page: Address -->
+      <section id="page-address" class="page">
+        <div class="form-container glass">
+          <h2 class="form-title">Shipping & Billing Address</h2>
+          <p class="form-subtitle">Enter your details to proceed with checkout.</p>
+          
+          <form id="address-form" onsubmit="handleAddressSubmit(event)">
+            <div class="form-grid">
+              <div class="form-group form-full-width">
+                <label for="addr-fullname">Full Name</label>
+                <input type="text" id="addr-fullname" required placeholder="John Doe">
+              </div>
+              <div class="form-group form-full-width">
+                <label for="addr-street">Street Address</label>
+                <input type="text" id="addr-street" required placeholder="123 Main St">
+              </div>
+              <div class="form-group">
+                <label for="addr-city">City</label>
+                <input type="text" id="addr-city" required placeholder="New York">
+              </div>
+              <div class="form-group">
+                <label for="addr-state">State / Province</label>
+                <input type="text" id="addr-state" required placeholder="NY">
+              </div>
+              <div class="form-group">
+                <label for="addr-zip">ZIP / Postal Code</label>
+                <input type="text" id="addr-zip" required placeholder="10001">
+              </div>
+              <div class="form-group">
+                <label for="addr-country">Country</label>
+                <input type="text" id="addr-country" required placeholder="USA">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 30px; width: 100%;">
+              Proceed to Payment <i data-lucide="arrow-right" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i>
+            </button>
+            <button type="button" class="btn btn-secondary" style="margin-top: 10px; width: 100%;" onclick="navigateTo('dashboard')">
+              Cancel
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Page: Payment -->
+      <section id="page-payment" class="page" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f8f9fa; z-index: 9999; overflow-y: auto; padding-top: 40px; box-sizing: border-box;">
+        <div style="max-width: 900px; margin: 0 auto 40px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; font-family: 'Inter', sans-serif; color: #333; position: relative;">
+          <!-- Top Blue Section -->
+          <div style="background: linear-gradient(to right, #4f46e5, #3b82f6); padding: 20px 40px; color: #fff;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.9rem;">
+              <div style="cursor: pointer; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block;" onclick="navigateTo('address')">
+                <i data-lucide="x-circle" style="vertical-align: middle; width: 16px; height: 16px;"></i> Cancel
+              </div>
+              <div style="cursor: pointer;">
+                <i data-lucide="globe" style="vertical-align: middle; width: 16px; height: 16px;"></i> English <i data-lucide="chevron-down" style="vertical-align: middle; width: 16px; height: 16px;"></i>
+              </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div style="display: flex; gap: 15px; align-items: center;">
+                <div style="width: 60px; height: 60px; background: #fff; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 32px; color: #3b82f6; font-style: italic; font-family: serif;">E</div>
+                <div>
+                  <h2 style="margin: 0; font-size: 1.4rem; font-weight: 600;">https://bidsphere.io/</h2>
+                  <p style="margin: 5px 0 0; opacity: 0.8; font-size: 0.9rem;">Tr ID 9413618</p>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="background: rgba(0,0,0,0.15); padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 10px;">
+                  Payment Link valid For <strong>14:56</strong>
+                </div>
+                <div style="font-size: 0.9rem; cursor: pointer; opacity: 0.9;">
+                  Details <i data-lucide="chevron-down" style="vertical-align: middle; width: 16px; height: 16px;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Section -->
+          <div style="display: flex;">
+            <!-- Left Column -->
+            <div style="width: 35%; border-right: 1px solid #f1f5f9; padding: 30px;">
+              <h3 style="color: #64748b; font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; font-weight: 500;">Select Payment Method</h3>
+              
+              <div id="eb-tab-card" class="eb-tab active" style="display: flex; align-items: center; padding: 15px; background: #f8fafc; border-radius: 8px; margin-bottom: 10px; cursor: pointer; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" onclick="selectEasebuzzTab('card', this)">
+                <i data-lucide="credit-card" style="width: 24px; height: 24px; color: #4f46e5; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="flex: 1;">
+                  <div style="font-weight: 500; color: #0f172a;" class="eb-tab-text">Credit Card</div>
+                  <div style="font-size: 0.75rem; color: #10b981; margin-top: 4px;">1 Offer Available</div>
+                </div>
+              </div>
+              
+              <div id="eb-tab-debit" class="eb-tab" style="display: flex; align-items: center; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 8px;" onclick="selectEasebuzzTab('card', this)">
+                <i data-lucide="credit-card" style="width: 24px; height: 24px; color: #64748b; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="font-weight: 500; color: #475569;" class="eb-tab-text">Debit Card</div>
+              </div>
+              
+              <div id="eb-tab-upi" class="eb-tab" style="display: flex; align-items: center; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 8px;" onclick="selectEasebuzzTab('upi', this)">
+                <i data-lucide="smartphone" style="width: 24px; height: 24px; color: #64748b; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="flex: 1;">
+                  <div style="font-weight: 500; color: #475569;" class="eb-tab-text">UPI</div>
+                  <div style="font-size: 0.75rem; color: #10b981; margin-top: 4px;">2 Offer Available</div>
+                </div>
+              </div>
+              
+              <div id="eb-tab-netbanking" class="eb-tab" style="display: flex; align-items: center; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 8px;" onclick="selectEasebuzzTab('netbanking', this)">
+                <i data-lucide="building" style="width: 24px; height: 24px; color: #64748b; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="font-weight: 500; color: #475569;" class="eb-tab-text">NetBanking</div>
+              </div>
+              
+              <div id="eb-tab-wallet" class="eb-tab" style="display: flex; align-items: center; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 8px;" onclick="selectEasebuzzTab('wallet', this)">
+                <i data-lucide="wallet" style="width: 24px; height: 24px; color: #64748b; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="flex: 1;">
+                  <div style="font-weight: 500; color: #475569;" class="eb-tab-text">Wallets</div>
+                  <div style="font-size: 0.75rem; color: #10b981; margin-top: 4px;">1 Offer Available</div>
+                </div>
+              </div>
+              
+              <div id="eb-tab-emi" class="eb-tab" style="display: flex; align-items: center; padding: 15px; cursor: pointer; border-radius: 8px;" onclick="selectEasebuzzTab('card', this)">
+                <i data-lucide="calendar" style="width: 24px; height: 24px; color: #64748b; margin-right: 15px;" class="eb-tab-icon"></i>
+                <div style="font-weight: 500; color: #475569;" class="eb-tab-text">EMI</div>
+              </div>
+            </div>
+
+            <!-- Right Column -->
+            <div style="width: 65%; padding: 30px; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: #64748b; font-size: 1.1rem; font-weight: 500; margin: 0;">Offers</h3>
+                <span style="color: #10b981; font-weight: 500; font-size: 0.95rem; cursor: pointer;">View All ></span>
+              </div>
+              
+              <div style="border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; background: #fffbeb;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <i data-lucide="percent" style="color: #ef4444; width: 18px; height: 18px;"></i>
+                  <span style="color: #1f2937; font-size: 0.95rem;">Savings of up to 1.5% with...</span>
+                </div>
+                <span style="color: #3b82f6; font-weight: 500; cursor: pointer; font-size: 0.95rem;">Apply</span>
+              </div>
+              
+              <form id="payment-checkout-form" onsubmit="handlePaymentSubmit(event)">
+                <!-- Card Form -->
+                <div id="eb-form-card" class="eb-form-section">
+                  <h3 style="color: #1e293b; font-size: 1.15rem; margin-bottom: 20px; font-weight: 600; margin-top: 0;">Enter Card Details</h3>
+                  <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <input type="text" placeholder="Card Number" style="flex: 2; padding: 16px; border: 1px solid #6366f1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;" maxlength="19">
+                    <input type="text" placeholder="MM/YY" style="flex: 1; padding: 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;" maxlength="5">
+                  </div>
+                  <div style="display: flex; gap: 15px; margin-bottom: 40px; align-items: center;">
+                    <input type="text" placeholder="Card Holder Name" style="flex: 2; padding: 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;">
+                    <input type="password" placeholder="CVV" style="flex: 1; padding: 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;" maxlength="4">
+                    <i data-lucide="info" style="color: #9ca3af; width: 22px; height: 22px;"></i>
+                  </div>
+                </div>
+
+                <!-- UPI Form -->
+                <div id="eb-form-upi" class="eb-form-section" style="display: none;">
+                  <h3 style="color: #1e293b; font-size: 1.15rem; margin-bottom: 20px; font-weight: 600; margin-top: 0;">Enter UPI ID</h3>
+                  <div style="margin-bottom: 40px;">
+                    <input type="text" placeholder="e.g. username@upi" style="width: 100%; padding: 16px; border: 1px solid #6366f1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;">
+                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 10px;">A payment request will be sent to this UPI ID.</p>
+                  </div>
+                </div>
+
+                <!-- NetBanking Form -->
+                <div id="eb-form-netbanking" class="eb-form-section" style="display: none;">
+                  <h3 style="color: #1e293b; font-size: 1.15rem; margin-bottom: 20px; font-weight: 600; margin-top: 0;">Select Bank</h3>
+                  <div style="margin-bottom: 40px;">
+                    <select style="width: 100%; padding: 16px; border: 1px solid #6366f1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;">
+                      <option>State Bank of India</option>
+                      <option>HDFC Bank</option>
+                      <option>ICICI Bank</option>
+                      <option>Axis Bank</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Wallets Form -->
+                <div id="eb-form-wallet" class="eb-form-section" style="display: none;">
+                  <h3 style="color: #1e293b; font-size: 1.15rem; margin-bottom: 20px; font-weight: 600; margin-top: 0;">Select Wallet</h3>
+                  <div style="margin-bottom: 40px;">
+                    <select style="width: 100%; padding: 16px; border: 1px solid #6366f1; border-radius: 8px; font-size: 1rem; color: #333; background: #fff; box-sizing: border-box;">
+                      <option>Paytm</option>
+                      <option>PhonePe</option>
+                      <option>Amazon Pay</option>
+                      <option>Mobikwik</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div style="text-align: right; margin-top: 30px; display: flex; justify-content: flex-end;">
+                  <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; text-align: right;">
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; color: #9ca3af;">
+                      <i data-lucide="shield-check" style="width: 28px; height: 28px;"></i>
+                      <span style="font-size: 1.6rem; font-weight: 700; color: #9ca3af;" id="easebuzz-pay-amount">Pay ₹ 0.00</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #9ca3af; margin-top: 5px;">Includes Platform Charges</div>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Footer Logos -->
+          <div style="padding: 20px 40px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 20px; opacity: 0.5; align-items: center;">
+              <strong style="font-size: 0.9rem; color: #333; font-family: sans-serif;">PCI DSS</strong>
+              <strong style="font-size: 0.9rem; color: #1a1f71; font-style: italic;">VISA</strong>
+              <strong style="font-size: 0.9rem; color: #eb001b;">Mastercard</strong>
+              <strong style="font-size: 0.9rem; color: #f26622;">RuPay</strong>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 0.8rem; color: #64748b;">Powered By</span>
+              <strong style="color: #1e3a8a; font-size: 1.25rem; font-style: italic;">Easebuzz</strong>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; color: #94a3b8; font-size: 0.85rem; padding-bottom: 40px; font-family: sans-serif;">
+          By proceeding with payment, you agree with our <a href="#" style="color: #60a5fa; text-decoration: none;">terms & conditions</a> and <a href="#" style="color: #60a5fa; text-decoration: none;">privacy policy</a>
+          <span style="margin-left: 20px;">v 2.6.142</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass">
+      <p>&copy; 2026 BidSphere Inc. Built using futuristic glassmorphism UI. All rights reserved.</p>
+      <p style="margin-top: 5px;">Created for pair programming demonstration.</p>
+    </footer>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal-content glass auth-modal-box">
+      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button id="tab-register" class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" required placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn">
+          Sign In <i data-lucide="log-in" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i>
+        </button>
+      </form>
+      
+      <!-- Register Form -->
+      <form id="register-form" onsubmit="handleRegisterSubmit(event)" style="display:none;">
+        <div class="form-group">
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" required placeholder="e.g. BuyerOne">
+        </div>
+        <div class="form-group">
+          <label for="register-email">Email Address</label>
+          <input type="email" id="register-email" required placeholder="e.g. buyer@bidsphere.io">
+        </div>
+        <div class="form-group">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" required placeholder="Min. 6 characters">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn">
+          Create Account <i data-lucide="user-plus" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-left:4px;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- App JS Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
