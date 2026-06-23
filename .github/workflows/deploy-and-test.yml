@@ -154,8 +154,4 @@ jobs:
           echo "- \`web-app-dist\` - Compiled static web build payload" >> $GITHUB_STEP_SUMMARY
           echo "- \`web-e2e-artifacts\` - Detailed HTML/Excel Execution Reports and UI Screenshots" >> $GITHUB_STEP_SUMMARY
           
-          # Append 300+ Test Cases names for each suite
-          node .github/scripts/generate_test_summary.js security
-          node .github/scripts/generate_test_summary.js web
-          node .github/scripts/generate_test_summary.js load
-          node .github/scripts/generate_test_summary.js mobile
+          cat test-summary.md >> $GITHUB_STEP_SUMMARY
