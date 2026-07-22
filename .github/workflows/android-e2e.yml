@@ -7,6 +7,9 @@ on:
     branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   mobile_appium_tests:
     name: Build & Run Android Appium Tests
