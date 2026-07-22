@@ -3,11 +3,18 @@ from sqlalchemy import create_engine, Column, String, Float, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
-DATABASE_URL = "sqlite:///./bidsphere.db"
+import os
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./bidsphere.db")
+
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    # Use this for PostgreSQL / Supabase
+    engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
@@ -18,7 +25,7 @@ class DBUser(Base):
     username = Column(String, primary_key=True, index=True)
     email = Column(String)
     hashed_password = Column(String, nullable=True) # Hashed password using hashlib
-    wallet_balance = Column(Float, default=2500.0)
+    wallet_balance = Column(Float, default=0.0)
     role = Column(String, default="user") # user or admin
     
     # Store list of item IDs as JSON string
