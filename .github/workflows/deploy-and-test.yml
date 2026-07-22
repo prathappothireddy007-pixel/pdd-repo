@@ -43,9 +43,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ env.BASE_URL }}
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
     steps:
@@ -65,17 +65,17 @@ jobs:
           cp app.js dist/
           cp data.js dist/
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Web App Artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: web-app-dist
           path: './online-auction-app/dist'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./online-auction-app/dist
 
   web_e2e_automation:
     name: Selenium Web E2E Testing
