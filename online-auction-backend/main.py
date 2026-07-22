@@ -161,43 +161,16 @@ def settle_auctions(db: Session):
         
         if bids:
             winning_bid = bids[-1]
-            auction.status = "sold"
+            auction.status = "ended"
             auction.current_bid = winning_bid.amount
             
-            # Update winner profile
+            # Update winner profile (add to items_won)
             winner = db.query(DBUser).filter(DBUser.username == winning_bid.bidder).first()
             if winner:
                 won_list = winner.items_won
                 if auction.id not in won_list:
                     won_list.append(auction.id)
                     winner.items_won = won_list
-                    winner.wallet_balance = winner.wallet_balance - winning_bid.amount
-            
-            # Update seller profile
-            seller = db.query(DBUser).filter(DBUser.username == auction.seller).first()
-            if seller:
-                sold_list = seller.items_sold
-                if auction.id not in sold_list:
-                    sold_list.append(auction.id)
-                    seller.items_sold = sold_list
-                    seller.wallet_balance = seller.wallet_balance + winning_bid.amount
-
-            # Create delivery record
-            existing_delivery = db.query(DBDelivery).filter(DBDelivery.auction_id == auction.id).first()
-            if not existing_delivery:
-                tracking_num = f"TRK-{''.join(secrets.choice('0123456789') for _ in range(10))}"
-                delivery = DBDelivery(
-                    auction_id=auction.id,
-                    item_title=auction.title,
-                    buyer=winning_bid.bidder,
-                    seller=auction.seller,
-                    price=winning_bid.amount,
-                    shipping_address="104 Cyberpunk Blvd, Sector 7",
-                    tracking_number=tracking_num,
-                    delivery_status="Pending Shipment",
-                    last_updated=datetime.utcnow().isoformat() + "Z"
-                )
-                db.add(delivery)
         else:
             auction.status = "ended"
             
@@ -567,6 +540,9 @@ def place_bid(auction_id: str, bid_in: BidCreate, db: Session = Depends(get_db))
     if bid_in.amount < min_allowed:
         raise HTTPException(status_code=400, detail=f"Bid amount must be at least {min_allowed}")
         
+    if auction.buy_now_price and bid_in.amount >= auction.buy_now_price:
+        raise HTTPException(status_code=400, detail="Your bid meets the Buy Now price! Please use the Buy Out button to purchase this item immediately.")
+        
     if user.wallet_balance < bid_in.amount:
         raise HTTPException(status_code=400, detail="Insufficient wallet balance")
 
@@ -597,6 +573,8 @@ def buyout_auction(auction_id: str, payload: dict = Body(...), db: Session = Dep
     settle_auctions(db)
     
     bidder = payload.get("bidder")
+    address = payload.get("address", "Pending User Address")
+    
     if not bidder:
         raise HTTPException(status_code=400, detail="Bidder username is required")
         
@@ -604,52 +582,61 @@ def buyout_auction(auction_id: str, payload: dict = Body(...), db: Session = Dep
     if not auction:
         raise HTTPException(status_code=404, detail="Auction not found")
         
-    if auction.status != "active":
-        raise HTTPException(status_code=400, detail="Auction is no longer active")
+    if auction.status not in ["active", "ended"]:
+        raise HTTPException(status_code=400, detail="Auction is no longer active or already sold")
         
-    if not auction.buy_now_price:
-        raise HTTPException(status_code=400, detail="This auction does not support buyouts")
-        
-    if auction.seller == bidder:
-        raise HTTPException(status_code=400, detail="Sellers cannot buy out their own listings")
-        
+    buyout_amount = 0
+    if auction.status == "ended":
+        highest_bid = db.query(DBBid).filter(DBBid.auction_id == auction.id).order_by(DBBid.amount.desc()).first()
+        if not highest_bid or highest_bid.bidder != bidder:
+            raise HTTPException(status_code=400, detail="You are not the winner of this auction")
+        buyout_amount = highest_bid.amount
+    else:
+        if not auction.buy_now_price:
+            raise HTTPException(status_code=400, detail="This auction does not support buyouts")
+            
+        if auction.seller == bidder:
+            raise HTTPException(status_code=400, detail="Sellers cannot buy out their own listings")
+            
+        buyout_amount = auction.buy_now_price
+
     user = db.query(DBUser).filter(DBUser.username == bidder).first()
     if not user:
         user = DBUser(username=bidder, email=f"{bidder}@bidsphere.io", hashed_password=hash_password("password123"), wallet_balance=2500.0)
         db.add(user)
         db.commit()
         
-    if user.wallet_balance < auction.buy_now_price:
-        raise HTTPException(status_code=400, detail="Insufficient wallet balance for buyout")
+    if user.wallet_balance < buyout_amount:
+        raise HTTPException(status_code=400, detail="Insufficient wallet balance for checkout")
         
-    # Process buyout
-    buyout_amount = auction.buy_now_price
-    
-    # Add buyout bid
-    db_bid = DBBid(
-        auction_id=auction_id,
-        bidder=bidder,
-        amount=buyout_amount,
-        timestamp=datetime.utcnow().isoformat() + "Z"
-    )
-    db.add(db_bid)
-    
+    # If active, add buyout bid
+    if auction.status == "active":
+        db_bid = DBBid(
+            auction_id=auction_id,
+            bidder=bidder,
+            amount=buyout_amount,
+            timestamp=datetime.utcnow().isoformat() + "Z"
+        )
+        db.add(db_bid)
+        auction.ends_at = time.time() * 1000  # Ends now
+        
     auction.status = "sold"
     auction.current_bid = buyout_amount
-    auction.ends_at = time.time() * 1000  # Ends now
     
     # Update winner profile
     won_list = user.items_won
-    won_list.append(auction_id)
-    user.items_won = won_list
+    if auction_id not in won_list:
+        won_list.append(auction_id)
+        user.items_won = won_list
     user.wallet_balance = user.wallet_balance - buyout_amount
     
     # Update seller profile
     seller = db.query(DBUser).filter(DBUser.username == auction.seller).first()
     if seller:
         sold_list = seller.items_sold
-        sold_list.append(auction_id)
-        seller.items_sold = sold_list
+        if auction_id not in sold_list:
+            sold_list.append(auction_id)
+            seller.items_sold = sold_list
         seller.wallet_balance = seller.wallet_balance + buyout_amount
 
     # Create delivery record
@@ -662,7 +649,7 @@ def buyout_auction(auction_id: str, payload: dict = Body(...), db: Session = Dep
             buyer=bidder,
             seller=auction.seller,
             price=buyout_amount,
-            shipping_address="104 Cyberpunk Blvd, Sector 7",
+            shipping_address=address,
             tracking_number=tracking_num,
             delivery_status="Pending Shipment",
             last_updated=datetime.utcnow().isoformat() + "Z"

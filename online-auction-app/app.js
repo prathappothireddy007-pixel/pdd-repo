@@ -920,6 +920,26 @@ function startTimerEngine() {
               user.itemsWon.push(item.id);
               user.walletBalance -= winningBid.amount;
               showToast(`🎉 Auction Won! You purchased "${item.title}" for ${formatCurrency(winningBid.amount)}`, "success");
+              
+              // Create local delivery record
+              const deliveries = getLocalDeliveries();
+              const existingLocalDelivery = deliveries.find(d => d.auctionId === item.id);
+              if (!existingLocalDelivery) {
+                  const trackingNum = `TRK-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+                  deliveries.push({
+                      id: Date.now(),
+                      auctionId: item.id,
+                      itemTitle: item.title,
+                      buyer: winningBid.bidder,
+                      seller: item.seller,
+                      price: winningBid.amount,
+                      shippingAddress: "Pending User Address",
+                      trackingNumber: trackingNum,
+                      deliveryStatus: "Pending Shipment",
+                      lastUpdated: new Date().toISOString()
+                  });
+                  saveLocalDeliveries(deliveries);
+              }
             } else if (user && item.seller === user.username) {
               user.walletBalance += winningBid.amount;
               user.itemsSold.push(item.id);

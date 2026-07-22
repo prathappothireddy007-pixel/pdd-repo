@@ -11,6 +11,7 @@ import {
   StatusBar,
   Dimensions
 } from 'react-native';
+import Home from './Home';
 
 const { width } = Dimensions.get('window');
 
@@ -126,6 +127,7 @@ export default function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'sell' | 'profile'
   const [activeDetailId, setActiveDetailId] = useState(null);
+  const [showLanding, setShowLanding] = useState(true);
 
   // Core App States
   const [auctions, setAuctions] = useState(INITIAL_AUCTIONS);
@@ -1673,6 +1675,10 @@ export default function App() {
   };
 
   // Main Return containing layout skeleton
+  if (showLanding) {
+    return <Home onEnterApp={() => setShowLanding(false)} />;
+  }
+
   return (
     <SafeAreaView style={styles.appContainer}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0813" />

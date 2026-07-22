@@ -172,7 +172,7 @@ function initializeStore() {
 async function checkBackendActive() {
   try {
     const checkUsername = currentUsername || "BidMaster_X";
-    const res = await fetch(`${API_BASE}/user/${checkUsername}`, { method: 'GET' });
+    const res = await fetch(`${API_BASE}/user/${checkUsername}`, { method: 'GET', cache: 'no-store' });
     if (res.ok) {
       isBackendActive = true;
       // If we are logged in, sync our profile details
@@ -227,7 +227,7 @@ function mapBackendAuction(a) {
 async function getAuctions() {
   if (isBackendActive) {
     try {
-      const res = await fetch(`${API_BASE}/auctions`);
+      const res = await fetch(`${API_BASE}/auctions`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         const mapped = data.map(mapBackendAuction);
@@ -249,7 +249,7 @@ async function getUserProfile() {
   
   if (isBackendActive) {
     try {
-      const res = await fetch(`${API_BASE}/user/${currentUsername}`);
+      const res = await fetch(`${API_BASE}/user/${currentUsername}`, { cache: 'no-store' });
       if (res.ok) {
         const serverUser = await res.json();
         const mappedUser = {
@@ -513,6 +513,11 @@ async function placeBidAPI(itemId, bidder, amount) {
   const minIncrement = 5;
   const minAllowed = item.bids.length > 0 ? (item.currentBid + minIncrement) : item.startingBid;
   if (amount < minAllowed) return { success: false, message: `Bid must be at least $${minAllowed}` };
+  
+  if (item.buyNowPrice && amount >= item.buyNowPrice) {
+      return { success: false, message: "Your bid meets the Buy Now price! Please use the Buy Out button to purchase immediately." };
+  }
+  
   if (user.walletBalance < amount) return { success: false, message: "Insufficient wallet balance." };
   
   item.bids.push({ bidder, amount, timestamp: new Date().toISOString() });
@@ -525,6 +530,9 @@ async function placeBidAPI(itemId, bidder, amount) {
   auctions[itemIndex] = item;
   saveLocalAuctions(auctions);
   saveLocalUserProfile(user);
+  
+  
+
   return { success: true, item };
 }
 
@@ -702,7 +710,7 @@ setInterval(checkBackendActive, 8000);
 async function getPendingAuctions() {
   if (isBackendActive) {
     try {
-      const res = await fetch(`${API_BASE}/admin/pending`);
+      const res = await fetch(`${API_BASE}/admin/pending`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         return data.map(mapBackendAuction);
@@ -797,7 +805,7 @@ async function getPayments() {
   if (!currentUsername) return [];
   if (isBackendActive) {
     try {
-      const res = await fetch(`${API_BASE}/payments?username=${currentUsername}`);
+      const res = await fetch(`${API_BASE}/payments?username=${currentUsername}`, { cache: 'no-store' });
       if (res.ok) {
         return await res.json();
       }
@@ -818,7 +826,7 @@ async function getDeliveries() {
   if (!currentUsername) return [];
   if (isBackendActive) {
     try {
-      const res = await fetch(`${API_BASE}/deliveries?username=${currentUsername}`);
+      const res = await fetch(`${API_BASE}/deliveries?username=${currentUsername}`, { cache: 'no-store' });
       if (res.ok) {
         return await res.json();
       }
