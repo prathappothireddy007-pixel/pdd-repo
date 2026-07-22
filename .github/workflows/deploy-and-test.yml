@@ -74,17 +74,11 @@ jobs:
           name: web-app-dist
           path: './online-auction-app/dist'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload GitHub Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: './online-auction-app/dist'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./online-auction-app/dist
 
   web_e2e_automation:
     name: Selenium Web E2E Testing
