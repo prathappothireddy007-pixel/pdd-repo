@@ -54,6 +54,7 @@ jobs:
             sleep 10
             
             echo "Running Appium Tests..."
+            mkdir -p automation-mobile
             cd automation-mobile
             # npm install
             # npx wdio run wdio.conf.js
