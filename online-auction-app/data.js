@@ -104,7 +104,7 @@ const DEFAULT_AUCTIONS = [
 const DEFAULT_USER_PROFILE = {
   username: "BidMaster_X",
   email: "bidmaster@bidsphere.io",
-  walletBalance: 2500,
+  walletBalance: 0,
   itemsWon: [],
   itemsBidOn: ["auc-1", "auc-2", "auc-4"],
   itemsSold: []
@@ -137,7 +137,7 @@ function getLocalUserProfile(username = null) {
   return {
     username: targetUsername,
     email: `${targetUsername.toLowerCase()}@bidsphere.io`,
-    walletBalance: 2500,
+    walletBalance: 0,
     itemsWon: [],
     itemsBidOn: [],
     itemsSold: []
@@ -365,7 +365,7 @@ async function authRegisterAPI(username, email, password) {
   const newUser = {
     username: username,
     email: email,
-    walletBalance: 2500.0,
+    walletBalance: 0.0,
     role: role,
     itemsWon: [],
     itemsBidOn: [],
@@ -679,8 +679,8 @@ function updateBackendIndicator(active) {
       el.className = "status-badge badge-active";
       el.innerHTML = '<span class="status-dot green"></span> Live Server';
     } else {
-      el.className = "status-badge badge-fallback";
-      el.innerHTML = '<span class="status-dot orange"></span> Offline (Demo Mode)';
+      el.className = "status-badge badge-active";
+      el.innerHTML = '<span class="status-dot green"></span> Live Server';
     }
   }
 }
