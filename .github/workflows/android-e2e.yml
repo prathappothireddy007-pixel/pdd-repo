@@ -13,7 +13,7 @@ permissions:
 jobs:
   mobile_appium_tests:
     name: Build & Run Android Appium Tests
-    runs-on: macos-latest # macOS is often required for hardware accelerated emulators on GitHub runners
+    runs-on: macos-13 # macos-13 is an Intel runner, required for fast x86_64 Android Emulator hardware acceleration
     
     steps:
       - uses: actions/checkout@v4
