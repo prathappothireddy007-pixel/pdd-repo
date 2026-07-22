@@ -53,9 +53,9 @@ jobs:
       - name: Run Appium Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 24
           target: default
-          arch: x86_64
+          arch: x86
           profile: Nexus 6
           disable-animations: true
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
