@@ -13,7 +13,7 @@ permissions:
 jobs:
   mobile_appium_tests:
     name: Build & Run Android Appium Tests
-    runs-on: macos-13 # macos-13 is an Intel runner, required for fast x86_64 Android Emulator hardware acceleration
+    runs-on: macos-latest # macOS 14 (Apple Silicon) is the fastest, but requires arm64-v8a architecture
     
     steps:
       - uses: actions/checkout@v4
@@ -47,9 +47,9 @@ jobs:
       - name: Run Appium Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          target: default
-          arch: x86_64
+          api-level: 31
+          target: google_apis
+          arch: arm64-v8a
           profile: Nexus 6
           script: |
             echo "Starting Appium Server in background..."
