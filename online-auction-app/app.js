@@ -882,6 +882,11 @@ function startTimerEngine() {
   }, 1000);
 
   // 2. Five-second server sync poll
+  let lastKnownLocalState = JSON.stringify({
+    auctions: getLocalAuctions(),
+    user: getLocalUserProfile()
+  });
+
   setInterval(async () => {
     if (isBackendActive) {
       const oldAuctions = JSON.stringify(getLocalAuctions());
@@ -931,6 +936,15 @@ function startTimerEngine() {
       if (stateChanged) {
         saveLocalAuctions(auctions);
         if (user) saveLocalUserProfile(user);
+      }
+      
+      const currentState = JSON.stringify({
+        auctions: getLocalAuctions(),
+        user: getLocalUserProfile()
+      });
+
+      if (stateChanged || currentState !== lastKnownLocalState) {
+        lastKnownLocalState = currentState;
         await updateHeaderWallet();
         if (activePage === 'dashboard') await renderDashboard();
         if (activePage === 'detail') await renderDetailPage(activeAuctionId);
