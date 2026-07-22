@@ -524,13 +524,13 @@ async function placeBidAPI(itemId, bidder, amount) {
   return { success: true, item };
 }
 
-async function buyOutAPI(itemId, bidder) {
+async function buyOutAPI(itemId, bidder, address = "104 Cyberpunk Blvd, Sector 7") {
   if (isBackendActive) {
     try {
       const res = await fetch(`${API_BASE}/auctions/${itemId}/buyout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bidder })
+        body: JSON.stringify({ bidder, address })
       });
       if (res.ok) {
         const updatedAuction = await res.json();
@@ -585,7 +585,7 @@ async function buyOutAPI(itemId, bidder) {
     buyer: bidder,
     seller: item.seller,
     price: paymentAmount,
-    shipping_address: "104 Cyberpunk Blvd, Sector 7",
+    shipping_address: address,
     tracking_number: trackingNum,
     delivery_status: "Pending Shipment",
     last_updated: new Date().toISOString()

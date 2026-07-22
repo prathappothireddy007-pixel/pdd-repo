@@ -8,6 +8,7 @@ let activeAuctionId = null;
 let selectedPresetGradient = 'linear-gradient(135deg, #2b1055, #7597de)';
 let selectedPresetIcon = 'keyboard';
 let activeProfileTab = 'bids';
+let currentShippingAddress = '';
 
 // DOM Element References
 const elWalletBalance = document.getElementById('wallet-balance');
@@ -779,6 +780,13 @@ async function buyOutItem(itemId) {
 // 3. Checkout Flow Handlers
 function handleAddressSubmit(event) {
   event.preventDefault();
+  const street = document.getElementById('addr-street').value;
+  const city = document.getElementById('addr-city').value;
+  const state = document.getElementById('addr-state').value;
+  const zip = document.getElementById('addr-zip').value;
+  const country = document.getElementById('addr-country').value;
+  currentShippingAddress = `${street}, ${city}, ${state} ${zip}, ${country}`;
+  
   navigateTo('payment');
 }
 
@@ -840,7 +848,7 @@ async function handlePaymentSubmit(event) {
     
     // Process transaction after showing success
     setTimeout(async () => {
-      const result = await buyOutAPI(activeAuctionId, currentUsername);
+      const result = await buyOutAPI(activeAuctionId, currentUsername, currentShippingAddress);
       if (result.success) {
         showToast(`Payment successful! You bought ${result.item.title}.`, "success");
         activeProfileTab = 'won';
