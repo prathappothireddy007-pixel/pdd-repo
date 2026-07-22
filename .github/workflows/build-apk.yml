@@ -40,13 +40,13 @@ jobs:
         working-directory: ./online-auction-expo
         run: npx expo prebuild --platform android --clean
         
+      - name: Configure Gradle Memory
+        working-directory: ./online-auction-expo/android
+        run: echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=512m" >> gradle.properties
+
       - name: Build APK
         working-directory: ./online-auction-expo/android
-        env:
-          NODE_ENV: production
-          NODE_OPTIONS: --max_old_space_size=4096
-          GRADLE_OPTS: "-Xmx4g -XX:MaxMetaspaceSize=512m"
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug
         
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
