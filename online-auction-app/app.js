@@ -16,7 +16,7 @@ const elDetailContainer = document.getElementById('detail-container-target');
 const elToastContainer = document.getElementById('toast-container');
 const elProfileUserName = document.getElementById('profile-user-name');
 const elProfileUserEmail = document.getElementById('profile-user-email');
-const elProfileWallet = document.getElementById('profile-wallet');
+const elProfileAvatar = document.getElementById('profile-user-avatar');
 const elProfileWonCount = document.getElementById('profile-won-count');
 const elProfileListedCount = document.getElementById('profile-listed-count');
 const elProfileTabContent = document.getElementById('profile-tab-content');
@@ -541,7 +541,9 @@ async function renderProfilePage() {
   // Populate Sidebar
   elProfileUserName.textContent = `@${user.username}`;
   elProfileUserEmail.textContent = user.email;
-  elProfileWallet.textContent = formatCurrency(user.walletBalance);
+  if (elProfileAvatar) {
+    elProfileAvatar.textContent = user.username.charAt(0).toUpperCase();
+  }
   elProfileWonCount.textContent = user.itemsWon.length;
   
   // Count user listings
