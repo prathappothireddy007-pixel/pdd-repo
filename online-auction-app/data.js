@@ -506,6 +506,10 @@ async function placeBidAPI(itemId, bidder, amount) {
   const item = auctions[itemIndex];
   const user = getLocalUserProfile(bidder);
   
+  if (item.status !== 'active' || item.endsAt <= Date.now()) {
+      return { success: false, message: "Auction has ended." };
+  }
+  
   const minIncrement = 5;
   const minAllowed = item.bids.length > 0 ? (item.currentBid + minIncrement) : item.startingBid;
   if (amount < minAllowed) return { success: false, message: `Bid must be at least $${minAllowed}` };
