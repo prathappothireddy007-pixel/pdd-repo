@@ -970,7 +970,14 @@ function updateActiveClocks(auctions) {
     if (clockEl) {
       const item = auctions.find(a => a.id === activeAuctionId);
       if (item) {
-        clockEl.textContent = item.status === 'active' && item.endsAt > now ? formatTimeRemaining(item.endsAt - now) : 'Ended';
+        const isLive = item.status === 'active' && item.endsAt > now;
+        clockEl.textContent = isLive ? formatTimeRemaining(item.endsAt - now) : 'Ended';
+        
+        // If it ended but the bid input is still visible, re-render to hide it
+        const bidInput = document.getElementById('bid-amount-input');
+        if (!isLive && bidInput) {
+            renderDetailPage(activeAuctionId);
+        }
       }
     }
   }
