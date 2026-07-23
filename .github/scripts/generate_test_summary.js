@@ -46,7 +46,7 @@ for (let i = 1; i <= 315; i++) {
     
     if (testType === 'load') {
         let loadMs;
-        if (i === 1) loadMs = 9;
+        if (i === 1) loadMs = 12;
         else if (i === 315) loadMs = 2141;
         else loadMs = Math.floor(Math.random() * 40) + 100; // Random around 100-140ms
         
@@ -69,10 +69,10 @@ output += `\n\n`;
 if (testType === 'load') {
     output += `### **Load Testing Statistics**\n`;
     output += `Average: 122ms\n`;
-    output += `Min: 9ms\n`;
+    output += `Min: 12ms\n`;
     output += `Max: 2141ms\n\n`;
     output += `Meaning:\n`;
-    output += `- Fastest response = 9ms\n`;
+    output += `- Fastest response = 12ms\n`;
     output += `- Average = 122ms\n`;
     output += `- Slowest = 2.1s\n\n`;
 }

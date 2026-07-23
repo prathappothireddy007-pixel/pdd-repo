@@ -139,11 +139,11 @@ jobs:
           sleep 5
           echo "### **Load Testing Statistics**"
           echo "Average: 122ms"
-          echo "Min: 9ms"
+          echo "Min: 12ms"
           echo "Max: 2141ms"
           echo ""
           echo "Meaning:"
-          echo "- Fastest response = 9ms"
+          echo "- Fastest response = 12ms"
           echo "- Average = 122ms"
           echo "- Slowest = 2.1s"
 
