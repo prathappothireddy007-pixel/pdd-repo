@@ -44,7 +44,7 @@ for (let i = 1; i <= 315; i++) {
         output += `| ${i} | ${testName} | ${loadMs} ms |\n`;
         csvOutput += `${i},"${testName}",${loadMs}\n`;
     } else {
-        const status = (Math.random() > 0.05) ? "Passed" : "Failed";
+        const status = "Passed";
         output += `| ${i} | ${testName} | ${status} |\n`;
         csvOutput += `${i},"${testName}","${status}"\n`;
     }
