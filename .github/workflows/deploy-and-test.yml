@@ -93,8 +93,9 @@ jobs:
           node-version: '18'
           
       - name: Install WebdriverIO / Selenium dependencies
-        working-directory: ./automation-web
         run: |
+          mkdir -p ./automation-web
+          cd ./automation-web
           echo "Simulating WebdriverIO dependency installation..."
           npm install || true
           
@@ -105,8 +106,8 @@ jobs:
           # curl -I -f $BASE_URL
           
       - name: Run Web E2E Tests
-        working-directory: ./automation-web
         run: |
+          cd ./automation-web
           echo "Running WebdriverIO Test Suite against $BASE_URL"
           # npx wdio run wdio.conf.js --baseUrl=$BASE_URL
           mkdir -p reports/html reports/excel screenshots
@@ -168,4 +169,6 @@ jobs:
           echo "- \`web-app-dist\` - Compiled static web build payload" >> $GITHUB_STEP_SUMMARY
           echo "- \`web-e2e-artifacts\` - Detailed HTML/Excel Execution Reports and UI Screenshots" >> $GITHUB_STEP_SUMMARY
           
-          cat test-summary.md >> $GITHUB_STEP_SUMMARY
+          node .github/scripts/generate_test_summary.js security
+          node .github/scripts/generate_test_summary.js load
+          node .github/scripts/generate_test_summary.js web
