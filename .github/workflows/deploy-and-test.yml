@@ -63,8 +63,7 @@ jobs:
         working-directory: ./online-auction-app
         run: |
           mkdir -p dist
-          cp index.html dist/
-          cp app.html dist/
+          cp app.html dist/index.html
           cp styles.css dist/
           cp app.js dist/
           cp data.js dist/
@@ -173,6 +172,7 @@ jobs:
           node .github/scripts/generate_test_summary.js security
           node .github/scripts/generate_test_summary.js load
           node .github/scripts/generate_test_summary.js web
+          node .github/scripts/generate_test_summary.js backend
 
       - name: Upload Excel/CSV Test Reports
         uses: actions/upload-artifact@v4
