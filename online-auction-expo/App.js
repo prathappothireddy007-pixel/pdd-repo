@@ -7,7 +7,7 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0813" />
       <WebView 
-        source={{ uri: 'https://prathappothireddy007-pixel.github.io/pdd-repo/app.html' }} 
+        source={{ uri: 'https://prathappothireddy007-pixel.github.io/pdd-repo/' }} 
         style={{ flex: 1 }}
         originWhitelist={['*']}
         javaScriptEnabled={true}
