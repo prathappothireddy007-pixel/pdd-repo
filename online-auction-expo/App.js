@@ -7,13 +7,13 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0813" />
       <WebView 
-        source={{ uri: 'http://10.0.2.2:3000/' }} 
+        source={{ uri: 'http://10.134.102.79:3000/' }} 
         style={{ flex: 1 }}
         originWhitelist={['*']}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         injectedJavaScript={`
-          window.API_BASE = 'http://10.0.2.2:8000/api';
+          window.API_BASE = 'http://10.134.102.79:8000/api';
           true;
         `}
       />
