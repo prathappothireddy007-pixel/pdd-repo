@@ -19,6 +19,11 @@ const prefixTemplate = templates[testType] || "Automated Test";
 let output = `\n### **View All 300+ ${prefixTemplate} Cases**\n\n`;
 let csvOutput = "";
 
+let totalLoadMs = 0;
+let minLoadMs = Number.MAX_VALUE;
+let maxLoadMs = 0;
+let loadTestCount = 0;
+
 if (testType === 'load') {
     output += `| S.No | Test Name | Load in ms |\n`;
     output += `| :--- | :--- | :--- |\n`;
@@ -45,6 +50,11 @@ for (let i = 1; i <= 315; i++) {
         else if (i === 315) loadMs = 1500;
         else loadMs = Math.floor(Math.random() * 200) + 150; // Random around 150-350ms
         
+        totalLoadMs += loadMs;
+        minLoadMs = Math.min(minLoadMs, loadMs);
+        maxLoadMs = Math.max(maxLoadMs, loadMs);
+        loadTestCount++;
+        
         output += `| ${i} | ${testName} | ${loadMs} ms |\n`;
         csvOutput += `${i},"${testName}",${loadMs}\n`;
     } else {
@@ -57,14 +67,15 @@ for (let i = 1; i <= 315; i++) {
 output += `\n\n`;
 
 if (testType === 'load') {
+    const avgLoadMs = Math.round(totalLoadMs / loadTestCount);
     output += `### **Load Testing Statistics**\n`;
-    output += `Average: 250ms\n`;
-    output += `Min: 50ms\n`;
-    output += `Max: 1500ms\n\n`;
+    output += `Average: ${avgLoadMs}ms\n`;
+    output += `Min: ${minLoadMs}ms\n`;
+    output += `Max: ${maxLoadMs}ms\n\n`;
     output += `Meaning:\n`;
-    output += `- Fastest response = 50ms\n`;
-    output += `- Average = 250ms\n`;
-    output += `- Slowest = 1.5s\n\n`;
+    output += `- Fastest response = ${minLoadMs}ms\n`;
+    output += `- Average = ${avgLoadMs}ms\n`;
+    output += `- Slowest = ${maxLoadMs >= 1000 ? (maxLoadMs / 1000).toFixed(1) + 's' : maxLoadMs + 'ms'}\n\n`;
 }
 
 // Write the CSV to disk

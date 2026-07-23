@@ -7,7 +7,7 @@ cd /d "%~dp0"
 
 if not exist venv (
     echo Creating virtual environment venv...
-    python -m venv venv
+    py -m venv venv
 )
 
 echo Activating virtual environment...
@@ -17,6 +17,6 @@ echo Installing/Updating dependencies from requirements.txt...
 pip install -r requirements.txt
 
 echo Starting server on 0.0.0.0:8000 (accessible on local network)...
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000 --env-file .env
 
 pause
