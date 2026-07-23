@@ -49,8 +49,8 @@ jobs:
         run: |
           # Force release to use debug keystore so it installs easily on phones without a production keystore
           sed -i 's/signingConfig signingConfigs.debug/signingConfig signingConfigs.debug/' app/build.gradle
-          # Ensure JS is bundled in debug if they use debug, but we will use release
-          ./gradlew assembleRelease
+          # Pass minSdk 24 because react-native-webview 14+ requires Android 7.0+
+          ./gradlew assembleRelease -Pandroid.minSdkVersion=24
         
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
