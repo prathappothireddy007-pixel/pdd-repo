@@ -63,8 +63,7 @@ jobs:
         working-directory: ./online-auction-app
         run: |
           mkdir -p dist
-          cp index.html dist/
-          cp app.html dist/
+          cp app.html dist/index.html
           cp styles.css dist/
           cp app.js dist/
           cp data.js dist/
