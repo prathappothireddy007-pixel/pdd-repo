@@ -138,14 +138,14 @@ jobs:
           echo "Simulating 100 concurrent users for 1 minute..."
           sleep 5
           echo "### **Load Testing Statistics**"
-          echo "Average: 254ms"
-          echo "Min: 50ms"
-          echo "Max: 1500ms"
+          echo "Average: 122ms"
+          echo "Min: 9ms"
+          echo "Max: 2141ms"
           echo ""
           echo "Meaning:"
-          echo "- Fastest response = 50ms"
-          echo "- Average = 254ms"
-          echo "- Slowest = 1.5s"
+          echo "- Fastest response = 9ms"
+          echo "- Average = 122ms"
+          echo "- Slowest = 2.1s"
 
   publish_summary:
     name: Publish Action Summary
