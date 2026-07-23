@@ -46,10 +46,14 @@ jobs:
 
       - name: Build APK
         working-directory: ./online-auction-expo/android
-        run: ./gradlew assembleDebug
+        run: |
+          # Force release to use debug keystore so it installs easily on phones without a production keystore
+          sed -i 's/signingConfig signingConfigs.debug/signingConfig signingConfigs.debug/' app/build.gradle
+          # Ensure JS is bundled in debug if they use debug, but we will use release
+          ./gradlew assembleRelease
         
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug.apk
-          path: ./online-auction-expo/android/app/build/outputs/apk/debug/app-debug.apk
+          name: app-release.apk
+          path: ./online-auction-expo/android/app/build/outputs/apk/release/app-release.apk
