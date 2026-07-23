@@ -13,7 +13,13 @@ export default function App() {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         injectedJavaScript={`
-          window.API_BASE = 'http://10.134.102.79:8000/api';
+          const originalFetch = window.fetch;
+          window.fetch = function() {
+            if (typeof arguments[0] === 'string' && arguments[0].includes('http://localhost:8000')) {
+              arguments[0] = arguments[0].replace('http://localhost:8000', 'http://10.134.102.79:8000');
+            }
+            return originalFetch.apply(this, arguments);
+          };
           true;
         `}
       />
