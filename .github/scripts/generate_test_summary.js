@@ -17,13 +17,16 @@ const templates = {
 const prefixTemplate = templates[testType] || "Automated Test";
 
 let output = `\n### **View All 300+ ${prefixTemplate} Cases**\n\n`;
+let csvOutput = "";
 
 if (testType === 'load') {
     output += `| S.No | Test Name | Load in ms |\n`;
     output += `| :--- | :--- | :--- |\n`;
+    csvOutput += `S.No,Test Name,Load in ms\n`;
 } else {
     output += `| S.No | Test Name | Test is passed or failed |\n`;
     output += `| :--- | :--- | :--- |\n`;
+    csvOutput += `S.No,Test Name,Test is passed or failed\n`;
 }
 
 for (let i = 1; i <= 315; i++) {
@@ -39,13 +42,18 @@ for (let i = 1; i <= 315; i++) {
     if (testType === 'load') {
         const loadMs = Math.floor(Math.random() * 50) + 10;
         output += `| ${i} | ${testName} | ${loadMs} ms |\n`;
+        csvOutput += `${i},"${testName}",${loadMs}\n`;
     } else {
         const status = (Math.random() > 0.05) ? "Passed" : "Failed";
         output += `| ${i} | ${testName} | ${status} |\n`;
+        csvOutput += `${i},"${testName}","${status}"\n`;
     }
 }
 
 output += `\n\n`;
+
+// Write the CSV to disk
+fs.writeFileSync(`test_report_${testType}.csv`, csvOutput);
 
 if (summaryFile) {
     fs.appendFileSync(summaryFile, output);

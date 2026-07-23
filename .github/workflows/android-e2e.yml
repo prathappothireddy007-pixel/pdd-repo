@@ -103,3 +103,9 @@ jobs:
           
           # Append 300+ Test Cases names for mobile suite
           node .github/scripts/generate_test_summary.js mobile
+
+      - name: Upload Excel/CSV Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-excel-test-reports
+          path: '*.csv'
