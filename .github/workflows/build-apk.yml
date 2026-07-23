@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-apk:
@@ -57,3 +57,11 @@ jobs:
         with:
           name: app-release.apk
           path: ./online-auction-expo/android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: "v1.0.${{ github.run_number }}"
+          name: "Release v1.0.${{ github.run_number }}"
+          files: ./online-auction-expo/android/app/build/outputs/apk/release/app-release.apk
