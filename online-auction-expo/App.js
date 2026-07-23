@@ -15,8 +15,8 @@ export default function App() {
         injectedJavaScript={`
           const originalFetch = window.fetch;
           window.fetch = function() {
-            if (typeof arguments[0] === 'string' && arguments[0].includes('http://localhost:8000')) {
-              arguments[0] = arguments[0].replace('http://localhost:8000', 'http://10.134.102.79:8000');
+            if (typeof arguments[0] === 'string' && arguments[0].includes('localhost:8000')) {
+              arguments[0] = arguments[0].replace('localhost:8000', '10.134.102.79:8000');
             }
             return originalFetch.apply(this, arguments);
           };
