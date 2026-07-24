@@ -19,6 +19,12 @@ const DEFAULT_AUCTIONS = [
     endsAt: Date.now() + (3.5 * 60 * 60 * 1000), // 3.5 hours from now
     imageGradient: "linear-gradient(135deg, #2b1055, #7597de)",
     imageIcon: "keyboard",
+    imageUrl: "https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80",
+      "https://images.unsplash.com/photo-1555126634-323283e090fa?w=800&q=80",
+      "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&q=80"
+    ],
     status: "active",
     bids: [
       { bidder: "ShiftKey99", amount: 150, timestamp: "2026-06-15T08:00:00Z" },
@@ -38,6 +44,7 @@ const DEFAULT_AUCTIONS = [
     endsAt: Date.now() + (8 * 60 * 60 * 1000), // 8 hours from now
     imageGradient: "linear-gradient(135deg, #1f4037, #99f2c8)",
     imageIcon: "watch",
+    imageUrl: "https://images.unsplash.com/photo-1524592094714-0f0654ece975?w=800&q=80",
     status: "active",
     bids: [
       { bidder: "AeroCollector", amount: 1200, timestamp: "2026-06-15T07:15:00Z" },
@@ -57,6 +64,7 @@ const DEFAULT_AUCTIONS = [
     endsAt: Date.now() + (1.2 * 60 * 60 * 1000), // 1.2 hours from now
     imageGradient: "linear-gradient(135deg, #f857a6, #ff5858)",
     imageIcon: "shoe",
+    imageUrl: "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=800&q=80",
     status: "active",
     bids: []
   },
@@ -72,6 +80,7 @@ const DEFAULT_AUCTIONS = [
     endsAt: Date.now() + (18 * 60 * 60 * 1000), // 18 hours from now
     imageGradient: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
     imageIcon: "gamepad",
+    imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
     status: "active",
     bids: [
       { bidder: "MarioBros85", amount: 250, timestamp: "2026-06-15T05:00:00Z" },
@@ -91,6 +100,7 @@ const DEFAULT_AUCTIONS = [
     endsAt: Date.now() + (22.5 * 60 * 60 * 1000), // 22.5 hours from now
     imageGradient: "linear-gradient(135deg, #fc00ff, #00dbde)",
     imageIcon: "image",
+    imageUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80",
     status: "active",
     bids: [
       { bidder: "GalleryDirector", amount: 500, timestamp: "2026-06-15T03:00:00Z" },
@@ -201,21 +211,35 @@ async function checkBackendActive() {
 }
 
 // Convert Backend Auction fields to match Frontend casing
-function mapBackendAuction(a) {
+function mapBackendAuction(bItem) {
+  let icon = bItem.icon || "image";
+  let imageUrlStr = bItem.image_url;
+  
+  if (!imageUrlStr && icon.includes("|IMG|")) {
+    const parts = icon.split("|IMG|");
+    icon = parts[0];
+    imageUrlStr = parts[1];
+  }
+  
+  const rawImageUrl = imageUrlStr ? imageUrlStr.trim() : null;
+  const imageUrls = rawImageUrl ? rawImageUrl.split(/[\n,]+/).map(u => u.trim()).filter(u => u) : [];
+  
   return {
-    id: a.id,
-    title: a.title,
-    description: a.description,
-    category: a.category,
-    startingBid: a.starting_bid,
-    buyNowPrice: a.buy_now_price,
-    currentBid: a.current_bid,
-    seller: a.seller,
-    endsAt: a.ends_at,
-    imageGradient: a.bg_color,
-    imageIcon: a.icon,
-    status: a.status,
-    bids: (a.bids || []).map(b => ({
+    id: bItem.id,
+    title: bItem.title,
+    description: bItem.description,
+    category: bItem.category,
+    startingBid: bItem.starting_bid,
+    buyNowPrice: bItem.buy_now_price,
+    currentBid: bItem.current_bid,
+    seller: bItem.seller,
+    endsAt: bItem.ends_at,
+    imageGradient: bItem.bg_color,
+    imageIcon: icon,
+    imageUrl: imageUrls.length > 0 ? imageUrls[0] : null,
+    imageUrls: imageUrls,
+    status: bItem.status,
+    bids: (bItem.bids || []).map(b => ({
       bidder: b.bidder,
       amount: b.amount,
       timestamp: b.timestamp
@@ -639,8 +663,7 @@ async function createListingAPI(title, description, category, startingBid, buyNo
     }
   }
   
-  const userObj = getLocalUserProfile(seller);
-  const isAdmin = userObj && userObj.role === 'admin';
+  // Local fallback logic
   const newAuction = {
     id: `auc-${Date.now()}`,
     title, description, category,
@@ -649,7 +672,7 @@ async function createListingAPI(title, description, category, startingBid, buyNo
     imageGradient: bgColor,
     imageIcon: icon,
     imageUrl: imageUrl,
-    status: isAdmin ? "active" : "pending",
+    status: "active",
     bids: []
   };
   
