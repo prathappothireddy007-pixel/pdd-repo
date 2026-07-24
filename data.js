@@ -639,7 +639,8 @@ async function createListingAPI(title, description, category, startingBid, buyNo
     }
   }
   
-  // Local fallback logic
+  const userObj = getLocalUserProfile(seller);
+  const isAdmin = userObj && userObj.role === 'admin';
   const newAuction = {
     id: `auc-${Date.now()}`,
     title, description, category,
@@ -648,7 +649,7 @@ async function createListingAPI(title, description, category, startingBid, buyNo
     imageGradient: bgColor,
     imageIcon: icon,
     imageUrl: imageUrl,
-    status: "active",
+    status: isAdmin ? "active" : "pending",
     bids: []
   };
   

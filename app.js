@@ -25,7 +25,7 @@ const elProfileTabContent = document.getElementById('profile-tab-content');
 // Navigate to different tabs/pages
 async function navigateTo(pageId, itemId = null) {
   // Authentication Guard for protected pages
-  if ((pageId === 'address' || pageId === 'payment' || pageId === 'profile' || pageId === 'admin') && !currentUsername) {
+  if ((pageId === 'address' || pageId === 'payment' || pageId === 'profile' || pageId === 'admin' || pageId === 'sell') && !currentUsername) {
     showToast("Authentication required. Please sign in first.", "error");
     openAuthModal();
     return;
@@ -199,6 +199,10 @@ function updateAuthHeaderUI() {
     if (elNavAdmin) {
       elNavAdmin.style.display = (user && user.role === 'admin') ? 'block' : 'none';
     }
+    const elNavSell = document.getElementById('li-nav-sell');
+    if (elNavSell) {
+      elNavSell.style.display = 'block';
+    }
   } else {
     if (elPill) elPill.style.display = 'none';
     if (elUserBtn) elUserBtn.style.display = 'none';
@@ -206,6 +210,8 @@ function updateAuthHeaderUI() {
     
     const elNavAdmin = document.getElementById('li-nav-admin');
     if (elNavAdmin) elNavAdmin.style.display = 'none';
+    const elNavSell = document.getElementById('li-nav-sell');
+    if (elNavSell) elNavSell.style.display = 'none';
   }
 }
 
@@ -1263,6 +1269,41 @@ async function handleAdminCreateListing(event) {
     await renderAdminPage();
     // Refresh dashboard if active
     if (activePage === 'dashboard') await renderDashboard();
+  } else {
+    showToast(result.message, "error");
+  }
+}
+
+async function handleUserCreateListing(event) {
+  event.preventDefault();
+
+  const title = document.getElementById('user-item-title').value.trim();
+  const category = document.getElementById('user-item-category').value;
+  const durationHours = parseFloat(document.getElementById('user-item-duration').value);
+  const startingBid = parseFloat(document.getElementById('user-item-starting-bid').value);
+  const buyNowVal = document.getElementById('user-item-buyout').value;
+  const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
+  const description = document.getElementById('user-item-description').value.trim();
+  const elImage = document.getElementById('user-item-image');
+  const imageUrl = elImage ? elImage.value.trim() : null;
+
+  if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
+    showToast("Please fill all required fields.", "error");
+    return;
+  }
+
+  showToast("Submitting item for review...", "info");
+
+  // User listed items start as pending automatically on the backend
+  const result = await createListingAPI(
+    title, description, category, startingBid, buyNowPrice, durationHours,
+    selectedPresetGradient, selectedPresetIcon, currentUsername, imageUrl
+  );
+
+  if (result.success) {
+    document.getElementById('user-sell-form').reset();
+    showToast(`"${title}" has been submitted and is pending admin approval!`, "success");
+    await navigateTo('profile');
   } else {
     showToast(result.message, "error");
   }
