@@ -200,9 +200,7 @@ function updateAuthHeaderUI() {
       elNavAdmin.style.display = (user && user.role === 'admin') ? 'block' : 'none';
     }
     const elNavSell = document.getElementById('li-nav-sell');
-    if (elNavSell) {
-      elNavSell.style.display = 'block';
-    }
+    if (elNavSell) elNavSell.style.display = 'block';
   } else {
     if (elPill) elPill.style.display = 'none';
     if (elUserBtn) elUserBtn.style.display = 'none';
@@ -408,6 +406,13 @@ async function renderDetailPage(itemId) {
     return;
   }
 
+  if (item.imageUrls && item.imageUrls.length > 1) {
+    currentSlideIndex = 0;
+    totalSlides = item.imageUrls.length;
+  } else {
+    totalSlides = 0;
+  }
+
   const isLive = item.status === 'active' && item.endsAt > Date.now();
   const timeRemainingStr = isLive ? formatTimeRemaining(item.endsAt - Date.now()) : "Ended";
   const user = await getUserProfile();
@@ -443,11 +448,30 @@ async function renderDetailPage(itemId) {
     `;
   }).join('') : `<div class="empty-history">No bids placed yet. Be the first to bid!</div>`;
 
+  // Compute Gallery Style
+  let galleryStyle = '';
+  if (!item.imageUrls || item.imageUrls.length === 0) {
+    galleryStyle = `background: ${item.imageGradient};`;
+  } else if (item.imageUrls.length === 1) {
+    galleryStyle = `background-image: url('${item.imageUrl}'); background-size: cover; background-position: center;`;
+  }
+
   // Render Page Content
   elDetailContainer.innerHTML = `
     <!-- Gallery/Image representation -->
-    <div class="detail-gallery" style="${item.imageUrl ? '' : `background: ${item.imageGradient};`}">
-      ${item.imageUrl ? `<img src="${item.imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" alt="${item.title}">` : `<i data-lucide="${iconName}" class="detail-gallery-icon"></i>`}
+    <div class="detail-gallery" style="${galleryStyle}">
+      ${(item.imageUrls && item.imageUrls.length > 1) ? `
+        <div class="detail-gallery-slider">
+          <div class="slider-images" id="slider-images-container">
+            ${item.imageUrls.map(url => `<div class="slider-image" style="background-image: url('${url}');"></div>`).join('')}
+          </div>
+          <button class="slider-btn left" onclick="prevSlide()"><i data-lucide="chevron-left"></i></button>
+          <button class="slider-btn right" onclick="nextSlide()"><i data-lucide="chevron-right"></i></button>
+          <div class="slider-dots">
+            ${item.imageUrls.map((_, idx) => `<div class="slider-dot ${idx === 0 ? 'active' : ''}" onclick="goToSlide(${idx})"></div>`).join('')}
+          </div>
+        </div>
+      ` : (!item.imageUrl ? `<i data-lucide="${iconName}" class="detail-gallery-icon"></i>` : '')}
       <div class="detail-clock-container">
         <div>
           <span class="countdown-label">Time Remaining</span>
@@ -1006,20 +1030,21 @@ function updateActiveClocks(auctions) {
       }
     });
   } else if (activePage === 'detail' && activeAuctionId) {
-    const clockEl = document.getElementById('detail-clock');
-    if (clockEl) {
+    window.detailInterval = setInterval(() => {
+      const clockEl = document.getElementById('detail-clock');
+      if (!clockEl) {
+        clearInterval(window.detailInterval);
+        return;
+      }
       const item = auctions.find(a => a.id === activeAuctionId);
       if (item) {
-        const isLive = item.status === 'active' && item.endsAt > now;
-        clockEl.textContent = isLive ? formatTimeRemaining(item.endsAt - now) : 'Ended';
-        
         // If it ended but the bid input is still visible, re-render to hide it
         const bidInput = document.getElementById('bid-amount-input');
         if (!isLive && bidInput) {
             renderDetailPage(activeAuctionId);
         }
       }
-    }
+    }, 1000);
   }
 }
 
@@ -1248,7 +1273,13 @@ async function handleAdminCreateListing(event) {
   const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
   const description = document.getElementById('admin-item-description').value.trim();
   const elImage = document.getElementById('admin-item-image');
-  const imageUrl = elImage ? elImage.value.trim() : null;
+  let imageUrl = null;
+  if (elImage && elImage.value.trim()) {
+    const rawVal = elImage.value.trim();
+    // split by comma or newline and rejoin with comma
+    const urls = rawVal.split(/[\n,]+/).map(u => u.trim()).filter(u => u);
+    if (urls.length > 0) imageUrl = urls.join(',');
+  }
 
   if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
     showToast("Please fill all required fields.", "error");
@@ -1277,34 +1308,70 @@ async function handleAdminCreateListing(event) {
 async function handleUserCreateListing(event) {
   event.preventDefault();
 
-  const title = document.getElementById('user-item-title').value.trim();
-  const category = document.getElementById('user-item-category').value;
-  const durationHours = parseFloat(document.getElementById('user-item-duration').value);
-  const startingBid = parseFloat(document.getElementById('user-item-starting-bid').value);
-  const buyNowVal = document.getElementById('user-item-buyout').value;
+  const title = document.getElementById('sell-item-title').value.trim();
+  const category = document.getElementById('sell-item-category').value;
+  const durationHours = parseFloat(document.getElementById('sell-item-duration').value);
+  const startingBid = parseFloat(document.getElementById('sell-item-starting-bid').value);
+  const buyNowVal = document.getElementById('sell-item-buyout').value;
   const buyNowPrice = buyNowVal ? parseFloat(buyNowVal) : null;
-  const description = document.getElementById('user-item-description').value.trim();
-  const elImage = document.getElementById('user-item-image');
-  const imageUrl = elImage ? elImage.value.trim() : null;
+  const description = document.getElementById('sell-item-description').value.trim();
+  const elImage = document.getElementById('sell-item-image');
+  let imageUrl = null;
+  if (elImage && elImage.value.trim()) {
+    const rawVal = elImage.value.trim();
+    const urls = rawVal.split(/[\n,]+/).map(u => u.trim()).filter(u => u);
+    if (urls.length > 0) imageUrl = urls.join(',');
+  }
 
   if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
     showToast("Please fill all required fields.", "error");
     return;
   }
 
-  showToast("Submitting item for review...", "info");
+  showToast("Submitting listing for approval...", "info");
 
-  // User listed items start as pending automatically on the backend
   const result = await createListingAPI(
     title, description, category, startingBid, buyNowPrice, durationHours,
-    selectedPresetGradient, selectedPresetIcon, currentUsername, imageUrl
+    'linear-gradient(135deg, #2b1055, #7597de)', 'box', currentUsername, imageUrl
   );
 
   if (result.success) {
-    document.getElementById('user-sell-form').reset();
-    showToast(`"${title}" has been submitted and is pending admin approval!`, "success");
-    await navigateTo('profile');
+    document.getElementById('sell-form').reset();
+    showToast(`"${title}" submitted successfully and is pending admin approval!`, "success");
+    await navigateTo('dashboard');
   } else {
     showToast(result.message, "error");
   }
 }
+
+// Global variables and functions for Slider
+window.currentSlideIndex = 0;
+window.totalSlides = 0;
+
+window.goToSlide = function(index) {
+  const container = document.getElementById('slider-images-container');
+  if (!container) return;
+  window.currentSlideIndex = index;
+  container.style.transform = `translateX(-${window.currentSlideIndex * 100}%)`;
+  
+  // Update dots
+  const dots = document.querySelectorAll('.slider-dot');
+  dots.forEach((dot, idx) => {
+    if (idx === window.currentSlideIndex) dot.classList.add('active');
+    else dot.classList.remove('active');
+  });
+};
+
+window.prevSlide = function() {
+  if (window.totalSlides <= 1) return;
+  let newIndex = window.currentSlideIndex - 1;
+  if (newIndex < 0) newIndex = window.totalSlides - 1;
+  window.goToSlide(newIndex);
+};
+
+window.nextSlide = function() {
+  if (window.totalSlides <= 1) return;
+  let newIndex = window.currentSlideIndex + 1;
+  if (newIndex >= window.totalSlides) newIndex = 0;
+  window.goToSlide(newIndex);
+};

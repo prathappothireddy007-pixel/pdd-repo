@@ -108,7 +108,62 @@
         </div>
       </section>
 
-
+      <!-- Page 3: Sell / Add Item Page -->
+      <section id="page-sell" class="page">
+        <div class="form-container glass">
+          <h2 class="form-title">List an Item for Auction</h2>
+          <p class="form-subtitle">Submit your item details. It will go live after admin approval.</p>
+          
+          <form id="sell-form" onsubmit="handleUserCreateListing(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="form-group form-full-width" style="grid-column: span 2;">
+                <label for="sell-item-title">Item Title</label>
+                <input type="text" id="sell-item-title" required placeholder="e.g. Apex-X Cyberpunk Keyboard">
+              </div>
+              <div class="form-group">
+                <label for="sell-item-category">Category</label>
+                <select id="sell-item-category" required>
+                  <option value="" disabled selected>Select Category</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Fashion & Luxury">Fashion & Luxury</option>
+                  <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                  <option value="Art & Collectibles">Art & Collectibles</option>
+                  <option value="Vehicles & Motors">Vehicles & Motors</option>
+                  <option value="Home & Living">Home & Living</option>
+                  <option value="Books & Comics">Books & Comics</option>
+                  <option value="Sports & Outdoors">Sports & Outdoors</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="sell-item-duration">Duration (Hours)</label>
+                <input type="number" id="sell-item-duration" required min="1" max="168" value="24">
+              </div>
+              <div class="form-group">
+                <label for="sell-item-starting-bid">Starting Bid (₹)</label>
+                <input type="number" id="sell-item-starting-bid" required min="1" placeholder="e.g. 150">
+              </div>
+              <div class="form-group">
+                <label for="sell-item-buyout">Buy Now Price (₹ - Optional)</label>
+                <input type="number" id="sell-item-buyout" min="1" placeholder="e.g. 500">
+              </div>
+              <div class="form-group form-full-width" style="grid-column: span 2;">
+                <label for="sell-item-image">Image URLs (Optional, comma-separated or one per line)</label>
+                <textarea id="sell-item-image" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-family: inherit; font-size: 0.95rem;"></textarea>
+              </div>
+              <div class="form-group form-full-width" style="grid-column: span 2;">
+                <label for="sell-item-description">Description & Details</label>
+                <textarea id="sell-item-description" required placeholder="Describe your item in detail..." style="height: 90px;"></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px; width: 100%;">
+              <i data-lucide="send" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> Submit for Approval
+            </button>
+            <button type="button" class="btn btn-secondary" style="margin-top: 10px; width: 100%;" onclick="navigateTo('dashboard')">
+              Cancel
+            </button>
+          </form>
+        </div>
+      </section>
 
       <!-- Page 4: User Profile -->
       <section id="page-profile" class="page">
@@ -148,64 +203,7 @@
         </div>
       </section>
 
-      <!-- Page 5: User Sell Item -->
-      <section id="page-sell" class="page">
-        <div style="max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">
-          <div class="glass" style="padding: 24px; border-radius: 16px;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #fff;">
-              <i data-lucide="plus-circle" style="color: var(--accent-cyan);"></i> Sell Your Item
-            </h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">
-              Submit your item to BidSphere. All submissions will be reviewed by an administrator before going live on the auction house.
-            </p>
-            <form id="user-sell-form" onsubmit="handleUserCreateListing(event)">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group" style="grid-column: span 2;">
-                  <label for="user-item-title">Item Title</label>
-                  <input type="text" id="user-item-title" required placeholder="e.g. Rare Cyberpunk GPU">
-                </div>
-                <div class="form-group">
-                  <label for="user-item-category">Category</label>
-                  <select id="user-item-category" required>
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Vehicles">Vehicles</option>
-                    <option value="Collectibles">Collectibles</option>
-                    <option value="Art">Art</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Real Estate">Real Estate</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="user-item-duration">Duration (Hours)</label>
-                  <input type="number" id="user-item-duration" required min="1" max="168" value="24">
-                </div>
-                <div class="form-group">
-                  <label for="user-item-starting-bid">Starting Bid ($)</label>
-                  <input type="number" id="user-item-starting-bid" required min="1" placeholder="e.g. 150">
-                </div>
-                <div class="form-group">
-                  <label for="user-item-buyout">Buy Now Price ($ - Optional)</label>
-                  <input type="number" id="user-item-buyout" min="1" placeholder="e.g. 500">
-                </div>
-                <div class="form-group" style="grid-column: span 2;">
-                  <label for="user-item-image">Image URL (Optional)</label>
-                  <input type="url" id="user-item-image" placeholder="https://example.com/image.jpg">
-                </div>
-                <div class="form-group" style="grid-column: span 2;">
-                  <label for="user-item-description">Description & Details</label>
-                  <textarea id="user-item-description" required placeholder="Describe your item in detail..." style="height: 120px;"></textarea>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-                Submit Item for Review <i data-lucide="arrow-right"></i>
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-
-      <!-- Page 6: Admin Moderation Panel -->
+      <!-- Page 5: Admin Moderation Panel -->
       <section id="page-admin" class="page">
         <div class="admin-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px;">
           <!-- Left and Right Top Columns: Direct Listing & Approvals/Active stacked -->
@@ -251,8 +249,8 @@
                     <input type="number" id="admin-item-buyout" min="1" placeholder="e.g. 500">
                   </div>
                   <div class="form-group" style="grid-column: span 2;">
-                    <label for="admin-item-image">Image URL (Optional)</label>
-                    <input type="url" id="admin-item-image" placeholder="https://example.com/image.jpg">
+                    <label for="admin-item-image">Image URLs (Optional, comma-separated or one per line)</label>
+                    <textarea id="admin-item-image" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg" style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-family: inherit; font-size: 0.95rem;"></textarea>
                   </div>
                   <div class="form-group" style="grid-column: span 2;">
                     <label for="admin-item-description">Description & Details</label>
