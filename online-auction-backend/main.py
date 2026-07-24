@@ -48,6 +48,7 @@ class AuctionCreate(BaseModel):
     duration_hours: float
     bg_color: str
     icon: str
+    image_url: Optional[str] = None
 
 class UserRegister(BaseModel):
     username: str
@@ -107,6 +108,7 @@ class AuctionResponse(BaseModel):
     ends_at: float
     bg_color: str
     icon: str
+    image_url: Optional[str] = None
     status: str
     bids: List[BidResponse] = []
 
@@ -341,48 +343,6 @@ def get_auction(auction_id: str):
 
 @app.post("/api/auctions", response_model=AuctionResponse)
 def create_auction(auction_in: AuctionCreate):
-    supabase = get_supabase()
-    user_res = supabase.table('users').select('*').eq('username', auction_in.seller).execute()
-    if not user_res.data:
-        user_data = {
-            "username": auction_in.seller,
-            "email": f"{auction_in.seller}@bidsphere.io",
-            "hashed_password": hash_password("password123"),
-            "wallet_balance": 1000.0,
-            "role": "user",
-            "items_won": "[]", "items_bid_on": "[]", "items_sold": "[]"
-        }
-        user_res = supabase.table('users').insert(user_data).execute()
-    
-    user = user_res.data[0]
-    now_ms = time.time() * 1000
-    is_admin = user['role'] == "admin"
-    status = "active" if is_admin else "pending"
-    ends_at_ms = (now_ms + (auction_in.duration_hours * 60 * 60 * 1000)) if is_admin else 0.0
-    new_id = f"auc-{int(time.time() * 1000)}"
-    
-    auc_data = {
-        "id": new_id,
-        "title": auction_in.title,
-        "description": auction_in.description,
-        "category": auction_in.category,
-        "starting_bid": auction_in.starting_bid,
-        "buy_now_price": auction_in.buy_now_price,
-        "current_bid": auction_in.starting_bid,
-        "seller": auction_in.seller,
-        "ends_at": ends_at_ms,
-        "duration_hours": auction_in.duration_hours,
-        "bg_color": auction_in.bg_color,
-        "icon": auction_in.icon,
-        "status": status
-    }
-    res = supabase.table('auctions').insert(auc_data).execute()
-    auction = res.data[0]
-    auction['bids'] = []
-    
-    sold_list = parse_json_list(user.get('items_sold'))
-    sold_list.append(new_id)
-    supabase.table('users').update({'items_sold': json.dumps(sold_list)}).eq('username', user['username']).execute()
     
     return auction
 

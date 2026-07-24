@@ -446,8 +446,8 @@ async function renderDetailPage(itemId) {
   // Render Page Content
   elDetailContainer.innerHTML = `
     <!-- Gallery/Image representation -->
-    <div class="detail-gallery" style="${item.imageUrl ? `background-image: url('${item.imageUrl}'); background-size: cover; background-position: center;` : `background: ${item.imageGradient};`}">
-      ${item.imageUrl ? '' : `<i data-lucide="${iconName}" class="detail-gallery-icon"></i>`}
+    <div class="detail-gallery" style="${item.imageUrl ? '' : `background: ${item.imageGradient};`}">
+      ${item.imageUrl ? `<img src="${item.imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;" alt="${item.title}">` : `<i data-lucide="${iconName}" class="detail-gallery-icon"></i>`}
       <div class="detail-clock-container">
         <div>
           <span class="countdown-label">Time Remaining</span>
