@@ -463,7 +463,7 @@ async function renderDetailPage(itemId) {
       ${(item.imageUrls && item.imageUrls.length > 1) ? `
         <div class="detail-gallery-slider">
           <div class="slider-images" id="slider-images-container">
-            ${item.imageUrls.map(url => `<div class="slider-image" style="background-image: url('${url}');"></div>`).join('')}
+            ${item.imageUrls.map(url => `<div class="slider-image" style="background-image: url(&quot;${url}&quot;);"></div>`).join('')}
           </div>
           <button class="slider-btn left" onclick="prevSlide()"><i data-lucide="chevron-left"></i></button>
           <button class="slider-btn right" onclick="nextSlide()"><i data-lucide="chevron-right"></i></button>
@@ -953,20 +953,20 @@ function startTimerEngine() {
               
               // Create local delivery record
               const deliveries = getLocalDeliveries();
-              const existingLocalDelivery = deliveries.find(d => d.auctionId === item.id);
+              const existingLocalDelivery = deliveries.find(d => d.auction_id === item.id);
               if (!existingLocalDelivery) {
                   const trackingNum = `TRK-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
                   deliveries.push({
                       id: Date.now(),
-                      auctionId: item.id,
-                      itemTitle: item.title,
+                      auction_id: item.id,
+                      item_title: item.title,
                       buyer: winningBid.bidder,
                       seller: item.seller,
                       price: winningBid.amount,
-                      shippingAddress: "Pending User Address",
-                      trackingNumber: trackingNum,
-                      deliveryStatus: "Pending Shipment",
-                      lastUpdated: new Date().toISOString()
+                      shipping_address: "Pending User Address",
+                      tracking_number: trackingNum,
+                      delivery_status: "Pending Shipment",
+                      last_updated: new Date().toISOString()
                   });
                   saveLocalDeliveries(deliveries);
               }
@@ -1319,8 +1319,20 @@ async function handleUserCreateListing(event) {
   let imageUrl = null;
   if (elImage && elImage.value.trim()) {
     const rawVal = elImage.value.trim();
-    const urls = rawVal.split(/[\n,]+/).map(u => u.trim()).filter(u => u);
-    if (urls.length > 0) imageUrl = urls.join(',');
+    let urls = [];
+    rawVal.split(/[\n|]+/).forEach(line => {
+      let parts = line.split(',');
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i].trim().match(/data:image\/[^;]+;base64/i) && i + 1 < parts.length) {
+          urls.push((parts[i] + ',' + parts[i+1]).trim());
+          i++;
+        } else {
+          urls.push(parts[i].trim());
+        }
+      }
+    });
+    urls = urls.filter(u => u);
+    if (urls.length > 0) imageUrl = urls.join('|');
   }
 
   if (!title || !category || isNaN(durationHours) || isNaN(startingBid)) {
