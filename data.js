@@ -222,8 +222,21 @@ function mapBackendAuction(bItem) {
   }
   
   const rawImageUrl = imageUrlStr ? imageUrlStr.trim() : null;
-  const imageUrls = rawImageUrl ? rawImageUrl.split(/[\n,]+/).map(u => u.trim()).filter(u => u) : [];
-  
+  let imageUrls = [];
+  if (rawImageUrl) {
+    rawImageUrl.split(/[\n|]+/).forEach(line => {
+      let parts = line.split(',');
+      for (let i = 0; i < parts.length; i++) {
+        if (parts[i].trim().match(/data:image\/[^;]+;base64/i) && i + 1 < parts.length) {
+          imageUrls.push((parts[i] + ',' + parts[i+1]).trim());
+          i++;
+        } else {
+          imageUrls.push(parts[i].trim());
+        }
+      }
+    });
+    imageUrls = imageUrls.filter(u => u);
+  }
   return {
     id: bItem.id,
     title: bItem.title,
@@ -566,13 +579,23 @@ async function buyOutAPI(itemId, bidder, address = "104 Cyberpunk Blvd, Sector 7
       const res = await fetch(`${API_BASE}/auctions/${itemId}/buyout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bidder, address })
+        body: JSON.stringify({ bidder: bidder, address: address })
       });
       if (res.ok) {
         const updatedAuction = await res.json();
+        const mapped = mapBackendAuction(updatedAuction);
+        
+        // Sync local storage to avoid stale data on fallback
+        const auctions = getLocalAuctions();
+        const itemIndex = auctions.findIndex(a => a.id === itemId);
+        if (itemIndex !== -1) {
+            auctions[itemIndex] = mapped;
+            saveLocalAuctions(auctions);
+        }
+        
         await getAuctions();
         await getUserProfile();
-        return { success: true, item: mapBackendAuction(updatedAuction) };
+        return { success: true, item: mapped };
       } else {
         const err = await res.json();
         return { success: false, message: err.detail || "Buyout failed." };
@@ -852,10 +875,12 @@ async function getDeliveries() {
     try {
       const res = await fetch(`${API_BASE}/deliveries?username=${currentUsername}`, { cache: 'no-store' });
       if (res.ok) {
-        return await res.json();
+        const backendDel = await res.json();
+        saveLocalDeliveries(backendDel);
+        return backendDel;
       }
     } catch (e) {
-      // fallback
+      console.error("Backend getDeliveries failed, using fallback", e);
     }
   }
   
