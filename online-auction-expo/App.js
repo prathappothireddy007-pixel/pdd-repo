@@ -128,6 +128,11 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'sell' | 'profile'
   const [activeDetailId, setActiveDetailId] = useState(null);
   const [showLanding, setShowLanding] = useState(true);
+  const [checkoutState, setCheckoutState] = useState('none'); // 'none' | 'address' | 'payment' | 'success'
+  const [checkoutItemId, setCheckoutItemId] = useState(null);
+  const [shippingAddress, setShippingAddress] = useState({ street: '', city: '', state: '', zip: '', country: '' });
+  const [paymentDetails, setPaymentDetails] = useState({ cardName: '', cardNumber: '', expiry: '', cvv: '' });
+
 
   // Core App States
   const [auctions, setAuctions] = useState(INITIAL_AUCTIONS);
@@ -477,7 +482,7 @@ export default function App() {
   };
 
   // 2. Buy Out Outright
-  const handleBuyOut = async (itemId) => {
+    const handleBuyOut = (itemId) => {
     if (!isLoggedIn) {
       Alert.alert("Authentication Required", "Please sign in or register to buy items outright.", [
         { text: "Cancel", style: "cancel" },
@@ -485,14 +490,16 @@ export default function App() {
       ]);
       return;
     }
-
     const item = auctions.find(a => a.id === itemId);
     if (!item || !item.buyNowPrice) return;
+    
+    setCheckoutItemId(itemId);
+    setCheckoutState('address');
+  };
 
-    if (user.walletBalance < item.buyNowPrice) {
-      triggerToast("Insufficient wallet funds for buyout.", "error");
-      return;
-    }
+  const completeBuyOut = async (itemId) => {
+    const item = auctions.find(a => a.id === itemId);
+    if (!item || !item.buyNowPrice) return;
 
     // Try live server API call
     const backendUrl = getBackendUrl();
@@ -979,6 +986,103 @@ export default function App() {
   };
 
   // 2. Detail Screen (Overlay)
+  
+  const renderCheckoutScreen = () => {
+    const item = auctions.find(a => a.id === checkoutItemId);
+    if (!item) return null;
+
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.detailHeaderBar}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => { setCheckoutState('none'); setCheckoutItemId(null); }}>
+            <Text style={styles.backBtnText}>✅ Cancel</Text>
+          </TouchableOpacity>
+          <Text style={styles.detailBarTitle}>Checkout: {item.title}</Text>
+        </View>
+
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          {checkoutState === 'address' && (
+            <View style={styles.authCard}>
+              <Text style={styles.authTitle}>Shipping Address</Text>
+              
+              <TextInput style={styles.input} placeholder="Street Address" placeholderTextColor="#8f9bb3" 
+                value={shippingAddress.street} onChangeText={t => setShippingAddress({...shippingAddress, street: t})} />
+              <TextInput style={styles.input} placeholder="City" placeholderTextColor="#8f9bb3" 
+                value={shippingAddress.city} onChangeText={t => setShippingAddress({...shippingAddress, city: t})} />
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TextInput style={[styles.input, {flex: 1, marginRight: 10}]} placeholder="State" placeholderTextColor="#8f9bb3" 
+                  value={shippingAddress.state} onChangeText={t => setShippingAddress({...shippingAddress, state: t})} />
+                <TextInput style={[styles.input, {flex: 1}]} placeholder="Zip Code" placeholderTextColor="#8f9bb3" 
+                  value={shippingAddress.zip} onChangeText={t => setShippingAddress({...shippingAddress, zip: t})} />
+              </View>
+              <TextInput style={styles.input} placeholder="Country" placeholderTextColor="#8f9bb3" 
+                value={shippingAddress.country} onChangeText={t => setShippingAddress({...shippingAddress, country: t})} />
+              
+              <TouchableOpacity style={styles.btnPrimary} onPress={() => {
+                if(!shippingAddress.street || !shippingAddress.city || !shippingAddress.zip) {
+                  triggerToast('Please fill all address fields', 'error'); return;
+                }
+                setCheckoutState('payment');
+              }}>
+                <Text style={styles.btnPrimaryText}>Continue to Payment</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {checkoutState === 'payment' && (
+            <View style={styles.authCard}>
+              <Text style={styles.authTitle}>Payment Details</Text>
+              <Text style={{color: '#fff', fontSize: 18, marginBottom: 15, textAlign: 'center'}}>
+                Total: {formatCurrency(item.buyNowPrice)}
+              </Text>
+              
+              <TextInput style={styles.input} placeholder="Cardholder Name" placeholderTextColor="#8f9bb3" 
+                value={paymentDetails.cardName} onChangeText={t => setPaymentDetails({...paymentDetails, cardName: t})} />
+              <TextInput style={styles.input} placeholder="Card Number" keyboardType="number-pad" placeholderTextColor="#8f9bb3" 
+                value={paymentDetails.cardNumber} onChangeText={t => setPaymentDetails({...paymentDetails, cardNumber: t})} maxLength={16} />
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TextInput style={[styles.input, {flex: 1, marginRight: 10}]} placeholder="MM/YY" placeholderTextColor="#8f9bb3" 
+                  value={paymentDetails.expiry} onChangeText={t => setPaymentDetails({...paymentDetails, expiry: t})} maxLength={5} />
+                <TextInput style={[styles.input, {flex: 1}]} placeholder="CVV" keyboardType="number-pad" placeholderTextColor="#8f9bb3" 
+                  value={paymentDetails.cvv} onChangeText={t => setPaymentDetails({...paymentDetails, cvv: t})} maxLength={3} />
+              </View>
+
+              <TouchableOpacity style={[styles.btnPrimary, {backgroundColor: '#ffd000'}]} onPress={() => {
+                if(!paymentDetails.cardName || paymentDetails.cardNumber.length < 16) {
+                  triggerToast('Please fill all payment fields correctly', 'error'); return;
+                }
+                triggerToast('Processing Payment...', 'info');
+                completeBuyOut(checkoutItemId);
+                setCheckoutState('success');
+              }}>
+                <Text style={[styles.btnPrimaryText, {color: '#1f2937'}]}>Pay {formatCurrency(item.buyNowPrice)}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {checkoutState === 'success' && (
+            <View style={[styles.authCard, {alignItems: 'center', padding: 40}]}>
+              <Text style={{fontSize: 50, marginBottom: 20}}>✅</Text>
+              <Text style={styles.authTitle}>Payment Successful!</Text>
+              <Text style={{color: '#a0aebc', textAlign: 'center', marginBottom: 30}}>
+                You have successfully purchased {item.title}.
+              </Text>
+              
+              <TouchableOpacity style={styles.btnPrimary} onPress={() => {
+                setCheckoutState('none');
+                setCheckoutItemId(null);
+                setActiveDetailId(null);
+                setActiveTab('profile');
+              }}>
+                <Text style={styles.btnPrimaryText}>Back to Profile</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  };
+
   const renderDetailScreen = () => {
     const item = auctions.find(a => a.id === activeDetailId);
     if (!item) return null;
@@ -1703,6 +1807,7 @@ export default function App() {
 
       {/* Detail view Modal popup overlay */}
       {activeDetailId !== null && renderDetailScreen()}
+      {checkoutState !== 'none' && renderCheckoutScreen()}
 
       {/* Floating custom Toast messages */}
       {toastMessage && (
