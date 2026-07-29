@@ -11,12 +11,15 @@ key: str = os.environ.get("SUPABASE_KEY", "")
 use_mock = os.environ.get("USE_MOCK_DB", "False").lower() == "true"
 if use_mock:
     from mock_supabase import MockSupabaseClient
-    supabase = MockSupabaseClient()
+    supabase_mock = MockSupabaseClient()
 else:
-    supabase: Client = create_client(url, key)
+    # Do not instantiate a global client to avoid httpx socket errors across threads on Windows
+    pass
 
 def get_supabase():
-    return supabase
+    if use_mock:
+        return supabase_mock
+    return create_client(url, key)
 
 def init_db():
     pass
