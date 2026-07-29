@@ -1,0 +1,5 @@
+[
+  "test_api.py::test_get_auctions",
+  "test_api.py::test_login_user",
+  "test_api.py::test_register_user"
+]
